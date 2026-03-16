@@ -1,0 +1,321 @@
+{
+  "actions": [],
+  "allow_copy": 0,
+  "allow_events_in_timeline": 0,
+  "allow_guest_to_view": 0,
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "field:policy_name",
+  "beta": 0,
+  "creation": "2026-03-16 00:00:00.000000",
+  "custom": 0,
+  "default_view": "List",
+  "doctype": "DocType",
+  "document_type": "Setup",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "policy_name",
+    "is_active",
+    "policy_type",
+    "column_break_identity",
+    "default_region",
+    "section_break_hosting_defaults",
+    "default_database_mode",
+    "default_deployment_mode",
+    "column_break_hosting_defaults",
+    "supports_public_routing",
+    "supports_custom_domains",
+    "section_break_resource_controls",
+    "worker_quota",
+    "web_quota",
+    "storage_quota_gb",
+    "column_break_resource_controls",
+    "max_background_jobs",
+    "max_file_size_mb",
+    "section_break_lifecycle_rules",
+    "sandbox_expiry_days",
+    "grace_period_days",
+    "column_break_lifecycle_rules",
+    "allow_in_place_upgrade",
+    "allow_copy_demo_data",
+    "requires_fresh_production_site",
+    "section_break_backup_retention",
+    "backup_frequency",
+    "backup_retention_days",
+    "column_break_backup_retention",
+    "requires_restore_test",
+    "restore_test_frequency_days",
+    "section_break_monitoring_support",
+    "monitoring_level",
+    "alerting_level",
+    "sla_profile",
+    "column_break_monitoring_support",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "policy_name",
+      "fieldtype": "Data",
+      "in_global_search": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Policy Name",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "default": "1",
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "in_list_view": 1,
+      "label": "Is Active"
+    },
+    {
+      "fieldname": "policy_type",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Policy Type",
+      "options": "\nSandbox\nStandard\nPremium\nVIP",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_identity",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "default_region",
+      "fieldtype": "Data",
+      "label": "Default Region"
+    },
+    {
+      "fieldname": "section_break_hosting_defaults",
+      "fieldtype": "Section Break",
+      "label": "Hosting Defaults"
+    },
+    {
+      "fieldname": "default_database_mode",
+      "fieldtype": "Select",
+      "label": "Default Database Mode",
+      "options": "\nShared Cluster DB\nDedicated Instance",
+      "reqd": 1
+    },
+    {
+      "fieldname": "default_deployment_mode",
+      "fieldtype": "Select",
+      "label": "Default Deployment Mode",
+      "options": "\nShared Runtime\nReserved Runtime\nDedicated Runtime",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_hosting_defaults",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "fieldname": "supports_public_routing",
+      "fieldtype": "Check",
+      "label": "Supports Public Routing"
+    },
+    {
+      "default": "0",
+      "fieldname": "supports_custom_domains",
+      "fieldtype": "Check",
+      "label": "Supports Custom Domains"
+    },
+    {
+      "fieldname": "section_break_resource_controls",
+      "fieldtype": "Section Break",
+      "label": "Resource Controls"
+    },
+    {
+      "fieldname": "worker_quota",
+      "fieldtype": "Int",
+      "label": "Worker Quota"
+    },
+    {
+      "fieldname": "web_quota",
+      "fieldtype": "Int",
+      "label": "Web Quota"
+    },
+    {
+      "fieldname": "storage_quota_gb",
+      "fieldtype": "Float",
+      "label": "Storage Quota (GB)"
+    },
+    {
+      "fieldname": "column_break_resource_controls",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "max_background_jobs",
+      "fieldtype": "Int",
+      "label": "Max Background Jobs"
+    },
+    {
+      "fieldname": "max_file_size_mb",
+      "fieldtype": "Int",
+      "label": "Max File Size (MB)"
+    },
+    {
+      "fieldname": "section_break_lifecycle_rules",
+      "fieldtype": "Section Break",
+      "label": "Lifecycle Rules"
+    },
+    {
+      "fieldname": "sandbox_expiry_days",
+      "fieldtype": "Int",
+      "label": "Sandbox Expiry Days"
+    },
+    {
+      "fieldname": "grace_period_days",
+      "fieldtype": "Int",
+      "label": "Grace Period Days"
+    },
+    {
+      "fieldname": "column_break_lifecycle_rules",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "fieldname": "allow_in_place_upgrade",
+      "fieldtype": "Check",
+      "label": "Allow In-place Upgrade"
+    },
+    {
+      "default": "0",
+      "fieldname": "allow_copy_demo_data",
+      "fieldtype": "Check",
+      "label": "Allow Copy Demo Data"
+    },
+    {
+      "default": "0",
+      "fieldname": "requires_fresh_production_site",
+      "fieldtype": "Check",
+      "label": "Requires Fresh Production Site"
+    },
+    {
+      "fieldname": "section_break_backup_retention",
+      "fieldtype": "Section Break",
+      "label": "Backup and Retention"
+    },
+    {
+      "fieldname": "backup_frequency",
+      "fieldtype": "Select",
+      "label": "Backup Frequency",
+      "options": "\nNone\nDaily\nTwice Daily\nHourly Snapshot"
+    },
+    {
+      "fieldname": "backup_retention_days",
+      "fieldtype": "Int",
+      "label": "Backup Retention Days"
+    },
+    {
+      "fieldname": "column_break_backup_retention",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "fieldname": "requires_restore_test",
+      "fieldtype": "Check",
+      "label": "Requires Restore Test"
+    },
+    {
+      "fieldname": "restore_test_frequency_days",
+      "fieldtype": "Int",
+      "label": "Restore Test Frequency Days"
+    },
+    {
+      "fieldname": "section_break_monitoring_support",
+      "fieldtype": "Section Break",
+      "label": "Monitoring and Support"
+    },
+    {
+      "fieldname": "monitoring_level",
+      "fieldtype": "Select",
+      "label": "Monitoring Level",
+      "options": "\nBasic\nStandard\nAdvanced"
+    },
+    {
+      "fieldname": "alerting_level",
+      "fieldtype": "Select",
+      "label": "Alerting Level",
+      "options": "\nNone\nBusiness Hours\n24x7"
+    },
+    {
+      "fieldname": "sla_profile",
+      "fieldtype": "Select",
+      "label": "SLA Profile",
+      "options": "\nNone\nStandard\nPremium\nVIP"
+    },
+    {
+      "fieldname": "column_break_monitoring_support",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "grid_page_length": 50,
+  "hide_toolbar": 0,
+  "index_web_pages_for_search": 0,
+  "is_submittable": 0,
+  "issingle": 0,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-03-16 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Ifitwala Press",
+  "name": "Tenant Policy",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Admin",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Ops",
+      "share": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Support",
+      "share": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "System Manager"
+    }
+  ],
+  "quick_entry": 0,
+  "read_only": 0,
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "policy_name",
+  "track_changes": 1,
+  "track_seen": 0
+}
