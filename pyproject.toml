@@ -4,11 +4,18 @@ authors = [
     { name = "François de Ryckel", email = "f.deryckel@gmail.com"}
 ]
 description = "Create containers for Ifitwala Ed"
-requires-python = ">=3.14"
+requires-python = ">=3.13,<3.14"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     # "frappe~=16.0.0" # Installed and managed by bench.
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4.2,<5",
+    "pytest>=8.3,<9",
+    "ruff>=0.11,<1",
 ]
 
 [build-system]
@@ -21,7 +28,7 @@ build-backend = "flit_core.buildapi"
 
 [tool.ruff]
 line-length = 110
-target-version = "py314"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = [
@@ -59,3 +66,12 @@ typing-modules = ["frappe.types.DF"]
 quote-style = "double"
 indent-style = "tab"
 docstring-code-format = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ifitwala_press.runtime]
+python = "3.13"
+mariadb = "11.8"
+node = "24+"
