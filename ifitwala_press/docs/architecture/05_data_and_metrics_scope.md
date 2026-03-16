@@ -234,6 +234,14 @@ Early cost values can be approximate.
 
 That is acceptable.
 
+Early cost snapshots may also be:
+- manually entered
+- derived from policy defaults
+- estimated from simple heuristics
+- refreshed without cloud billing API integration
+
+That is acceptable in phase 1 if the assumptions are visible.
+
 Bad:
 - fake precision
 - unexplained totals
@@ -244,6 +252,15 @@ Good:
 - explicit snapshot date
 - transparent approximation logic
 - trend over time
+
+## 4.4 Metrics source maturity
+Metric collection can mature in stages.
+
+- phase 1: manual entry or simple heuristic snapshots
+- phase 1.5: scheduled server-side summaries
+- phase 2: provider-fed or infrastructure-fed summaries
+
+Do not force source sophistication ahead of operational need.
 
 ---
 

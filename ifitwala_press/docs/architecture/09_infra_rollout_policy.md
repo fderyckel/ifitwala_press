@@ -1,0 +1,129 @@
+# 09_infra_rollout_policy.md
+
+## Purpose
+
+This document defines the staged infrastructure rollout posture for **Ifitwala_Press**.
+
+The goal is to keep the control-plane model stable while allowing the actual deployment shape to mature in step with revenue, operational load, and customer risk.
+
+This is not a replacement for the core architecture documents.
+It is a rollout companion that makes founder-stage reality explicit.
+
+---
+
+## 1. Rollout principle
+
+The control plane must model:
+- tenant and environment separation
+- one site = one database
+- lifecycle state
+- hosting tier
+- routing intent
+- policy
+- health, cost, and subscription visibility
+
+The deployment implementation may mature in stages.
+
+Early-stage cost efficiency is acceptable.
+Model drift is not.
+
+---
+
+## 2. Founder Mode
+
+### Purpose
+Support early customers and trials at low fixed cost while proving the operating model manually.
+
+### Acceptable runtime shape
+- one low-cost shared runtime is acceptable
+- self-managed deployment is acceptable
+- consolidated services are acceptable if the control-plane intent stays explicit
+
+### Acceptable DB placement
+- shared DB fleet is acceptable
+- self-managed DB placement is acceptable
+- one database per site remains mandatory
+
+### Backup expectation
+- backups must exist for production
+- sandbox backups may be lighter-weight
+- restore discipline may be manual but must be real
+
+### Health monitoring expectation
+- simple health checks are acceptable
+- manual review and heuristic summaries are acceptable
+- failures must still be visible in the control plane
+
+### Automation expectation
+- manual and semi-automated actions are acceptable
+- provisioning checklists or operator-run procedures are acceptable
+- provider API automation is explicitly optional
+
+---
+
+## 3. Standard Production Target
+
+### Purpose
+Support normal live customer operations with stronger operational consistency and lower manual burden.
+
+### Acceptable runtime shape
+- shared runtime remains acceptable
+- deployment should become more repeatable
+- routing and backup handling should become more standardized
+
+### Acceptable DB placement
+- shared DB fleet remains the default
+- placement may be self-managed or managed
+- dedicated DB should be used only when justified
+
+### Backup expectation
+- production backup policy must be explicit
+- restore readiness should be reviewed on a schedule
+
+### Health monitoring expectation
+- scheduled summaries should replace purely manual checks
+- production health signals should be refreshed consistently
+
+### Automation expectation
+- semi-automated execution should become the norm
+- selected routing, backup, and provisioning steps may be automated once proven manually
+
+---
+
+## 4. Premium / VIP Target
+
+### Purpose
+Support tenants that justify stronger isolation, clearer blast-radius control, and tighter operational guarantees.
+
+### Acceptable runtime shape
+- shared, reserved, or dedicated runtime may be used based on risk and contract
+- the chosen mode must be explicit in the control plane
+
+### Acceptable DB placement
+- dedicated DB instance is the normal expectation
+- placement may be self-managed or managed depending on stage and commitments
+
+### Backup expectation
+- stronger retention and restore discipline is expected
+- backup freshness and restore confidence should be visible
+
+### Health monitoring expectation
+- monitoring should be more frequent and more reliable
+- degraded state should be surfaced quickly
+
+### Automation expectation
+- automation is justified where it reduces operator error and improves recoverability
+- provider-specific implementation should still sit behind control-plane intent
+
+---
+
+## 5. Decision rule
+
+When choosing infrastructure work, ask:
+
+1. Does this improve operator clarity or safety now?
+2. Does this preserve a migration path to stronger isolation later?
+3. Does this avoid locking the model to a premature provider assumption?
+4. Is this justified by current customers, revenue, or risk?
+
+If the answer is no, defer it.

@@ -257,8 +257,8 @@ Examples:
 
 ### Hosting defaults
 - `default_database_mode` — Select
-  - Shared Cluster DB
-  - Dedicated Instance
+  - Shared DB Fleet
+  - Dedicated DB Instance
 - `default_deployment_mode` — Select
   - Shared Runtime
   - Reserved Runtime
@@ -307,7 +307,7 @@ Examples:
 ## Validations
 
 - if `policy_type = Sandbox`, backup frequency can be None or Daily, but should not imply premium guarantees
-- if `default_database_mode = Dedicated Instance`, policy type should not be Sandbox unless explicitly justified
+- if `default_database_mode = Dedicated DB Instance`, policy type should not be Sandbox unless explicitly justified
 - if `requires_fresh_production_site = 1`, then `allow_in_place_upgrade` should usually be 0
 - numeric quotas must be non-negative
 
@@ -357,6 +357,26 @@ Do not use domain or site name as the actual document name.
 
 ## Suggested key fields
 
+### Phase 1 required vs phase 2 detail
+Phase 1 should keep `Tenant Environment` focused on operational decisions and lifecycle visibility.
+
+Required in phase 1:
+- tenant/environment identity
+- lifecycle state and reason
+- policy and hosting tier
+- placement intent
+- logical DB mode and deployment mode
+- primary routing intent
+- expiry, health summary, cost summary, and provisioning summary
+
+Defer to phase 2 unless clearly needed in the UI or action contracts:
+- provider-specific router metadata
+- exact runtime image metadata
+- exact Redis endpoints
+- exact bucket metadata
+- exact DB host and port details
+- cluster and namespace specifics that do not affect operator decisions yet
+
 ### Identity section
 - `tenant` — Link `Press Tenant` — reqd
 - `environment_name` — Data
@@ -389,6 +409,11 @@ Do not use domain or site name as the actual document name.
   - Standard
   - Premium
   - VIP
+- `placement_strategy` — Select
+  - Founder Shared Runtime
+  - Shared Production Fleet
+  - Dedicated DB
+  - Dedicated Runtime + DB
 
 ### Domain / routing section
 - `primary_domain` — Data
@@ -399,39 +424,33 @@ Do not use domain or site name as the actual document name.
 - `dns_ready` — Check
 - `tls_ready` — Check
 - `host_header_value` — Data
-- `traefik_router_name` — Data
-- `traefik_entrypoint` — Data
 
 ### Deployment placement section
-- `cluster_name` — Data
 - `region` — Data
-- `namespace` — Data
-- `app_image` — Data
-- `app_image_tag` — Data
 - `frappe_branch` — Data
 - `ifitwala_ed_branch` — Data
 - `deployment_mode` — Select
   - Shared Runtime
   - Reserved Runtime
   - Dedicated Runtime
+- `deployment_mode_notes` — Small Text
 
 ### Database section
 - `database_mode` — Select
-  - Shared Cluster DB
-  - Dedicated Instance
+  - Shared DB Fleet
+  - Dedicated DB Instance
+- `db_provider` — Select
+  - Self Managed
+  - Google Managed
+  - Other Managed
 - `db_instance_name` — Data
 - `db_name` — Data
 - `db_user` — Data
-- `db_host` — Data
-- `db_port` — Int
 - `db_ha_enabled` — Check
 - `db_last_backup` — Datetime
 - `db_restore_tested_on` — Date
 
 ### Cache / queue / realtime section
-- `redis_cache_endpoint` — Data
-- `redis_queue_endpoint` — Data
-- `redis_socketio_endpoint` — Data
 - `socketio_enabled` — Check
 - `worker_profile` — Data or Link later if needed
 
@@ -440,8 +459,6 @@ Do not use domain or site name as the actual document name.
   - GCS
   - S3 Compatible
   - Local Temporary
-- `bucket_name` — Data
-- `bucket_prefix` — Data
 - `storage_quota_gb` — Float
 - `expires_on` — Date
 
@@ -537,8 +554,8 @@ Suggested fields:
 
 - `site_name` must be unique and normalized
 - if `environment_type = Sandbox`, `hosting_tier` should normally be Sandbox
-- if `hosting_tier = VIP`, `database_mode` should not be Shared Cluster DB
-- if `database_mode = Dedicated Instance`, `db_instance_name` should be required
+- if `hosting_tier = VIP`, `database_mode` should not be Shared DB Fleet
+- if `database_mode = Dedicated DB Instance`, `db_instance_name` should be required
 - if `routing_mode = Public`, `primary_domain` should normally be required
 - if `site_status = Live`, policy and DB fields should not be blank
 - if `expires_on` is set for non-sandbox production, require justification or policy support
@@ -563,6 +580,7 @@ Suggested fields:
 `Tenant Environment` is the operational pane of glass.
 Do not turn it into a dumping ground for every possible infra detail.
 Only store what the control plane needs to reason and act.
+Detailed provider payloads can move into follow-up records or service-layer integrations once the operator workflow proves they are necessary.
 
 ---
 

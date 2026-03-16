@@ -55,6 +55,11 @@ What is not acceptable:
 - no state discipline
 - no clear separation of concepts
 
+### 1.3A Proof before automation
+No infrastructure automation should be built before at least one manual lifecycle flow has been executed end to end and proven operationally sound.
+
+Automation should follow demonstrated operational truth, not replace it.
+
 ### 1.4 Avoid false completeness
 A half-working provisioning pipeline on top of weak records is worse than a manual but governed workflow.
 
@@ -104,6 +109,17 @@ Phase 1 does **not** require:
 - full GCP cost integration
 - perfect dashboards
 - complete alerting engine
+
+### 3.1 Phase 1 infrastructure posture
+Phase 1 may run on a low-cost, simple deployment shape if it preserves the control-plane model.
+
+Acceptable founder-stage realities include:
+- one low-cost shared runtime
+- manual DB, user, and site creation
+- manual backups and restore verification at small scale
+- manually maintained routing steps
+
+The records must still capture intended future placement, lifecycle, and policy cleanly.
 
 ---
 
@@ -469,10 +485,21 @@ The following should not block phase 1.
 ## 6.1 Full GCP automation
 Do not block on:
 - Cloud SQL automation
+- managed DB automation generally
 - GCS automation
 - GKE automation
 - cost API integrations
 - DNS automation
+
+## 6.1A Not phase 1
+The following are explicitly deferred unless a real operating need proves otherwise:
+
+- Cloud SQL or other managed DB automation
+- Redis Memorystore automation
+- Traefik sync automation
+- Cloud DNS automation
+- instance group or autoscaling automation
+- Docker API or infra-agent orchestration complexity
 
 These can come later once the control-plane records and actions are stable.
 

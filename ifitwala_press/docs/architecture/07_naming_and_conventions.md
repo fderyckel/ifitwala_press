@@ -167,8 +167,8 @@ Meaning:
 How the environment’s database is placed.
 
 Allowed values currently:
-- Shared Cluster DB
-- Dedicated Instance
+- Shared DB Fleet
+- Dedicated DB Instance
 
 This is not the same as hosting tier, though related.
 
@@ -182,6 +182,16 @@ Allowed values currently:
 - Dedicated Runtime
 
 This is not the same as DB mode.
+
+## 2.8A Current deployment mode vs target architecture
+We need words for both present operational reality and intended destination.
+
+- `database_mode` = logical database placement intent
+- `deployment_mode` = current runtime isolation level
+- `db_provider` = actual provider or management class if tracked
+- `placement_strategy` = coarse operator-facing placement decision
+
+Do not treat target architecture language as proof that the current deployment already has that shape.
 
 ## 2.9 Lifecycle state
 Meaning:
@@ -334,11 +344,11 @@ Use:
 ## 5.4 Hosting / infra
 Use:
 - `hosting_tier`
+- `placement_strategy`
 - `database_mode`
 - `deployment_mode`
 - `region`
-- `cluster_name`
-- `namespace`
+- `deployment_mode_notes`
 
 ## 5.5 Routing
 Use:
@@ -350,12 +360,13 @@ Use:
 
 ## 5.6 DB placement
 Use:
+- `db_provider`
 - `db_instance_name`
 - `db_name`
 - `db_user`
-- `db_host`
-- `db_port`
 - `db_ha_enabled`
+
+Detailed connection and cluster-specific fields should remain optional until they materially improve operator workflow.
 
 ## 5.7 Health / metrics
 Use:
@@ -418,8 +429,8 @@ Use exactly:
 
 ## 7.2 Database mode
 Use exactly:
-- Shared Cluster DB
-- Dedicated Instance
+- Shared DB Fleet
+- Dedicated DB Instance
 
 ## 7.3 Deployment mode
 Use exactly:

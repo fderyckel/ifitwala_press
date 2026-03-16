@@ -152,6 +152,18 @@ The app/runtime layer contains:
 
 It is reused across many tenants.
 
+### 5.1A Target architecture vs current deployment mode
+The control-plane model is locked before the infrastructure implementation is mature.
+
+That means:
+- the target architecture remains shared runtime plus separated state layers
+- the early implementation may run on a simpler self-managed stack
+- temporary consolidation for cost reasons is acceptable in founder stage
+- the control plane must still record intended placement and separation clearly
+
+Early deployment convenience must not blur the model.
+The model should stay migration-friendly even when the first runtime is simple.
+
 ### 5.2 Separated state layers
 Tenant-specific state should live outside the app image:
 
@@ -162,6 +174,12 @@ Tenant-specific state should live outside the app image:
 - routing config
 
 This is a control-plane architecture, not a pet-server architecture.
+
+### 5.3 Cash-efficiency principle
+Until revenue, contractual obligations, and uptime commitments justify stronger infrastructure, deployment choices should optimize for low fixed cost while preserving clean migration paths to stronger isolation later.
+
+Cheap early implementation is acceptable.
+Architecture drift is not.
 
 ---
 
@@ -187,7 +205,7 @@ Characteristics:
 
 Likely infra pattern:
 - shared runtime
-- shared database fleet
+- shared DB fleet
 - one database per site
 - limited storage and worker budget
 
@@ -204,7 +222,7 @@ Characteristics:
 
 Likely infra pattern:
 - shared runtime
-- shared HA database fleet
+- shared DB fleet
 - one database per site
 
 ### 6.3 Premium / VIP Production
@@ -257,7 +275,7 @@ Used by default for:
 - normal-sized customers
 
 Meaning:
-- multiple tenant databases on a shared managed DB fleet
+- multiple tenant databases on a shared DB fleet
 - cost-efficient
 - operationally simpler
 - acceptable when monitored carefully
@@ -274,6 +292,18 @@ Meaning:
 - higher cost
 - stronger isolation
 - cleaner blast-radius boundaries
+
+### 7.2A Provider-agnostic placement
+One database per site remains locked.
+
+Database placement may be implemented as:
+- self-managed shared VM or cluster
+- managed shared instance
+- dedicated self-managed instance
+- dedicated managed instance
+
+The control plane should model placement intent first.
+Specific providers are an implementation choice, not the architectural contract.
 
 ### 7.3 Strategic position
 The intended architecture is hybrid:

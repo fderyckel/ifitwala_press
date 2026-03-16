@@ -72,6 +72,15 @@ Named service functions should orchestrate multi-step operational behavior.
 
 Do not bury orchestration logic inside random form events.
 
+### 1.7 Execution maturity is expected to evolve
+The same control-plane action may exist in three implementation classes:
+- manual
+- semi-automated
+- automated
+
+The action contract should survive across all three.
+Phase 1 may legitimately use manual or semi-automated execution while preserving validation, auditability, and explicit state handling.
+
 ---
 
 # 2. Service boundary philosophy
@@ -120,6 +129,15 @@ Responsible for:
 
 This is where most control-plane behavior belongs.
 
+### 2.4 Service contracts should stay provider-agnostic
+Service inputs should describe:
+- placement intent
+- database mode
+- routing intent
+- copy or conversion strategy
+
+They should not assume a specific cloud provider API, managed database product, or proxy implementation in phase 1.
+
 ---
 
 # 3. First-class actions
@@ -166,6 +184,10 @@ Create a sandbox environment for a tenant.
 - set expiry date according to policy
 - create `Tenant Transition Log`
 - optionally queue provisioning job
+
+## Execution note
+In phase 1 this action may initiate a manual operator workflow instead of fully automated provisioning.
+The recorded job or reference may point to a checklist, ticket, or manually-run procedure.
 
 ## Output
 - environment record created/updated
@@ -342,6 +364,10 @@ Start real production provisioning for a qualified environment.
 - create transition log
 - optionally dispatch background provisioning workflow
 
+## Execution note
+In phase 1, provisioning may begin as a manual or semi-automated workflow.
+The action still owns validation, intent capture, state transition, and failure visibility.
+
 ## Failure behavior
 - if provisioning workflow cannot start, fail loudly
 - if provisioning starts but later fails, move to Provisioning Failed and log details
@@ -374,6 +400,10 @@ Mark a production environment as live only after provisioning and go-live checks
 - update go-live timestamps
 - create transition log
 - update tenant active environment pointer if appropriate
+
+## Execution note
+This may represent completion of a manual go-live checklist in phase 1.
+The control plane should record that explicitly rather than pretending the process was fully automated.
 
 ## Notes
 This action must not be casually available.
