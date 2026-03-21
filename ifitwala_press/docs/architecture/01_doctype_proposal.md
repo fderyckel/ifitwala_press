@@ -5,7 +5,7 @@
 This document translates the current Ifitwala_Press control-plane model into a first Frappe DocType proposal.
 
 The goal is not to overbuild.
-The goal is to define the minimum set of strong, durable records needed to operate Ifitwala_Ed tenants safely and clearly.
+The goal is to define the minimum set of strong, durable records needed to operate Ifitwala_Ed tenant environments safely and clearly, including approved platform apps and tenant-specific customization apps.
 
 This proposal focuses on:
 
@@ -365,6 +365,7 @@ Required in phase 1:
 - lifecycle state and reason
 - policy and hosting tier
 - placement intent
+- app bundle intent
 - logical DB mode and deployment mode
 - primary routing intent
 - expiry, health summary, cost summary, and provisioning summary
@@ -427,8 +428,9 @@ Defer to phase 2 unless clearly needed in the UI or action contracts:
 
 ### Deployment placement section
 - `region` — Data
-- `frappe_branch` — Data
-- `ifitwala_ed_branch` — Data
+- `app_bundle` — Link `App Bundle`
+- `app_release` — Link `App Release`
+- `site_app_assignment` — Link `Tenant Environment App Assignment`
 - `deployment_mode` — Select
   - Shared Runtime
   - Reserved Runtime
@@ -557,7 +559,8 @@ Suggested fields:
 - if `hosting_tier = VIP`, `database_mode` should not be Shared DB Fleet
 - if `database_mode = Dedicated DB Instance`, `db_instance_name` should be required
 - if `routing_mode = Public`, `primary_domain` should normally be required
-- if `site_status = Live`, policy and DB fields should not be blank
+- if `site_status = Live`, policy, DB fields, and `app_bundle` should not be blank
+- if `deployment_mode = Shared Runtime`, the assigned `app_bundle` should be approved for shared-pool use
 - if `expires_on` is set for non-sandbox production, require justification or policy support
 
 ## Key actions
@@ -645,7 +648,159 @@ These are not required for the first commit, but they are close enough to the mi
 
 ---
 
-# 5. `Tenant Subscription`
+# 5. `App Bundle`
+
+## Role
+
+`App Bundle` defines one approved compatible set of app code that may be deployed together in one runtime pool.
+
+## Why it matters
+
+Ifitwala_Press must support more than `ifitwala_ed` alone.
+It must support:
+- platform extensions such as `ifitwala_drive`
+- future approved `ifitwala_*` apps
+- school-specific customization apps
+
+But that flexibility must stay governed.
+`App Bundle` is the record that keeps app composition explicit instead of hidden in image tags or operator memory.
+
+## Suggested fields
+
+### Identity section
+- `bundle_name` — Data — reqd — unique
+- `bundle_slug` — Data — reqd — unique
+- `is_active` — Check
+- `bundle_type` — Select
+  - Platform Default
+  - Shared Compatible
+  - Tenant Custom
+  - VIP Custom
+
+### Runtime section
+- `frappe_branch` — Data
+- `runtime_image` — Data
+- `runtime_image_tag` — Data
+- `default_deployment_mode` — Select
+  - Shared Runtime
+  - Reserved Runtime
+  - Dedicated Runtime
+- `shared_runtime_compatible` — Check
+
+### Governance section
+- `supports_sandbox` — Check
+- `supports_standard_production` — Check
+- `supports_premium` — Check
+- `supports_vip` — Check
+- `notes` — Small Text
+
+## Child table
+
+### A. `App Bundle App`
+Suggested fields:
+- `app_name` — Data
+- `app_source_type` — Select
+  - Core
+  - Ifitwala Platform
+  - Tenant Custom
+- `source_url` — Data
+- `branch_or_track` — Data
+- `pin_ref` — Data
+- `install_order` — Int
+- `install_on_site_by_default` — Check
+- `required_for_bundle` — Check
+
+## Notes
+
+This record owns approved app composition.
+It should not be replaced by loose text notes on `Tenant Environment`.
+
+---
+
+# 6. `App Release`
+
+## Role
+
+`App Release` represents one buildable and deployable release of an `App Bundle`.
+
+## Why it matters
+
+The environment should point to a governed release, not only to a conceptual bundle.
+This keeps image, release, and rollout intent auditable.
+
+## Suggested fields
+
+- `app_bundle` — Link `App Bundle` — reqd
+- `release_label` — Data — reqd — unique
+- `status` — Select
+  - Draft
+  - Build Pending
+  - Ready
+  - Deprecated
+  - Blocked
+- `runtime_image` — Data
+- `runtime_image_tag` — Data
+- `runtime_image_digest` — Data
+- `built_on` — Datetime
+- `built_by` — Link User
+- `release_notes` — Small Text
+
+## Notes
+
+This record is where exact image metadata belongs.
+That keeps `Tenant Environment` operator-focused while preserving release traceability.
+
+---
+
+# 7. `Tenant Environment App Assignment`
+
+## Role
+
+`Tenant Environment App Assignment` records how one environment consumes an approved app bundle and which apps are actually intended to be installed on that site.
+
+## Why it matters
+
+The runtime image and the site install set are related but not identical.
+This record makes that distinction explicit and auditable.
+
+## Suggested fields
+
+- `environment` — Link `Tenant Environment` — reqd — unique
+- `app_bundle` — Link `App Bundle` — reqd
+- `app_release` — Link `App Release`
+- `assignment_mode` — Select
+  - Bundle Default
+  - Bundle Subset
+  - Bundle Plus Tenant Extensions
+- `approved_by` — Link User
+- `approved_on` — Datetime
+- `notes` — Small Text
+
+## Child table
+
+### A. `Assigned Site App`
+Suggested fields:
+- `app_name` — Data
+- `source_type` — Select
+  - Core
+  - Ifitwala Platform
+  - Tenant Custom
+- `install_on_site` — Check
+- `required_for_environment` — Check
+- `install_status` — Select
+  - Pending
+  - Installed
+  - Failed
+  - Skipped
+
+## Notes
+
+This gives the control plane a first-class record of site app intent.
+Do not bury this only in image tags, shell history, or ticket comments.
+
+---
+
+# 8. `Tenant Subscription`
 
 ## Role
 
@@ -692,7 +847,7 @@ Do not prematurely build a full billing engine.
 
 ---
 
-# 6. `Tenant Usage Snapshot`
+# 9. `Tenant Usage Snapshot`
 
 ## Role
 
@@ -722,7 +877,7 @@ Usage is core to:
 
 ---
 
-# 7. `Tenant Cost Snapshot`
+# 10. `Tenant Cost Snapshot`
 
 ## Role
 
@@ -747,7 +902,7 @@ Cost visibility is a first-class mission of Ifitwala_Press.
 
 ---
 
-# 8. `Tenant Health Check`
+# 11. `Tenant Health Check`
 
 ## Role
 
@@ -775,7 +930,7 @@ Stores structured health check results as first-class records if child tables be
 
 ---
 
-# 9. `Tenant Incident` or `Tenant Alert Log`
+# 12. `Tenant Incident` or `Tenant Alert Log`
 
 ## Role
 
@@ -821,14 +976,17 @@ Build now:
 
 ## Phase 1.5
 Add soon after:
-5. `Tenant Subscription`
-6. `Tenant Usage Snapshot`
-7. `Tenant Cost Snapshot`
+5. `App Bundle`
+6. `App Release`
+7. `Tenant Environment App Assignment`
+8. `Tenant Subscription`
+9. `Tenant Usage Snapshot`
+10. `Tenant Cost Snapshot`
 
 ## Phase 2
 Add when the operational flow is stable:
-8. `Tenant Health Check`
-9. `Tenant Incident` / `Tenant Alert Log`
+11. `Tenant Health Check`
+12. `Tenant Incident` / `Tenant Alert Log`
 
 ---
 
@@ -849,6 +1007,7 @@ To keep the control plane useful, list views should be intentional.
 - tenant
 - environment type
 - site status
+- app bundle
 - hosting tier
 - database mode
 - primary domain

@@ -1,9 +1,9 @@
 # Ifitwala_Press
 
-Ifitwala_Press is an internal-only **Frappe control plane** for operating hosted **Ifitwala_Ed** tenants on **Google Cloud**.
+Ifitwala_Press is an internal-only **Frappe control plane** for operating hosted **Ifitwala_Ed** tenant environments on **Google Cloud**.
 
 It is inspired by the architectural logic of Frappe Press, but it is intentionally narrower:
-it exists only to manage **Ifitwala_Ed** environments for our own customers.
+it exists only to manage **Ifitwala_Ed**-based environments for our own customers, including approved platform apps and tenant-specific customization apps.
 
 ## What it is
 
@@ -46,6 +46,16 @@ The intended hosting model is:
 - separated cache / queue / realtime services
 - separated object storage
 - hostname-based routing
+
+The runtime image is expected to carry a managed app bundle, not only `ifitwala_ed`.
+That bundle may include:
+- `ifitwala_ed`
+- `ifitwala_drive`
+- approved `ifitwala_*` platform apps
+- approved school-specific customization apps
+
+Those apps must be governed, versioned, and baked into images.
+They must not be installed ad hoc into running production containers.
 
 ### 4. Hybrid hosting strategy
 Not all customers should get the same infrastructure.
@@ -114,6 +124,9 @@ The current intended first-class objects are:
 - `Tenant Transition Log`
 
 ### Likely early follow-up
+- `App Bundle`
+- `App Release`
+- `Tenant Environment App Assignment`
 - `Tenant Environment Domain`
 - `Tenant Health Check`
 - `Tenant Subscription`

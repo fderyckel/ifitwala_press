@@ -52,6 +52,7 @@ The control plane must still record:
 - tenant identity
 - environment identity
 - lifecycle state
+- app bundle intent
 - hosting tier
 - database mode
 - routing intent
@@ -75,7 +76,9 @@ Prove, in a disposable local or founder-mode environment:
 - Frappe v16 starts against MariaDB 11.8
 - a site can be created successfully
 - migrations run cleanly
+- an image containing `ifitwala_ed` and `ifitwala_drive` can be built or pulled cleanly
 - `ifitwala_ed` installs successfully
+- `ifitwala_drive` installs successfully
 - basic CRUD works after setup
 
 ### Why this gate exists
@@ -122,6 +125,7 @@ By the end of this phase:
 - lifecycle state is stored on `Tenant Environment`
 - policy can be assigned cleanly
 - transition history has a durable append-only record shape
+- the environment model has a clear place for app bundle intent even if `App Bundle` lands in phase 1.5
 
 ### First file set to add
 

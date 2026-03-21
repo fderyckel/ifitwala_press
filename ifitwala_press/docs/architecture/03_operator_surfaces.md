@@ -378,6 +378,9 @@ Show:
 - region
 - cluster
 - namespace
+- app bundle
+- app release
+- site app assignment/profile
 - app image
 - image tag
 - deployment mode
@@ -428,6 +431,7 @@ Examples:
 - Expire Sandbox
 - Qualify for Production
 - Provision Production
+- Change App Bundle / Release
 - Run Health Check
 - Refresh Usage Snapshot
 - Refresh Cost Snapshot

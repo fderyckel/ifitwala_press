@@ -132,6 +132,7 @@ This is where most control-plane behavior belongs.
 ### 2.4 Service contracts should stay provider-agnostic
 Service inputs should describe:
 - placement intent
+- app bundle intent
 - database mode
 - routing intent
 - copy or conversion strategy
@@ -169,6 +170,7 @@ Create a sandbox environment for a tenant.
 ## Inputs
 - tenant
 - selected policy or default policy
+- optional app bundle override
 - optional sandbox name
 - optional expiry override
 - optional demo/template profile
@@ -180,6 +182,7 @@ Create a sandbox environment for a tenant.
 - set lifecycle state = Sandbox Provisioning
 - apply hosting tier = Sandbox
 - apply policy defaults
+- persist selected app bundle intent
 - assign site_name or reserve naming
 - set expiry date according to policy
 - create `Tenant Transition Log`
@@ -316,6 +319,7 @@ Move a tenant/environment into production qualification state.
 - tenant/environment
 - target hosting tier
 - target database mode
+- target app bundle
 - conversion strategy
 - optional region
 - optional policy override
@@ -324,6 +328,7 @@ Move a tenant/environment into production qualification state.
 - ensure or create production-target environment if that is the chosen model
 - set state = Production Qualification
 - persist selected hosting intent
+- persist selected app bundle intent
 - persist conversion strategy
 - create transition log
 
@@ -353,6 +358,8 @@ Start real production provisioning for a qualified environment.
 ## Inputs
 - environment
 - production site name or site naming confirmation
+- app bundle / release selection
+- site app assignment inputs if non-default
 - deployment placement inputs
 - optional domain inputs
 - optional copy strategy inputs
@@ -361,12 +368,19 @@ Start real production provisioning for a qualified environment.
 - set state = Production Provisioning
 - record provisioning job id if queued
 - persist finalized provisioning inputs
+- persist finalized app bundle / release / site app assignment
 - create transition log
 - optionally dispatch background provisioning workflow
 
 ## Execution note
 In phase 1, provisioning may begin as a manual or semi-automated workflow.
 The action still owns validation, intent capture, state transition, and failure visibility.
+Provisioning should be treated as a governed sequence even when some steps remain manual:
+- resolve the approved app bundle and release
+- build or pull the required runtime image if needed
+- create the site
+- install the intended apps on the site
+- apply environment config and record the resulting release metadata
 
 ## Failure behavior
 - if provisioning workflow cannot start, fail loudly
@@ -663,6 +677,7 @@ Required fields must be present for that action.
 
 Examples:
 - production cannot provision without DB mode and policy
+- production cannot provision without app bundle intent
 - public routing sync cannot run meaningfully without domain metadata
 - dedicated DB mode should require DB instance identity
 
@@ -680,6 +695,7 @@ Related fields must agree.
 Examples:
 - VIP tier + shared DB contradiction
 - Production + missing policy contradiction
+- shared runtime + incompatible app bundle contradiction
 - Archived + active operational action contradiction
 
 ---

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document locks the current architectural direction for **Ifitwala_Press** as an internal control plane for operating hosted **Ifitwala_Ed** tenants.
+This document locks the current architectural direction for **Ifitwala_Press** as an internal control plane for operating hosted **Ifitwala_Ed** tenant environments.
 
 The purpose of this document is to define:
 
@@ -22,7 +22,7 @@ It should not be changed casually.
 
 ## 1. Platform role
 
-Ifitwala_Press is our internal operating system for hosted Ifitwala_Ed.
+Ifitwala_Press is our internal operating system for hosted Ifitwala_Ed environments.
 
 Its job is to let our team:
 
@@ -148,11 +148,29 @@ The intended architecture is:
 
 The app/runtime layer contains:
 - `frappe`
-- `ifitwala_ed`
+- one managed app bundle
 
 It is reused across many tenants.
 
-### 5.1A Target architecture vs current deployment mode
+That managed app bundle may include:
+- `ifitwala_ed`
+- `ifitwala_drive`
+- other approved `ifitwala_*` apps
+- approved tenant-specific customization apps
+
+### 5.1A Managed app bundle discipline
+The control plane must treat runtime app composition as governed infrastructure intent.
+
+That means:
+- app code is baked into immutable Docker images
+- running production containers must not be mutated with ad hoc `bench get-app` or similar manual installs
+- each environment must be assigned to an approved app bundle and release
+- the site-level installed app set must remain explicit and auditable
+- tenants may share a runtime pool only when their assigned app bundle is compatible with that pool
+
+This preserves flexibility without turning production into a mutable pet-server model.
+
+### 5.1B Target architecture vs current deployment mode
 The control-plane model is locked before the infrastructure implementation is mature.
 
 That means:
@@ -207,6 +225,7 @@ Likely infra pattern:
 - shared runtime
 - shared DB fleet
 - one database per site
+- one approved shared app bundle or compatibility pool
 - limited storage and worker budget
 
 ### 6.2 Standard Production
@@ -224,6 +243,7 @@ Likely infra pattern:
 - shared runtime
 - shared DB fleet
 - one database per site
+- shared runtime only for tenants on compatible approved app bundles
 
 ### 6.3 Premium / VIP Production
 Purpose:
@@ -238,6 +258,7 @@ Characteristics:
 Likely infra pattern:
 - shared or reserved runtime
 - dedicated database instance per tenant
+- reserved or dedicated runtime when tenant-specific app combinations no longer fit a safe shared compatibility pool
 - stronger backup and monitoring policies
 
 ### Why tiering matters

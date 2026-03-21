@@ -39,6 +39,25 @@ Support early customers and trials at low fixed cost while proving the operating
 - self-managed deployment is acceptable
 - consolidated services are acceptable if the control-plane intent stays explicit
 
+### Runtime contract for founder mode
+Founder mode still needs a concrete runtime contract.
+
+At minimum, founder-mode docs and procedures should make explicit:
+- which Docker runtime shape is authoritative
+- which directories or volumes are persisted
+- how app bundles are built or pulled
+- how site creation and site app installation are performed
+- how common bench config is stored and updated
+
+Shared runtime in founder mode means shared only across environments with a compatible approved app bundle.
+If a school needs a materially different customization stack, it may need:
+- a separate shared compatibility pool
+- a reserved runtime
+- or a dedicated runtime
+
+Do not treat running production containers as mutable.
+Adding or changing apps should happen by approving a bundle or release and rolling out a new image.
+
 ### Acceptable DB placement
 - shared DB fleet is acceptable
 - self-managed DB placement is acceptable
@@ -70,6 +89,7 @@ Support normal live customer operations with stronger operational consistency an
 - shared runtime remains acceptable
 - deployment should become more repeatable
 - routing and backup handling should become more standardized
+- compatible app bundles should be grouped into deliberate runtime pools rather than mixed casually
 
 ### Acceptable DB placement
 - shared DB fleet remains the default
@@ -98,6 +118,7 @@ Support tenants that justify stronger isolation, clearer blast-radius control, a
 ### Acceptable runtime shape
 - shared, reserved, or dedicated runtime may be used based on risk and contract
 - the chosen mode must be explicit in the control plane
+- tenant-specific custom app combinations may justify reserved or dedicated runtime even when DB isolation is already stronger
 
 ### Acceptable DB placement
 - dedicated DB instance is the normal expectation
