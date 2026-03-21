@@ -1,0 +1,1 @@
+"""Tenant Cost Snapshot DocType."""

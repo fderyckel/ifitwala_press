@@ -1,0 +1,174 @@
+{
+  "actions": [],
+  "allow_copy": 0,
+  "allow_events_in_timeline": 0,
+  "allow_guest_to_view": 0,
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "beta": 0,
+  "creation": "2026-03-21 00:00:00.000000",
+  "custom": 0,
+  "default_view": "List",
+  "doctype": "DocType",
+  "document_type": "Setup",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "tenant",
+    "environment",
+    "snapshot_on",
+    "active_users_30d",
+    "storage_used_gb",
+    "file_count",
+    "request_count",
+    "avg_concurrency_estimate",
+    "peak_concurrency_estimate",
+    "queue_jobs_processed",
+    "notes"
+  ],
+  "fields": [
+    {
+      "default": "USG-.YYYY.-",
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "hidden": 1,
+      "label": "Series",
+      "options": "USG-.YYYY.-"
+    },
+    {
+      "fieldname": "tenant",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Tenant",
+      "options": "Press Tenant"
+    },
+    {
+      "fieldname": "environment",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Environment",
+      "options": "Tenant Environment"
+    },
+    {
+      "fieldname": "snapshot_on",
+      "fieldtype": "Datetime",
+      "in_list_view": 1,
+      "label": "Snapshot On",
+      "reqd": 1
+    },
+    {
+      "fieldname": "active_users_30d",
+      "fieldtype": "Int",
+      "label": "Active Users 30d"
+    },
+    {
+      "fieldname": "storage_used_gb",
+      "fieldtype": "Float",
+      "label": "Storage Used (GB)"
+    },
+    {
+      "fieldname": "file_count",
+      "fieldtype": "Int",
+      "label": "File Count"
+    },
+    {
+      "fieldname": "request_count",
+      "fieldtype": "Int",
+      "label": "Request Count"
+    },
+    {
+      "fieldname": "avg_concurrency_estimate",
+      "fieldtype": "Float",
+      "label": "Avg Concurrency Estimate"
+    },
+    {
+      "fieldname": "peak_concurrency_estimate",
+      "fieldtype": "Float",
+      "label": "Peak Concurrency Estimate"
+    },
+    {
+      "fieldname": "queue_jobs_processed",
+      "fieldtype": "Int",
+      "label": "Queue Jobs Processed"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "grid_page_length": 50,
+  "hide_toolbar": 0,
+  "index_web_pages_for_search": 0,
+  "is_submittable": 0,
+  "issingle": 0,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-03-21 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Ifitwala Press",
+  "name": "Tenant Usage Snapshot",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Admin",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Ops",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Support",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Finance",
+      "share": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "System Manager"
+    }
+  ],
+  "quick_entry": 0,
+  "read_only": 0,
+  "row_format": "Dynamic",
+  "sort_field": "snapshot_on",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "environment",
+  "track_changes": 1,
+  "track_seen": 0
+}

@@ -46,6 +46,15 @@ def test_core_phase_one_doctype_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "__init__.py").is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "tenant_transition_log.py").is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "tenant_transition_log.json").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "__init__.py").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "tenant_subscription.py").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "tenant_subscription.json").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "__init__.py").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "tenant_usage_snapshot.py").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "tenant_usage_snapshot.json").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "__init__.py").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "tenant_cost_snapshot.py").is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "tenant_cost_snapshot.json").is_file()
 
 
 def test_service_layer_files_exist() -> None:
@@ -54,3 +63,67 @@ def test_service_layer_files_exist() -> None:
 		ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "environment_lifecycle_service.py"
 	).is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "transition_log_service.py").is_file()
+
+
+def test_api_and_install_files_exist() -> None:
+	assert (ROOT / "ifitwala_press" / "api" / "__init__.py").is_file()
+	assert (ROOT / "ifitwala_press" / "api" / "lifecycle.py").is_file()
+	assert (ROOT / "ifitwala_press" / "install.py").is_file()
+
+
+def test_hooks_enable_install_bootstrap() -> None:
+	hooks = (ROOT / "ifitwala_press" / "hooks.py").read_text()
+	assert 'after_install = "ifitwala_press.install.after_install"' in hooks
+	assert 'before_tests = "ifitwala_press.install.before_tests"' in hooks
+
+
+def test_role_bootstrap_and_lifecycle_api_are_declared() -> None:
+	install_source = (ROOT / "ifitwala_press" / "install.py").read_text()
+	api_source = (ROOT / "ifitwala_press" / "api" / "lifecycle.py").read_text()
+
+	for role_name in (
+		"Ifitwala Press Admin",
+		"Ifitwala Press Ops",
+		"Ifitwala Press Support",
+		"Ifitwala Press Sales",
+		"Ifitwala Press Finance",
+	):
+		assert role_name in install_source
+
+	for method_name in (
+		"create_sandbox",
+		"qualify_for_production",
+		"provision_production",
+		"mark_live",
+		"suspend_environment",
+		"restore_environment",
+		"archive_environment",
+	):
+		assert f"def {method_name}(" in api_source
+
+
+def test_operator_surface_js_files_exist() -> None:
+	assert (ROOT / "ifitwala_press" / "public" / "js" / "press_tenant.js").is_file()
+	assert (ROOT / "ifitwala_press" / "public" / "js" / "press_tenant_list.js").is_file()
+	assert (ROOT / "ifitwala_press" / "public" / "js" / "tenant_environment.js").is_file()
+	assert (ROOT / "ifitwala_press" / "public" / "js" / "tenant_environment_list.js").is_file()
+	assert (ROOT / "ifitwala_press" / "public" / "css" / "ifitwala_press.css").is_file()
+
+
+def test_hooks_register_operator_surface_js() -> None:
+	hooks = (ROOT / "ifitwala_press" / "hooks.py").read_text()
+	assert 'app_include_css = "/assets/ifitwala_press/css/ifitwala_press.css"' in hooks
+	assert '"Press Tenant": "public/js/press_tenant.js"' in hooks
+	assert '"Tenant Environment": "public/js/tenant_environment.js"' in hooks
+	assert '"Press Tenant": "public/js/press_tenant_list.js"' in hooks
+	assert '"Tenant Environment": "public/js/tenant_environment_list.js"' in hooks
+
+
+def test_view_api_files_exist() -> None:
+	assert (ROOT / "ifitwala_press" / "api" / "views.py").is_file()
+
+
+def test_detail_panel_api_methods_are_declared() -> None:
+	view_api_source = (ROOT / "ifitwala_press" / "api" / "views.py").read_text()
+	assert "def get_tenant_environment_panel(" in view_api_source
+	assert "def get_environment_transition_history(" in view_api_source

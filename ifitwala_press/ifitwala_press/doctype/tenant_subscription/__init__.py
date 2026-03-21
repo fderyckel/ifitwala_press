@@ -1,0 +1,1 @@
+"""Tenant Subscription DocType."""

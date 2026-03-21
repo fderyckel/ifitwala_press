@@ -25,6 +25,7 @@
     "status_reason",
     "last_transition_on",
     "last_transition_by",
+    "transition_history_html",
     "section_break_policy_tier",
     "policy",
     "hosting_tier",
@@ -141,6 +142,11 @@
       "fieldtype": "Link",
       "label": "Last Transition By",
       "options": "User"
+    },
+    {
+      "fieldname": "transition_history_html",
+      "fieldtype": "HTML",
+      "label": "Transition History"
     },
     {
       "fieldname": "section_break_policy_tier",

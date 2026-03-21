@@ -89,6 +89,8 @@ def qualify_for_production(
 	environment_doc = _as_doc("Tenant Environment", environment)
 	_assert_transition_allowed(environment_doc.site_status, PRODUCTION_QUALIFICATION)
 
+	if environment_doc.environment_type != "Production":
+		environment_doc.environment_type = "Production"
 	environment_doc.hosting_tier = hosting_tier
 	environment_doc.database_mode = database_mode
 	environment_doc.policy = policy or environment_doc.policy
@@ -107,12 +109,10 @@ def provision_production(
 	status_reason: str | None = None,
 ) -> Document:
 	environment_doc = _as_doc("Tenant Environment", environment)
-
-	if environment_doc.environment_type != "Production":
-		frappe.throw("Provision Production can only target a Production environment.")
-
 	_assert_transition_allowed(environment_doc.site_status, PRODUCTION_PROVISIONING)
 
+	if environment_doc.environment_type != "Production":
+		environment_doc.environment_type = "Production"
 	if site_name:
 		environment_doc.site_name = site_name
 	if primary_domain:
@@ -128,11 +128,8 @@ def mark_live(
 	status_reason: str | None = None,
 ) -> Document:
 	environment_doc = _as_doc("Tenant Environment", environment)
-
-	if environment_doc.environment_type != "Production":
-		frappe.throw("Only Production environments can be marked Live.")
-
 	_assert_transition_allowed(environment_doc.site_status, LIVE)
+	environment_doc.environment_type = "Production"
 	_transition_environment(environment_doc, LIVE, status_reason or "Production environment marked live.")
 
 	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)

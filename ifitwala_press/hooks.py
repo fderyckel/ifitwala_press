@@ -1,7 +1,7 @@
 app_name = "ifitwala_press"
 app_title = "Ifitwala Press"
 app_publisher = "François de Ryckel"
-app_description = "Create containers for Ifitwala Ed"
+app_description = "Internal control plane for Ifitwala Ed tenants"
 app_email = "f.deryckel@gmail.com"
 app_license = "mit"
 
@@ -25,7 +25,7 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/ifitwala_press/css/ifitwala_press.css"
+app_include_css = "/assets/ifitwala_press/css/ifitwala_press.css"
 # app_include_js = "/assets/ifitwala_press/js/ifitwala_press.js"
 
 # include js, css files in header of web template
@@ -43,8 +43,14 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_js = {
+	"Press Tenant": "public/js/press_tenant.js",
+	"Tenant Environment": "public/js/tenant_environment.js",
+}
+doctype_list_js = {
+	"Press Tenant": "public/js/press_tenant_list.js",
+	"Tenant Environment": "public/js/tenant_environment_list.js",
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -86,7 +92,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "ifitwala_press.install.before_install"
-# after_install = "ifitwala_press.install.after_install"
+after_install = "ifitwala_press.install.after_install"
 
 # Uninstallation
 # ------------
@@ -164,7 +170,7 @@ app_license = "mit"
 # Testing
 # -------
 
-# before_tests = "ifitwala_press.install.before_tests"
+before_tests = "ifitwala_press.install.before_tests"
 
 # Extend DocType Class
 # ------------------------------

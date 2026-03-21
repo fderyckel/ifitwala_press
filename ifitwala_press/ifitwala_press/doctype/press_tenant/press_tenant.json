@@ -52,6 +52,7 @@
     "default_conversion_strategy",
     "section_break_internal_tracking",
     "active_environment",
+    "linked_environments_html",
     "last_reviewed_on",
     "internal_notes"
   ],
@@ -272,6 +273,11 @@
       "fieldtype": "Link",
       "label": "Active Environment",
       "options": "Tenant Environment"
+    },
+    {
+      "fieldname": "linked_environments_html",
+      "fieldtype": "HTML",
+      "label": "Linked Environments"
     },
     {
       "fieldname": "last_reviewed_on",

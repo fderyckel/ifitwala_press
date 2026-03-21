@@ -1,0 +1,172 @@
+{
+  "actions": [],
+  "allow_copy": 0,
+  "allow_events_in_timeline": 0,
+  "allow_guest_to_view": 0,
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "beta": 0,
+  "creation": "2026-03-21 00:00:00.000000",
+  "custom": 0,
+  "default_view": "List",
+  "doctype": "DocType",
+  "document_type": "Setup",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "tenant",
+    "plan_name",
+    "subscription_tier",
+    "status",
+    "start_date",
+    "end_date",
+    "billing_cycle",
+    "price",
+    "currency",
+    "notes"
+  ],
+  "fields": [
+    {
+      "default": "SUB-.YYYY.-",
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "hidden": 1,
+      "label": "Series",
+      "options": "SUB-.YYYY.-"
+    },
+    {
+      "fieldname": "tenant",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Tenant",
+      "options": "Press Tenant",
+      "reqd": 1
+    },
+    {
+      "fieldname": "plan_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Plan Name"
+    },
+    {
+      "fieldname": "subscription_tier",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Subscription Tier",
+      "options": "\nSandbox\nStandard\nPremium\nVIP"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Status",
+      "options": "\nTrial\nActive\nPending Renewal\nExpired\nSuspended\nCancelled"
+    },
+    {
+      "fieldname": "start_date",
+      "fieldtype": "Date",
+      "label": "Start Date"
+    },
+    {
+      "fieldname": "end_date",
+      "fieldtype": "Date",
+      "label": "End Date"
+    },
+    {
+      "fieldname": "billing_cycle",
+      "fieldtype": "Select",
+      "label": "Billing Cycle",
+      "options": "\nMonthly\nQuarterly\nAnnual"
+    },
+    {
+      "fieldname": "price",
+      "fieldtype": "Currency",
+      "label": "Price"
+    },
+    {
+      "fieldname": "currency",
+      "fieldtype": "Link",
+      "label": "Currency",
+      "options": "Currency"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "grid_page_length": 50,
+  "hide_toolbar": 0,
+  "index_web_pages_for_search": 0,
+  "is_submittable": 0,
+  "issingle": 0,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-03-21 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Ifitwala Press",
+  "name": "Tenant Subscription",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Admin",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Ops",
+      "share": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Sales",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Finance",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "System Manager"
+    }
+  ],
+  "quick_entry": 0,
+  "read_only": 0,
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "plan_name",
+  "track_changes": 1,
+  "track_seen": 0
+}

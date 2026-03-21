@@ -1,0 +1,38 @@
+.ifitwala-panel {
+	border: 1px solid var(--border-color, #d1d8dd);
+	border-radius: 8px;
+	background: var(--fg-color, #ffffff);
+}
+
+.ifitwala-panel-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--border-color, #d1d8dd);
+}
+
+.ifitwala-panel-row:last-child {
+	border-bottom: 0;
+}
+
+.indicator-pill {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.indicator-pill.green {
+	background: #e6f6ec;
+	color: #177245;
+}
+
+.indicator-pill.red {
+	background: #fde7e7;
+	color: #b42318;
+}
