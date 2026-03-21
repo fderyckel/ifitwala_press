@@ -16,6 +16,17 @@ Ifitwala_Press is the internal operating system we use to:
 - govern lifecycle transitions from trial to production
 - prepare for routing and infra orchestration later, including Traefik-based hostname routing
 
+## Deployment surfaces
+
+The platform is expected to operate with three distinct surfaces:
+
+- `ifitwala.com` as the public brand/docs front end
+- `press.ifitwala.com` or `ops.ifitwala.com` as the internal control plane
+- `*.ifitwala.com` as tenant environment hostnames
+
+The public site and the control plane must not be the same Frappe site.
+They may temporarily share founder-stage infrastructure only if their isolation boundary remains explicit and operational risk is understood.
+
 ## What it is not
 
 Ifitwala_Press is not:

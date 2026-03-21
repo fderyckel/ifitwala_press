@@ -217,6 +217,27 @@ The desired domain/routing relationship the control plane owns.
 
 Do not hardcode this to Traefik semantics in naming yet.
 
+## 2.13 Deployment surface
+Meaning:
+The functional surface a hostname or site belongs to.
+
+Canonical surfaces:
+
+- public site
+- control plane
+- tenant runtime
+
+Do not use one site to mean all three.
+
+## 2.14 Hostname conventions
+Use these hostname conventions unless explicitly revised:
+
+- `ifitwala.com` for the public brand/docs surface
+- `press.ifitwala.com` or `ops.ifitwala.com` for the internal control plane
+- `*.ifitwala.com` for tenant environments
+
+Do not place the control plane on the same hostname or Frappe site as the public website.
+
 ---
 
 # 3. Canonical DocType names

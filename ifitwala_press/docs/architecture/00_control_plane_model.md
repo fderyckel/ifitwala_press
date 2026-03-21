@@ -137,6 +137,24 @@ This model is the default unless explicitly revised.
 
 ## 5. Hosting architecture model
 
+### 5.0 Deployment surfaces
+The platform has three distinct surfaces:
+
+- the public brand/docs site
+- the internal operator control plane
+- the tenant runtime surface
+
+The public site and the control plane must not be the same Frappe site.
+
+The expected hostname shape is:
+
+- `ifitwala.com` for the public site
+- `press.ifitwala.com` or `ops.ifitwala.com` for the control plane
+- `*.ifitwala.com` for tenant environments
+
+Host-level separation is recommended early.
+Site-level separation is mandatory.
+
 ### 5.1 Shared runtime, separated state
 The intended architecture is:
 
@@ -178,6 +196,7 @@ That means:
 - the early implementation may run on a simpler self-managed stack
 - temporary consolidation for cost reasons is acceptable in founder stage
 - the control plane must still record intended placement and separation clearly
+- the public site and the control plane must remain separate sites even in founder mode
 
 Early deployment convenience must not blur the model.
 The model should stay migration-friendly even when the first runtime is simple.

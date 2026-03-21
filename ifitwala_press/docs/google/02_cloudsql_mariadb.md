@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This note records how managed MariaDB should be treated in **Ifitwala_Press** planning.
+This note records how managed database planning should be treated in **Ifitwala_Press**.
 
 It is not a phase-1 mandate.
 It is not a replacement for the founder-mode rollout policy.
 
 Its job is to clarify:
-- how managed MariaDB fits the long-term architecture
+- how managed database options fit the long-term architecture
 - what phase 1 should and should not depend on
 - how the repository baseline affects DB planning
 
@@ -22,10 +22,20 @@ The current repository database baseline is:
 
 This file must stay aligned with that project-level decision.
 
-Any managed MariaDB rollout plan must therefore:
+Any later managed DB rollout plan must therefore:
 - target the approved MariaDB 11.8 line
 - include a compatibility spike before production commitment
 - avoid reintroducing older version guidance as if it were the active repo standard
+
+### Current planning correction
+
+Do not treat "Cloud SQL for MariaDB" as the active plan.
+
+The current repository posture is:
+
+- phase 1 stays on self-managed MariaDB 11.8
+- managed DB adoption is deferred
+- any future managed path must be re-evaluated against then-current provider support
 
 ---
 
@@ -47,13 +57,13 @@ The control plane must still model:
 - backup expectations
 - lifecycle consequences
 
-But phase 1 does not need to automate Cloud SQL creation.
+But phase 1 does not need to automate managed DB creation.
 
 ---
 
-## 3. Why managed MariaDB still matters later
+## 3. Why managed DB still matters later
 
-Managed MariaDB remains a credible later-stage option because it can reduce:
+A managed DB path may still matter later because it can reduce:
 - operational toil
 - backup burden
 - restore complexity
@@ -71,7 +81,7 @@ This is a phase-2-or-later concern unless operational reality proves it earlier.
 
 ## 4. Constraints that still apply if managed DB is adopted later
 
-If a managed MariaDB path is adopted later, design around these control-plane constraints:
+If a managed DB path is adopted later, design around these control-plane constraints:
 
 ### A. One database per site remains mandatory
 
@@ -136,7 +146,7 @@ That later step should follow this order:
 
 ## 7. Decision rule
 
-Do not adopt managed MariaDB work just because it sounds cleaner.
+Do not adopt managed DB work just because it sounds cleaner.
 
 Adopt it when it materially improves one or more of:
 - operator safety

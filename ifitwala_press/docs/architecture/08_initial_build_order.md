@@ -114,12 +114,14 @@ Phase 1 does **not** require:
 Phase 1 may run on a low-cost, simple deployment shape if it preserves the control-plane model.
 
 Acceptable founder-stage realities include:
+- separate public-site and control-plane hostnames
 - one low-cost shared runtime
 - manual DB, user, and site creation
 - manual backups and restore verification at small scale
 - manually maintained routing steps
 
 The records must still capture intended future placement, lifecycle, and policy cleanly.
+The public site and the control plane must remain separate Frappe sites even if host consolidation is temporarily tolerated.
 
 ---
 

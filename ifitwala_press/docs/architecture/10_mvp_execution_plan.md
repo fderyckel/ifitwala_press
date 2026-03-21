@@ -41,12 +41,22 @@ The next work is to make the control-plane backbone real.
 
 The MVP should follow the already-approved founder-mode shape:
 
+- separate public-site and control-plane Frappe sites
 - one low-cost shared runtime is acceptable
 - one database per site remains mandatory
 - manual and semi-automated execution is acceptable
 - manual backups and restore discipline are acceptable at small scale
 - routing may be manually maintained in phase 1
 - full Cloud SQL, Traefik, Redis, and CI/CD automation are not phase-1 blockers
+
+The preferred phase-1 topology is:
+
+- `ifitwala.com` as the public site
+- `press.ifitwala.com` or `ops.ifitwala.com` as the control plane
+- one founder shared runtime for tenant environments
+
+Separate hosts for public, control plane, and tenant runtime are recommended.
+Separate public and control-plane sites are mandatory.
 
 The control plane must still record:
 - tenant identity
@@ -89,6 +99,8 @@ The spike must happen before:
 - deployment scripts
 - managed DB automation
 - deeper provisioning logic
+
+This spike should use the founder-mode self-managed MariaDB posture, not a managed DB assumption.
 
 ---
 

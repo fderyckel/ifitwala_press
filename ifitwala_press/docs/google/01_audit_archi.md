@@ -1,6 +1,10 @@
 Ifitwala Press Architecture Feedback & Proposals (Updated)
 2026-03-15
 
+Status note added 2026-03-21:
+Proposal 3 below is no longer aligned with the current repository posture.
+Google Cloud SQL should not be treated as the current phase-1 DB plan, and "Cloud SQL for MariaDB" should not be treated as an active implementation target.
+
 Design and Architecture Feedback
 The architecture documentation for Ifitwala_Press describes an exceptionally rigorous and well-modeled internal control plane. By strictly defining the system as an internal tool and separating the commercial representation (Press Tenant) from the technical reality (Tenant Environment), you've avoided the most common pitfalls of PaaS design.
 
@@ -20,10 +24,10 @@ Criteria Impact: High Google Cloud optimization and Docker engineering. Eliminat
 Rating: 0.95 Since you are not using Kubernetes ExternalDNS, write a simple background hook in Ifitwala_Press that listens to Tenant Environment Domain record changes and directly calls the Google Cloud DNS API to create/delete A and CNAME records pointing to your Traefik Load Balancer IP.
 
 Criteria Impact: Perfect fit for DNS multi-tenant automation. Makes the control plane the true single source of truth for routing without relying on external orchestration polling.
-3. Cloud SQL for MariaDB (Shared & Dedicated)
-Rating: 0.90 Fully embrace Google Cloud SQL for MariaDB instead of managing self-hosted MariaDB on clustered VMs. Use a Shared Cloud SQL instance for Sandbox/Standard tenants (creating isolated databases within the same instance) and spin up dedicated Cloud SQL instances for VIPs via Google Cloud API calls from Ifitwala_Press.
+3. Managed DB later, self-managed MariaDB now
+Rating: 0.60 Keep self-managed MariaDB 11.8 as the current founder-mode baseline. Revisit managed DB options only after the control-plane backbone and one manual lifecycle flow are proven. If a managed DB path is later adopted, it must be based on then-current provider support and an explicit compatibility decision.
 
-Criteria Impact: Massive Google Cloud optimization and Security. Offloads backups, HA clustering, and point-in-time recovery to Google.
+Criteria Impact: Better alignment with current repository rollout policy. Avoids phase-1 drift and avoids planning around an unsupported or unproven managed DB assumption.
 4. Direct Docker API via TLS or mTLS secure socket
 Rating: 0.85 Instead of having Ansible run docker-compose up over SSH for every lifecycle event (which is slow), use Ansible to provision the VM and secure the Docker Daemon socket with mTLS. Have the Ifitwala_Press Agent communicate directly with the Docker API over this secure socket to spin containers up/down instantly.
 

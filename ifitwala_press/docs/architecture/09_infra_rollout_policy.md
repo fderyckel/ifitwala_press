@@ -39,6 +39,16 @@ Support early customers and trials at low fixed cost while proving the operating
 - self-managed deployment is acceptable
 - consolidated services are acceptable if the control-plane intent stays explicit
 
+### Mandatory site separation
+Founder mode does not permit collapsing all surfaces into one site.
+
+The minimum required separation is:
+- one public-facing site for `ifitwala.com`
+- one internal control-plane site for `press.ifitwala.com` or `ops.ifitwala.com`
+
+These may temporarily share founder-stage infrastructure if necessary.
+They must not be the same Frappe site.
+
 ### Runtime contract for founder mode
 Founder mode still needs a concrete runtime contract.
 
@@ -62,6 +72,16 @@ Adding or changing apps should happen by approving a bundle or release and rolli
 - shared DB fleet is acceptable
 - self-managed DB placement is acceptable
 - one database per site remains mandatory
+
+### Managed DB posture in founder mode
+Managed DB adoption is not a founder-mode requirement.
+
+Phase 1 should assume:
+- self-managed MariaDB 11.8
+- manual or semi-manual DB provisioning
+- explicit backup and restore runbooks
+
+Do not make Cloud SQL or similar provider automation a phase-1 dependency.
 
 ### Backup expectation
 - backups must exist for production
