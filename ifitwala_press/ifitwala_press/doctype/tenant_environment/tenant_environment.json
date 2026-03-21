@@ -1,0 +1,451 @@
+{
+  "actions": [],
+  "allow_copy": 0,
+  "allow_events_in_timeline": 0,
+  "allow_guest_to_view": 0,
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "beta": 0,
+  "creation": "2026-03-21 00:00:00.000000",
+  "custom": 0,
+  "default_view": "List",
+  "doctype": "DocType",
+  "document_type": "Setup",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "tenant",
+    "environment_name",
+    "environment_type",
+    "site_name",
+    "section_break_lifecycle",
+    "site_status",
+    "status_reason",
+    "last_transition_on",
+    "last_transition_by",
+    "section_break_policy_tier",
+    "policy",
+    "hosting_tier",
+    "placement_strategy",
+    "column_break_policy_tier",
+    "estimated_monthly_cost",
+    "billing_status_snapshot",
+    "usage_snapshot_on",
+    "section_break_routing",
+    "primary_domain",
+    "routing_mode",
+    "dns_ready",
+    "tls_ready",
+    "host_header_value",
+    "section_break_deployment",
+    "region",
+    "frappe_branch",
+    "ifitwala_ed_branch",
+    "deployment_mode",
+    "deployment_mode_notes",
+    "section_break_database",
+    "database_mode",
+    "db_provider",
+    "db_instance_name",
+    "db_name",
+    "db_user",
+    "column_break_database",
+    "db_ha_enabled",
+    "db_last_backup",
+    "db_restore_tested_on",
+    "section_break_storage",
+    "file_storage_provider",
+    "storage_quota_gb",
+    "expires_on",
+    "section_break_health_capacity",
+    "health_score",
+    "last_health_check",
+    "avg_response_ms",
+    "error_rate_percent",
+    "queue_backlog_count",
+    "slow_query_count",
+    "capacity_state",
+    "section_break_provisioning",
+    "provisioning_job_id",
+    "last_provisioning_step",
+    "provisioning_message"
+  ],
+  "fields": [
+    {
+      "default": "ENV-.YYYY.-",
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "hidden": 1,
+      "label": "Series",
+      "options": "ENV-.YYYY.-"
+    },
+    {
+      "fieldname": "tenant",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Tenant",
+      "options": "Press Tenant",
+      "reqd": 1
+    },
+    {
+      "fieldname": "environment_name",
+      "fieldtype": "Data",
+      "label": "Environment Name"
+    },
+    {
+      "fieldname": "environment_type",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Environment Type",
+      "options": "\nSandbox\nProduction\nStaging",
+      "reqd": 1
+    },
+    {
+      "fieldname": "site_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Site Name",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "section_break_lifecycle",
+      "fieldtype": "Section Break",
+      "label": "Lifecycle"
+    },
+    {
+      "default": "Lead",
+      "fieldname": "site_status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Site Status",
+      "options": "\nLead\nSandbox Provisioning\nSandbox Active\nSandbox Expired\nProduction Qualification\nProduction Provisioning\nLive\nSuspended\nArchived\nProvisioning Failed",
+      "reqd": 1
+    },
+    {
+      "fieldname": "status_reason",
+      "fieldtype": "Small Text",
+      "label": "Status Reason"
+    },
+    {
+      "fieldname": "last_transition_on",
+      "fieldtype": "Datetime",
+      "label": "Last Transition On"
+    },
+    {
+      "fieldname": "last_transition_by",
+      "fieldtype": "Link",
+      "label": "Last Transition By",
+      "options": "User"
+    },
+    {
+      "fieldname": "section_break_policy_tier",
+      "fieldtype": "Section Break",
+      "label": "Policy and Tier"
+    },
+    {
+      "fieldname": "policy",
+      "fieldtype": "Link",
+      "label": "Policy",
+      "options": "Tenant Policy"
+    },
+    {
+      "fieldname": "hosting_tier",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Hosting Tier",
+      "options": "\nSandbox\nStandard\nPremium\nVIP"
+    },
+    {
+      "fieldname": "placement_strategy",
+      "fieldtype": "Select",
+      "label": "Placement Strategy",
+      "options": "\nFounder Shared Runtime\nShared Production Fleet\nDedicated DB\nDedicated Runtime + DB"
+    },
+    {
+      "fieldname": "column_break_policy_tier",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "estimated_monthly_cost",
+      "fieldtype": "Currency",
+      "label": "Estimated Monthly Cost"
+    },
+    {
+      "fieldname": "billing_status_snapshot",
+      "fieldtype": "Select",
+      "label": "Billing Status Snapshot",
+      "options": "\nTrial\nBillable\nSuspended\nArchived"
+    },
+    {
+      "fieldname": "usage_snapshot_on",
+      "fieldtype": "Datetime",
+      "label": "Usage Snapshot On"
+    },
+    {
+      "fieldname": "section_break_routing",
+      "fieldtype": "Section Break",
+      "label": "Routing"
+    },
+    {
+      "fieldname": "primary_domain",
+      "fieldtype": "Data",
+      "label": "Primary Domain"
+    },
+    {
+      "default": "Pending",
+      "fieldname": "routing_mode",
+      "fieldtype": "Select",
+      "label": "Routing Mode",
+      "options": "\nInternal Only\nPublic\nPending"
+    },
+    {
+      "default": "0",
+      "fieldname": "dns_ready",
+      "fieldtype": "Check",
+      "label": "DNS Ready"
+    },
+    {
+      "default": "0",
+      "fieldname": "tls_ready",
+      "fieldtype": "Check",
+      "label": "TLS Ready"
+    },
+    {
+      "fieldname": "host_header_value",
+      "fieldtype": "Data",
+      "label": "Host Header Value"
+    },
+    {
+      "fieldname": "section_break_deployment",
+      "fieldtype": "Section Break",
+      "label": "Deployment"
+    },
+    {
+      "fieldname": "region",
+      "fieldtype": "Data",
+      "label": "Region"
+    },
+    {
+      "fieldname": "frappe_branch",
+      "fieldtype": "Data",
+      "label": "Frappe Branch"
+    },
+    {
+      "fieldname": "ifitwala_ed_branch",
+      "fieldtype": "Data",
+      "label": "Ifitwala Ed Branch"
+    },
+    {
+      "fieldname": "deployment_mode",
+      "fieldtype": "Select",
+      "label": "Deployment Mode",
+      "options": "\nShared Runtime\nReserved Runtime\nDedicated Runtime"
+    },
+    {
+      "fieldname": "deployment_mode_notes",
+      "fieldtype": "Small Text",
+      "label": "Deployment Mode Notes"
+    },
+    {
+      "fieldname": "section_break_database",
+      "fieldtype": "Section Break",
+      "label": "Database"
+    },
+    {
+      "fieldname": "database_mode",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Database Mode",
+      "options": "\nShared DB Fleet\nDedicated DB Instance"
+    },
+    {
+      "fieldname": "db_provider",
+      "fieldtype": "Select",
+      "label": "DB Provider",
+      "options": "\nSelf Managed\nGoogle Managed\nOther Managed"
+    },
+    {
+      "fieldname": "db_instance_name",
+      "fieldtype": "Data",
+      "label": "DB Instance Name"
+    },
+    {
+      "fieldname": "db_name",
+      "fieldtype": "Data",
+      "label": "DB Name"
+    },
+    {
+      "fieldname": "db_user",
+      "fieldtype": "Data",
+      "label": "DB User"
+    },
+    {
+      "fieldname": "column_break_database",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "fieldname": "db_ha_enabled",
+      "fieldtype": "Check",
+      "label": "DB HA Enabled"
+    },
+    {
+      "fieldname": "db_last_backup",
+      "fieldtype": "Datetime",
+      "label": "DB Last Backup"
+    },
+    {
+      "fieldname": "db_restore_tested_on",
+      "fieldtype": "Date",
+      "label": "DB Restore Tested On"
+    },
+    {
+      "fieldname": "section_break_storage",
+      "fieldtype": "Section Break",
+      "label": "Storage"
+    },
+    {
+      "fieldname": "file_storage_provider",
+      "fieldtype": "Select",
+      "label": "File Storage Provider",
+      "options": "\nGCS\nS3 Compatible\nLocal Temporary"
+    },
+    {
+      "fieldname": "storage_quota_gb",
+      "fieldtype": "Float",
+      "label": "Storage Quota (GB)"
+    },
+    {
+      "fieldname": "expires_on",
+      "fieldtype": "Date",
+      "label": "Expires On"
+    },
+    {
+      "fieldname": "section_break_health_capacity",
+      "fieldtype": "Section Break",
+      "label": "Health and Capacity"
+    },
+    {
+      "fieldname": "health_score",
+      "fieldtype": "Float",
+      "label": "Health Score"
+    },
+    {
+      "fieldname": "last_health_check",
+      "fieldtype": "Datetime",
+      "label": "Last Health Check"
+    },
+    {
+      "fieldname": "avg_response_ms",
+      "fieldtype": "Int",
+      "label": "Avg Response (ms)"
+    },
+    {
+      "fieldname": "error_rate_percent",
+      "fieldtype": "Percent",
+      "label": "Error Rate Percent"
+    },
+    {
+      "fieldname": "queue_backlog_count",
+      "fieldtype": "Int",
+      "label": "Queue Backlog Count"
+    },
+    {
+      "fieldname": "slow_query_count",
+      "fieldtype": "Int",
+      "label": "Slow Query Count"
+    },
+    {
+      "fieldname": "capacity_state",
+      "fieldtype": "Select",
+      "label": "Capacity State",
+      "options": "\nHealthy\nWarning\nSaturated\nCritical"
+    },
+    {
+      "fieldname": "section_break_provisioning",
+      "fieldtype": "Section Break",
+      "label": "Provisioning"
+    },
+    {
+      "fieldname": "provisioning_job_id",
+      "fieldtype": "Data",
+      "label": "Provisioning Job ID"
+    },
+    {
+      "fieldname": "last_provisioning_step",
+      "fieldtype": "Data",
+      "label": "Last Provisioning Step"
+    },
+    {
+      "fieldname": "provisioning_message",
+      "fieldtype": "Small Text",
+      "label": "Provisioning Message"
+    }
+  ],
+  "grid_page_length": 50,
+  "hide_toolbar": 0,
+  "index_web_pages_for_search": 0,
+  "is_submittable": 0,
+  "issingle": 0,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-03-21 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Ifitwala Press",
+  "name": "Tenant Environment",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Admin",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Ops",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Support",
+      "share": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "System Manager"
+    }
+  ],
+  "quick_entry": 0,
+  "read_only": 0,
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "site_name",
+  "track_changes": 1,
+  "track_seen": 0
+}

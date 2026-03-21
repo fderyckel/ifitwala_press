@@ -9,9 +9,10 @@ Before changing code or docs, read:
 ## Runtime Baseline
 
 The current project baseline is:
-- Python 3.13
+- Python 3.14
 - MariaDB 11.8
 - Node 24+
+- Yarn
 
 Python tooling is defined in [pyproject.toml](/Users/francois.de/Documents/ifitwala_press/pyproject.toml).
 
@@ -25,6 +26,15 @@ That means:
 - do not reintroduce older MariaDB recommendations elsewhere in the repo without an explicit architecture decision
 - do not assume generic Frappe guidance overrides this repository baseline automatically
 - any rollout plan for Frappe v16 must include a compatibility spike proving site creation, migrations, and app install behavior on MariaDB 11.8 before production rollout
+
+## Runtime Tooling Rule
+
+The application and local dev baseline is:
+- Python 3.14
+- Node 24+
+- Yarn for JavaScript package management
+
+Use Yarn, not npm, for any frontend or asset-install workflow added to this repository.
 
 ## Local Setup
 

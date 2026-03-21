@@ -1,0 +1,359 @@
+{
+  "actions": [],
+  "allow_copy": 0,
+  "allow_events_in_timeline": 0,
+  "allow_guest_to_view": 0,
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "beta": 0,
+  "creation": "2026-03-21 00:00:00.000000",
+  "custom": 0,
+  "default_view": "List",
+  "doctype": "DocType",
+  "document_type": "Setup",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "tenant_name",
+    "tenant_slug",
+    "organization_type",
+    "column_break_identity",
+    "country",
+    "timezone",
+    "primary_contact_name",
+    "primary_contact_email",
+    "primary_contact_phone",
+    "section_break_commercial",
+    "tenant_status",
+    "subscription_tier",
+    "subscription_status",
+    "column_break_commercial",
+    "sales_owner",
+    "customer_success_owner",
+    "billing_owner",
+    "contract_start_date",
+    "contract_end_date",
+    "section_break_size_profile",
+    "estimated_students",
+    "estimated_staff",
+    "estimated_guardians",
+    "estimated_peak_concurrency",
+    "section_break_risk_sensitivity",
+    "data_sensitivity_level",
+    "vip_flag",
+    "requires_data_residency",
+    "column_break_risk_sensitivity",
+    "security_notes",
+    "section_break_hosting_intent",
+    "default_hosting_tier",
+    "default_policy",
+    "default_conversion_strategy",
+    "section_break_internal_tracking",
+    "active_environment",
+    "last_reviewed_on",
+    "internal_notes"
+  ],
+  "fields": [
+    {
+      "default": "TEN-.YYYY.-",
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "hidden": 1,
+      "label": "Series",
+      "options": "TEN-.YYYY.-"
+    },
+    {
+      "fieldname": "tenant_name",
+      "fieldtype": "Data",
+      "in_global_search": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Tenant Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "tenant_slug",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Tenant Slug",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "organization_type",
+      "fieldtype": "Select",
+      "label": "Organization Type",
+      "options": "\nSchool\nInternational School\nUniversity\nDemo / Prospect\nOther"
+    },
+    {
+      "fieldname": "column_break_identity",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "country",
+      "fieldtype": "Link",
+      "label": "Country",
+      "options": "Country"
+    },
+    {
+      "fieldname": "timezone",
+      "fieldtype": "Data",
+      "label": "Timezone"
+    },
+    {
+      "fieldname": "primary_contact_name",
+      "fieldtype": "Data",
+      "label": "Primary Contact Name"
+    },
+    {
+      "fieldname": "primary_contact_email",
+      "fieldtype": "Data",
+      "label": "Primary Contact Email"
+    },
+    {
+      "fieldname": "primary_contact_phone",
+      "fieldtype": "Data",
+      "label": "Primary Contact Phone"
+    },
+    {
+      "fieldname": "section_break_commercial",
+      "fieldtype": "Section Break",
+      "label": "Commercial"
+    },
+    {
+      "default": "Lead",
+      "fieldname": "tenant_status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Tenant Status",
+      "options": "\nLead\nTrial\nQualified\nCustomer\nSuspended\nArchived",
+      "reqd": 1
+    },
+    {
+      "default": "Sandbox",
+      "fieldname": "subscription_tier",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Subscription Tier",
+      "options": "\nSandbox\nStandard\nPremium\nVIP"
+    },
+    {
+      "default": "Trial",
+      "fieldname": "subscription_status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Subscription Status",
+      "options": "\nTrial\nActive\nPending Renewal\nExpired\nSuspended\nCancelled"
+    },
+    {
+      "fieldname": "column_break_commercial",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "sales_owner",
+      "fieldtype": "Link",
+      "label": "Sales Owner",
+      "options": "User"
+    },
+    {
+      "fieldname": "customer_success_owner",
+      "fieldtype": "Link",
+      "label": "Customer Success Owner",
+      "options": "User"
+    },
+    {
+      "fieldname": "billing_owner",
+      "fieldtype": "Link",
+      "label": "Billing Owner",
+      "options": "User"
+    },
+    {
+      "fieldname": "contract_start_date",
+      "fieldtype": "Date",
+      "label": "Contract Start Date"
+    },
+    {
+      "fieldname": "contract_end_date",
+      "fieldtype": "Date",
+      "label": "Contract End Date"
+    },
+    {
+      "fieldname": "section_break_size_profile",
+      "fieldtype": "Section Break",
+      "label": "Size and Profile"
+    },
+    {
+      "fieldname": "estimated_students",
+      "fieldtype": "Int",
+      "label": "Estimated Students"
+    },
+    {
+      "fieldname": "estimated_staff",
+      "fieldtype": "Int",
+      "label": "Estimated Staff"
+    },
+    {
+      "fieldname": "estimated_guardians",
+      "fieldtype": "Int",
+      "label": "Estimated Guardians"
+    },
+    {
+      "fieldname": "estimated_peak_concurrency",
+      "fieldtype": "Int",
+      "label": "Estimated Peak Concurrency"
+    },
+    {
+      "fieldname": "section_break_risk_sensitivity",
+      "fieldtype": "Section Break",
+      "label": "Risk and Sensitivity"
+    },
+    {
+      "fieldname": "data_sensitivity_level",
+      "fieldtype": "Select",
+      "label": "Data Sensitivity Level",
+      "options": "\nLow\nStandard\nHigh\nCritical"
+    },
+    {
+      "default": "0",
+      "fieldname": "vip_flag",
+      "fieldtype": "Check",
+      "in_list_view": 1,
+      "label": "VIP Flag"
+    },
+    {
+      "default": "0",
+      "fieldname": "requires_data_residency",
+      "fieldtype": "Check",
+      "label": "Requires Data Residency"
+    },
+    {
+      "fieldname": "column_break_risk_sensitivity",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "security_notes",
+      "fieldtype": "Small Text",
+      "label": "Security Notes"
+    },
+    {
+      "fieldname": "section_break_hosting_intent",
+      "fieldtype": "Section Break",
+      "label": "Hosting Intent"
+    },
+    {
+      "fieldname": "default_hosting_tier",
+      "fieldtype": "Select",
+      "label": "Default Hosting Tier",
+      "options": "\nShared\nDedicated DB\nVIP Reserved"
+    },
+    {
+      "fieldname": "default_policy",
+      "fieldtype": "Link",
+      "label": "Default Policy",
+      "options": "Tenant Policy"
+    },
+    {
+      "fieldname": "default_conversion_strategy",
+      "fieldtype": "Select",
+      "label": "Default Conversion Strategy",
+      "options": "\nFresh Production Site\nCopy Config Only\nCopy Selected Data\nIn-place Upgrade"
+    },
+    {
+      "fieldname": "section_break_internal_tracking",
+      "fieldtype": "Section Break",
+      "label": "Internal Tracking"
+    },
+    {
+      "fieldname": "active_environment",
+      "fieldtype": "Link",
+      "label": "Active Environment",
+      "options": "Tenant Environment"
+    },
+    {
+      "fieldname": "last_reviewed_on",
+      "fieldtype": "Date",
+      "label": "Last Reviewed On"
+    },
+    {
+      "fieldname": "internal_notes",
+      "fieldtype": "Small Text",
+      "label": "Internal Notes"
+    }
+  ],
+  "grid_page_length": 50,
+  "hide_toolbar": 0,
+  "index_web_pages_for_search": 0,
+  "is_submittable": 0,
+  "issingle": 0,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-03-21 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Ifitwala Press",
+  "name": "Press Tenant",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Admin",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Ops",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Sales",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Finance",
+      "share": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "System Manager"
+    }
+  ],
+  "quick_entry": 0,
+  "read_only": 0,
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "tenant_name",
+  "track_changes": 1,
+  "track_seen": 0
+}

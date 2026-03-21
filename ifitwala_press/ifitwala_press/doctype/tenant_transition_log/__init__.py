@@ -1,0 +1,1 @@
+"""Tenant Transition Log DocType."""

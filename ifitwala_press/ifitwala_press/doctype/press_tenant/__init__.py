@@ -1,0 +1,1 @@
+"""Press Tenant DocType."""
