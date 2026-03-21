@@ -5,6 +5,19 @@ frappe.ui.form.on("Tenant Environment", {
 		}
 
 		renderTransitionHistory(frm);
+		renderBusinessSummary(frm);
+
+		if (hasUsageSnapshotRole()) {
+			frm.add_custom_button(__("Record Usage Snapshot"), () => {
+				promptUsageSnapshot(frm, { environment: frm.doc.name, tenant: frm.doc.tenant });
+			}, __("Business"));
+		}
+
+		if (hasCostSnapshotRole()) {
+			frm.add_custom_button(__("Record Cost Snapshot"), () => {
+				promptCostSnapshot(frm, { environment: frm.doc.name, tenant: frm.doc.tenant });
+			}, __("Business"));
+		}
 
 		if (!hasLifecycleRole()) {
 			return;
@@ -204,6 +217,19 @@ function hasLifecycleRole() {
 }
 
 
+function hasUsageSnapshotRole() {
+	return (
+		hasLifecycleRole() ||
+		frappe.user.has_role("Ifitwala Press Support")
+	);
+}
+
+
+function hasCostSnapshotRole() {
+	return hasUsageSnapshotRole() || frappe.user.has_role("Ifitwala Press Finance");
+}
+
+
 function renderTransitionHistory(frm) {
 	frappe.call({
 		method: "ifitwala_press.api.views.get_environment_transition_history",
@@ -253,4 +279,108 @@ function renderTransitionHistory(frm) {
 			frm.refresh_field("transition_history_html");
 		},
 	});
+}
+
+
+function renderBusinessSummary(frm) {
+	frappe.call({
+		method: "ifitwala_press.api.business.get_environment_business_summary",
+		args: { environment: frm.doc.name },
+		callback: ({ message }) => {
+			const usage = message?.usage_snapshot;
+			const cost = message?.cost_snapshot;
+			const sections = [
+				renderSummaryBlock(
+					__("Latest Usage"),
+					usage
+						? [
+							`${escape(usage.snapshot_on_display || "")}`,
+							`${escape(String(usage.active_users_30d || 0))} active users | ${escape(String(usage.request_count || 0))} requests`,
+							`${escape(String(usage.storage_used_gb || 0))} GB storage | avg concurrency ${escape(String(usage.avg_concurrency_estimate || 0))}`,
+							`Peak ${escape(String(usage.peak_concurrency_estimate || 0))} | queue jobs ${escape(String(usage.queue_jobs_processed || 0))}`,
+						]
+						: [__("No usage snapshot recorded.")],
+				),
+				renderSummaryBlock(
+					__("Latest Cost"),
+					cost
+						? [
+							`${escape(cost.snapshot_on_display || "")}`,
+							`${escape(String(cost.total_cost_estimate || 0))} ${escape(cost.currency || "")} total`,
+							`DB ${escape(String(cost.db_cost_estimate || 0))} | Storage ${escape(String(cost.storage_cost_estimate || 0))}`,
+							`Compute ${escape(String(cost.compute_cost_estimate || 0))} | Backup ${escape(String(cost.backup_cost_estimate || 0))}`,
+						]
+						: [__("No cost snapshot recorded.")],
+				),
+			];
+
+			frm.set_df_property("business_summary_html", "options", `<div class="ifitwala-summary-grid">${sections.join("")}</div>`);
+			frm.refresh_field("business_summary_html");
+		},
+	});
+}
+
+
+function promptUsageSnapshot(frm, defaults) {
+	frappe.prompt(
+		[
+			{ fieldname: "snapshot_on", fieldtype: "Datetime", label: __("Snapshot On") },
+			{ fieldname: "active_users_30d", fieldtype: "Int", label: __("Active Users 30d") },
+			{ fieldname: "storage_used_gb", fieldtype: "Float", label: __("Storage Used (GB)") },
+			{ fieldname: "file_count", fieldtype: "Int", label: __("File Count") },
+			{ fieldname: "request_count", fieldtype: "Int", label: __("Request Count") },
+			{ fieldname: "avg_concurrency_estimate", fieldtype: "Float", label: __("Avg Concurrency Estimate") },
+			{ fieldname: "peak_concurrency_estimate", fieldtype: "Float", label: __("Peak Concurrency Estimate") },
+			{ fieldname: "queue_jobs_processed", fieldtype: "Int", label: __("Queue Jobs Processed") },
+			{ fieldname: "notes", fieldtype: "Small Text", label: __("Notes") },
+		],
+		(values) => callBusinessMethod(frm, "record_usage_snapshot", { ...defaults, ...values }, __("Recording usage snapshot")),
+		__("Record Usage Snapshot"),
+		__("Save")
+	);
+}
+
+
+function promptCostSnapshot(frm, defaults) {
+	frappe.prompt(
+		[
+			{ fieldname: "snapshot_on", fieldtype: "Datetime", label: __("Snapshot On") },
+			{ fieldname: "db_cost_estimate", fieldtype: "Currency", label: __("DB Cost Estimate") },
+			{ fieldname: "storage_cost_estimate", fieldtype: "Currency", label: __("Storage Cost Estimate") },
+			{ fieldname: "compute_cost_estimate", fieldtype: "Currency", label: __("Compute Cost Estimate") },
+			{ fieldname: "backup_cost_estimate", fieldtype: "Currency", label: __("Backup Cost Estimate") },
+			{ fieldname: "total_cost_estimate", fieldtype: "Currency", label: __("Total Cost Estimate") },
+			{ fieldname: "currency", fieldtype: "Link", label: __("Currency"), options: "Currency" },
+			{ fieldname: "notes", fieldtype: "Small Text", label: __("Notes") },
+		],
+		(values) => callBusinessMethod(frm, "record_cost_snapshot", { ...defaults, ...values }, __("Recording cost snapshot")),
+		__("Record Cost Snapshot"),
+		__("Save")
+	);
+}
+
+
+function callBusinessMethod(frm, methodName, args, freezeMessage) {
+	frappe.call({
+		method: `ifitwala_press.api.business.${methodName}`,
+		args,
+		freeze: true,
+		freeze_message: freezeMessage,
+		callback: () => frm.reload_doc(),
+	});
+}
+
+
+function renderSummaryBlock(title, lines) {
+	return `
+		<div class="ifitwala-summary-block">
+			<div class="ifitwala-summary-title">${escape(title)}</div>
+			${lines.map((line) => `<div class="text-muted small">${line}</div>`).join("")}
+		</div>
+	`;
+}
+
+
+function escape(value) {
+	return frappe.utils.escape_html(String(value ?? ""));
 }

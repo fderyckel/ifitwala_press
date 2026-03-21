@@ -53,6 +53,7 @@
     "section_break_internal_tracking",
     "active_environment",
     "linked_environments_html",
+    "business_summary_html",
     "last_reviewed_on",
     "internal_notes"
   ],
@@ -278,6 +279,11 @@
       "fieldname": "linked_environments_html",
       "fieldtype": "HTML",
       "label": "Linked Environments"
+    },
+    {
+      "fieldname": "business_summary_html",
+      "fieldtype": "HTML",
+      "label": "Business Summary"
     },
     {
       "fieldname": "last_reviewed_on",

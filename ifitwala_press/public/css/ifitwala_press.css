@@ -36,3 +36,24 @@
 	background: #fde7e7;
 	color: #b42318;
 }
+
+.ifitwala-summary-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 12px;
+}
+
+.ifitwala-summary-block {
+	border: 1px solid var(--border-color, #d1d8dd);
+	border-radius: 8px;
+	padding: 12px 14px;
+	background: var(--fg-color, #ffffff);
+}
+
+.ifitwala-summary-title {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	margin-bottom: 6px;
+}

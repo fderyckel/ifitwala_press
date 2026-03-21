@@ -67,6 +67,7 @@ def test_service_layer_files_exist() -> None:
 
 def test_api_and_install_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "api" / "__init__.py").is_file()
+	assert (ROOT / "ifitwala_press" / "api" / "business.py").is_file()
 	assert (ROOT / "ifitwala_press" / "api" / "lifecycle.py").is_file()
 	assert (ROOT / "ifitwala_press" / "install.py").is_file()
 
@@ -127,3 +128,15 @@ def test_detail_panel_api_methods_are_declared() -> None:
 	view_api_source = (ROOT / "ifitwala_press" / "api" / "views.py").read_text()
 	assert "def get_tenant_environment_panel(" in view_api_source
 	assert "def get_environment_transition_history(" in view_api_source
+
+
+def test_business_api_methods_are_declared() -> None:
+	business_api_source = (ROOT / "ifitwala_press" / "api" / "business.py").read_text()
+	for method_name in (
+		"get_tenant_business_summary",
+		"get_environment_business_summary",
+		"record_tenant_subscription",
+		"record_usage_snapshot",
+		"record_cost_snapshot",
+	):
+		assert f"def {method_name}(" in business_api_source

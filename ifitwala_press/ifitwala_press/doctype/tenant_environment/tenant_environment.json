@@ -26,6 +26,7 @@
     "last_transition_on",
     "last_transition_by",
     "transition_history_html",
+    "business_summary_html",
     "section_break_policy_tier",
     "policy",
     "hosting_tier",
@@ -147,6 +148,11 @@
       "fieldname": "transition_history_html",
       "fieldtype": "HTML",
       "label": "Transition History"
+    },
+    {
+      "fieldname": "business_summary_html",
+      "fieldtype": "HTML",
+      "label": "Business Summary"
     },
     {
       "fieldname": "section_break_policy_tier",
