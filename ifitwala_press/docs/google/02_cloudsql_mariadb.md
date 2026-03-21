@@ -1,60 +1,148 @@
-Feasibility Assessment: Google Cloud SQL (MariaDB) for Frappe v16
-1. Feasibility: Can it be done?
-Yes, absolutely. Running the Frappe Framework (version 16) against Google Cloud SQL for MariaDB is highly feasible and strongly recommended for production and control-plane deployments.
+# Planning Note: Cloud SQL / Managed MariaDB Posture
 
-While Frappe's default installer (easy_install) assumes a local MariaDB database running on the same server, the framework itself communicates with the database layer purely over standard MySQL/MariaDB TCP/IP sockets. Decoupling the database is the standard enterprise practice to achieve high availability and simplify multi-tenancy.
+## Purpose
 
-2. Has it been done before?
-Yes. Many large ERPNext instances split the architecture by relying on AWS RDS for MariaDB or Google Cloud SQL for MariaDB. bench (Frappe's CLI) has built-in flags exactly for this (--db-host and --db-port).
+This note records how managed MariaDB should be treated in **Ifitwala_Press** planning.
 
-3. Constraints & Gotchas (Updated for Frappe v16)
-Using Google Cloud SQL with Frappe v16 introduces a few specific constraints you must architect around:
+It is not a phase-1 mandate.
+It is not a replacement for the founder-mode rollout policy.
 
-A. MariaDB Version Requirements (v16 specific)
-Requirement: Frappe Version 16 requires MariaDB 10.6.
-Constraint: Do not assume that because Frappe v16 is newer, you should use the latest MariaDB (like 11.x). While Frappe Manager is experimenting with MariaDB 11 LTS support, MariaDB 10.6 remains the explicitly tested, stable, and recommended version across the community for v16. Using versions 10.11 or higher has historically caused ORM syntax errors or data corruption issues that are silently skipped. Google Cloud SQL offers MariaDB 10.6 as a standard option.
-B. The "SUPER" Privilege Issue
-When you run bench new-site <sitename>, Frappe attempts to connect using the MariaDB root user to execute CREATE DATABASE, CREATE USER, and GRANT ALL PRIVILEGES.
+Its job is to clarify:
+- how managed MariaDB fits the long-term architecture
+- what phase 1 should and should not depend on
+- how the repository baseline affects DB planning
 
-Constraint: Google Cloud SQL restricts true SUPER privileges. While the root equivalent user provided by Cloud SQL can create databases, Frappe's script sometimes attempts global configurations or specific GRANT statements that Cloud SQL blocks. Therefore, letting bench do the DB creation directly often fails in managed cloud environments.
-C. Default Character Set and Collation
-Frappe v16 strictly requires a 4-byte UTF-8 character set (utf8mb4) to support emojis and modern international text without truncating payloads.
+---
 
-Constraint: Google Cloud SQL defaults must be explicitly overridden via "Database Flags" upon creation.
-D. Private Networking (VPC)
-Your Frappe Docker containers running on Google Compute Engine VMs must be able to reach the Cloud SQL instance securely.
+## 1. Repository baseline
 
-Constraint: You should never expose Cloud SQL to the public internet. You must configure Private Services Access (VPC Peering) so that the Cloud SQL instance gets a private IP address (e.g., 10.x.x.x) that your worker node VMs can route to internally without egressing to the public web.
-4. How to Implement It (Specific Steps for Ifitwala Press)
-For Ifitwala_Press (a control plane managing many tenants), you must implement a split-privilege architecture to guarantee security and bypass the SUPER privilege constraints.
+The current repository database baseline is:
 
-When an operator clicks "Create Sandbox" or "Provision Production", Ifitwala_Press performs the following flow:
+- MariaDB 11.8
 
-Phase 1: Infrastructure Setup (Google Cloud)
-Provision the Instance: Create a Cloud SQL instance. Explicitly select MariaDB 10.6.
-Network Type: Select Private IP and attach it to your default VPC.
-Database Flags: Set the following flags in the Cloud SQL console:
-character_set_server = utf8mb4
-collation_server = utf8mb4_unicode_ci
-Machine Type: Start with a minimum of 2 vCPU and 8GB RAM per shared instance. Adjust the buffer pool size flag (innodb_buffer_pool_size) to consume roughly 60-70% of available RAM.
-Phase 2: Secure Tenant Creation Workflow (The Control Plane Logic)
-Step 1. Control Plane Acts (via GCP API) Instead of letting the worker VM run a root bench command, Ifitwala_Press intercepts the process:
+This file must stay aligned with that project-level decision.
 
-Ifitwala_Press uses its own GCP IAM Service Account to connect to the Cloud SQL Admin API over HTTPS.
-It automatically creates a new logical database (e.g., tenant_foo_db).
-It automatically creates a new database user (e.g., tenant_foo_user) and a secure random password (abcd123).
-It applies the correct Cloud SQL user permissions to ensure that tenant_foo_user can only access tenant_foo_db.
-Step 2. Hand-off to the Worker VM (Ansible/Agent)
+Any managed MariaDB rollout plan must therefore:
+- target the approved MariaDB 11.8 line
+- include a compatibility spike before production commitment
+- avoid reintroducing older version guidance as if it were the active repo standard
 
-Ifitwala_Press securely transmits the tenant's specific credentials (db_name, db_user, db_password, and the Cloud SQL Private IP db_host) to the Agent running on the target Google Compute Engine VM.
-Step 3. Agent Installs the Frappe Site
+---
 
-The Agent generates the site directory (frappe-bench/sites/tenant_foo.yourdomain.com/).
-The Agent manually writes the site_config.json file inside that folder containing the credentials generated in Step 1.
-Because the database already exists and the user inherently has access to it, the Agent runs the specific command to install Frappe directly onto the provisioned destination, bypassing the "root" configuration sequence:
-bash
-bench --site tenant_foo.yourdomain.com install-app ifitwala_ed
-Why this specific implementation?
-Security: The underlying worker VMs running Frappe containers never hold the Cloud SQL root credentials. If a Docker container or worker VM is compromised, the blast radius is strictly limited to that VM's local tenants.
-Bypasses Cloud SQL Limitations: By creating the database and user via Google Cloud APIs (Ifitwala_Press), bench never executes the global GRANT statements that typically fail on managed DBaaS solutions.
-Frappe v16 Optimization: Deploying the exact version (10.6) and setting character encodings preemptively prevents cryptic ORM failures during major version upgrades later in Frappe 16's lifecycle.
+## 2. Phase-1 rule
+
+Managed database automation is not required for the MVP.
+
+Phase 1 may legitimately run with:
+- one shared founder-mode runtime
+- manual or semi-manual database provisioning
+- one database per site
+- manual backup and restore verification at small scale
+
+This matches the rollout policy and initial build-order documents.
+
+The control plane must still model:
+- database mode
+- placement intent
+- backup expectations
+- lifecycle consequences
+
+But phase 1 does not need to automate Cloud SQL creation.
+
+---
+
+## 3. Why managed MariaDB still matters later
+
+Managed MariaDB remains a credible later-stage option because it can reduce:
+- operational toil
+- backup burden
+- restore complexity
+- high-availability overhead
+
+For standard and premium operations later on, a managed DB path may support:
+- shared DB fleet for standard tenants
+- stronger isolation for premium or VIP tenants
+- clearer restore discipline
+- more repeatable provisioning
+
+This is a phase-2-or-later concern unless operational reality proves it earlier.
+
+---
+
+## 4. Constraints that still apply if managed DB is adopted later
+
+If a managed MariaDB path is adopted later, design around these control-plane constraints:
+
+### A. One database per site remains mandatory
+
+Even on a shared managed instance:
+- one tenant environment
+- one site
+- one database
+
+must remain the control-plane rule.
+
+### B. Private networking only
+
+The DB should not be exposed publicly.
+
+Use private connectivity between runtime hosts and the DB layer.
+
+### C. Character set and collation must be deliberate
+
+The platform must still enforce a UTF-8 capable server configuration appropriate for Frappe and your app stack.
+
+### D. Privilege model must be compatible with managed services
+
+Provisioning logic should not assume unrestricted root-style behavior from the runtime host.
+
+The control plane should eventually support a split-privilege pattern where:
+- infrastructure or platform-level credentials create logical databases and users
+- runtime hosts receive only tenant-scoped credentials
+
+### E. Version choice must be validated, not assumed
+
+Because this repository chooses MariaDB 11.8, that exact baseline must be proven by test or spike in your own stack before committing to a managed rollout.
+
+---
+
+## 5. Recommended founder-mode posture now
+
+For the current MVP, keep the DB posture simple:
+
+- one founder-mode runtime shape
+- one MariaDB 11.8 baseline
+- one database per site
+- manual or semi-manual DB creation if needed
+- explicit backup and restore runbook
+
+This keeps the control-plane model clean without forcing early provider automation.
+
+---
+
+## 6. Recommended later migration posture
+
+Only after the control-plane backbone is proven should the platform revisit managed DB automation.
+
+That later step should follow this order:
+
+1. prove manual lifecycle flow end to end
+2. prove MariaDB 11.8 compatibility in the real app stack
+3. standardize database naming, user creation, and credential handling
+4. model placement intent clearly on `Tenant Environment`
+5. only then automate managed DB provisioning behind service boundaries
+
+---
+
+## 7. Decision rule
+
+Do not adopt managed MariaDB work just because it sounds cleaner.
+
+Adopt it when it materially improves one or more of:
+- operator safety
+- restore discipline
+- production consistency
+- blast-radius control
+- time spent on repetitive DB operations
+
+If it does not clearly improve those outcomes yet, defer it.

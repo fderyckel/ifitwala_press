@@ -15,6 +15,17 @@ The current project baseline is:
 
 Python tooling is defined in [pyproject.toml](/Users/francois.de/Documents/ifitwala_press/pyproject.toml).
 
+## Database Baseline Rule
+
+`MariaDB 11.8` is the current repository baseline.
+
+Treat this as an explicit project decision, not a loose suggestion.
+
+That means:
+- do not reintroduce older MariaDB recommendations elsewhere in the repo without an explicit architecture decision
+- do not assume generic Frappe guidance overrides this repository baseline automatically
+- any rollout plan for Frappe v16 must include a compatibility spike proving site creation, migrations, and app install behavior on MariaDB 11.8 before production rollout
+
 ## Local Setup
 
 Install developer tooling:
