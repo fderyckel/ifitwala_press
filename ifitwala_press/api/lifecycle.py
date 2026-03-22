@@ -8,10 +8,16 @@ from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import
 	archive_environment as archive_environment_service,
 )
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
+	complete_sandbox_provisioning as complete_sandbox_provisioning_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	create_sandbox as create_sandbox_service,
 )
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	mark_live as mark_live_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
+	mark_provisioning_failed as mark_provisioning_failed_service,
 )
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	provision_production as provision_production_service,
@@ -66,6 +72,41 @@ def create_sandbox(
 
 
 @frappe.whitelist()
+def complete_sandbox_provisioning(
+	environment: str,
+	site_name: str | None = None,
+	primary_domain: str | None = None,
+	routing_mode: str | None = None,
+	dns_ready: int | bool | None = None,
+	tls_ready: int | bool | None = None,
+	host_header_value: str | None = None,
+	db_name: str | None = None,
+	db_user: str | None = None,
+	provisioning_job_id: str | None = None,
+	last_provisioning_step: str | None = None,
+	provisioning_message: str | None = None,
+	status_reason: str | None = None,
+) -> dict[str, Any]:
+	_require_lifecycle_role()
+	document = complete_sandbox_provisioning_service(
+		environment,
+		site_name=site_name,
+		primary_domain=primary_domain,
+		routing_mode=routing_mode,
+		dns_ready=dns_ready,
+		tls_ready=tls_ready,
+		host_header_value=host_header_value,
+		db_name=db_name,
+		db_user=db_user,
+		provisioning_job_id=provisioning_job_id,
+		last_provisioning_step=last_provisioning_step,
+		provisioning_message=provisioning_message,
+		status_reason=status_reason,
+	)
+	return _serialize_document(document)
+
+
+@frappe.whitelist()
 def qualify_for_production(
 	environment: str,
 	hosting_tier: str,
@@ -84,6 +125,25 @@ def qualify_for_production(
 		policy=policy,
 		region=region,
 		status_reason=status_reason,
+	)
+	return _serialize_document(document)
+
+
+@frappe.whitelist()
+def mark_provisioning_failed(
+	environment: str,
+	reason: str,
+	last_provisioning_step: str | None = None,
+	provisioning_job_id: str | None = None,
+	provisioning_message: str | None = None,
+) -> dict[str, Any]:
+	_require_lifecycle_role()
+	document = mark_provisioning_failed_service(
+		environment,
+		reason=reason,
+		last_provisioning_step=last_provisioning_step,
+		provisioning_job_id=provisioning_job_id,
+		provisioning_message=provisioning_message,
 	)
 	return _serialize_document(document)
 

@@ -85,6 +85,96 @@ function addLifecycleButtons(frm) {
 		}, __("Actions"));
 	}
 
+	if (status === "Sandbox Provisioning") {
+		frm.add_custom_button(__("Complete Sandbox Provisioning"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "site_name",
+						fieldtype: "Data",
+						label: __("Site Name"),
+						default: frm.doc.site_name,
+					},
+					{
+						fieldname: "primary_domain",
+						fieldtype: "Data",
+						label: __("Primary Domain"),
+						default: frm.doc.primary_domain || "",
+					},
+					{
+						fieldname: "routing_mode",
+						fieldtype: "Select",
+						label: __("Routing Mode"),
+						options: "\nInternal Only\nPublic\nPending",
+						default: frm.doc.routing_mode || "Internal Only",
+					},
+					{
+						fieldname: "dns_ready",
+						fieldtype: "Check",
+						label: __("DNS Ready"),
+						default: frm.doc.dns_ready || 0,
+					},
+					{
+						fieldname: "tls_ready",
+						fieldtype: "Check",
+						label: __("TLS Ready"),
+						default: frm.doc.tls_ready || 0,
+					},
+					{
+						fieldname: "host_header_value",
+						fieldtype: "Data",
+						label: __("Host Header Value"),
+						default: frm.doc.host_header_value || "",
+					},
+					{
+						fieldname: "db_name",
+						fieldtype: "Data",
+						label: __("DB Name"),
+						default: frm.doc.db_name || "",
+					},
+					{
+						fieldname: "db_user",
+						fieldtype: "Data",
+						label: __("DB User"),
+						default: frm.doc.db_user || "",
+					},
+					{
+						fieldname: "provisioning_job_id",
+						fieldtype: "Data",
+						label: __("Provisioning Job ID"),
+						default: frm.doc.provisioning_job_id || "",
+					},
+					{
+						fieldname: "last_provisioning_step",
+						fieldtype: "Data",
+						label: __("Last Provisioning Step"),
+						default: frm.doc.last_provisioning_step || "",
+					},
+					{
+						fieldname: "provisioning_message",
+						fieldtype: "Small Text",
+						label: __("Provisioning Message"),
+						default: frm.doc.provisioning_message || "",
+					},
+					{
+						fieldname: "status_reason",
+						fieldtype: "Small Text",
+						label: __("Activation Note"),
+					},
+				],
+				(values) =>
+					callLifecycleMethod(
+						frm,
+						"complete_sandbox_provisioning",
+						values,
+						__("Completing sandbox provisioning")
+					),
+				__("Complete Sandbox Provisioning"),
+				__("Complete")
+			);
+		}, __("Actions"));
+	}
+
 	if (status === "Production Qualification" || status === "Provisioning Failed") {
 		frm.add_custom_button(__("Provision Production"), () => {
 			frappe.prompt(
@@ -116,6 +206,48 @@ function addLifecycleButtons(frm) {
 				(values) => callLifecycleMethod(frm, "provision_production", values, __("Starting production provisioning")),
 				__("Provision Production"),
 				__("Start")
+			);
+		}, __("Actions"));
+	}
+
+	if (status === "Sandbox Provisioning" || status === "Production Provisioning") {
+		frm.add_custom_button(__("Mark Provisioning Failed"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "last_provisioning_step",
+						fieldtype: "Data",
+						label: __("Last Provisioning Step"),
+						default: frm.doc.last_provisioning_step || "",
+					},
+					{
+						fieldname: "provisioning_job_id",
+						fieldtype: "Data",
+						label: __("Provisioning Job ID"),
+						default: frm.doc.provisioning_job_id || "",
+					},
+					{
+						fieldname: "provisioning_message",
+						fieldtype: "Small Text",
+						label: __("Provisioning Message"),
+						default: frm.doc.provisioning_message || "",
+					},
+					{
+						fieldname: "reason",
+						fieldtype: "Small Text",
+						label: __("Failure Reason"),
+						reqd: 1,
+					},
+				],
+				(values) =>
+					callLifecycleMethod(
+						frm,
+						"mark_provisioning_failed",
+						values,
+						__("Marking provisioning as failed")
+					),
+				__("Mark Provisioning Failed"),
+				__("Mark Failed")
 			);
 		}, __("Actions"));
 	}

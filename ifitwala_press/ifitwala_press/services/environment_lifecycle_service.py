@@ -99,6 +99,57 @@ def qualify_for_production(
 	return environment_doc
 
 
+def complete_sandbox_provisioning(
+	environment: str | Document,
+	*,
+	site_name: str | None = None,
+	primary_domain: str | None = None,
+	routing_mode: str | None = None,
+	dns_ready: int | bool | None = None,
+	tls_ready: int | bool | None = None,
+	host_header_value: str | None = None,
+	db_name: str | None = None,
+	db_user: str | None = None,
+	provisioning_job_id: str | None = None,
+	last_provisioning_step: str | None = None,
+	provisioning_message: str | None = None,
+	status_reason: str | None = None,
+) -> Document:
+	environment_doc = _as_doc("Tenant Environment", environment)
+	_assert_transition_allowed(environment_doc.site_status, SANDBOX_ACTIVE)
+
+	if environment_doc.environment_type != "Sandbox":
+		environment_doc.environment_type = "Sandbox"
+	if site_name:
+		environment_doc.site_name = site_name
+	if primary_domain:
+		environment_doc.primary_domain = primary_domain
+	if routing_mode:
+		environment_doc.routing_mode = routing_mode
+	if dns_ready is not None:
+		environment_doc.dns_ready = int(bool(dns_ready))
+	if tls_ready is not None:
+		environment_doc.tls_ready = int(bool(tls_ready))
+	if host_header_value:
+		environment_doc.host_header_value = host_header_value
+	if db_name:
+		environment_doc.db_name = db_name
+	if db_user:
+		environment_doc.db_user = db_user
+	if provisioning_job_id:
+		environment_doc.provisioning_job_id = provisioning_job_id
+	if last_provisioning_step:
+		environment_doc.last_provisioning_step = last_provisioning_step
+	if provisioning_message:
+		environment_doc.provisioning_message = provisioning_message
+	_transition_environment(
+		environment_doc,
+		SANDBOX_ACTIVE,
+		status_reason or "Sandbox provisioning completed.",
+	)
+	return environment_doc
+
+
 def provision_production(
 	environment: str | Document,
 	*,
@@ -118,6 +169,27 @@ def provision_production(
 		environment_doc.primary_domain = primary_domain
 	environment_doc.provisioning_job_id = provisioning_job_id
 	_transition_environment(environment_doc, PRODUCTION_PROVISIONING, status_reason or "Production provisioning started.")
+	return environment_doc
+
+
+def mark_provisioning_failed(
+	environment: str | Document,
+	*,
+	reason: str,
+	last_provisioning_step: str | None = None,
+	provisioning_job_id: str | None = None,
+	provisioning_message: str | None = None,
+) -> Document:
+	environment_doc = _as_doc("Tenant Environment", environment)
+	_assert_transition_allowed(environment_doc.site_status, PROVISIONING_FAILED)
+
+	if last_provisioning_step:
+		environment_doc.last_provisioning_step = last_provisioning_step
+	if provisioning_job_id:
+		environment_doc.provisioning_job_id = provisioning_job_id
+	if provisioning_message:
+		environment_doc.provisioning_message = provisioning_message
+	_transition_environment(environment_doc, PROVISIONING_FAILED, reason)
 	return environment_doc
 
 

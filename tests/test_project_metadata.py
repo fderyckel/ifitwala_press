@@ -93,7 +93,9 @@ def test_role_bootstrap_and_lifecycle_api_are_declared() -> None:
 
 	for method_name in (
 		"create_sandbox",
+		"complete_sandbox_provisioning",
 		"qualify_for_production",
+		"mark_provisioning_failed",
 		"provision_production",
 		"mark_live",
 		"suspend_environment",
