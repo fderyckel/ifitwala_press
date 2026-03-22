@@ -69,6 +69,7 @@ def test_api_and_install_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "api" / "__init__.py").is_file()
 	assert (ROOT / "ifitwala_press" / "api" / "business.py").is_file()
 	assert (ROOT / "ifitwala_press" / "api" / "lifecycle.py").is_file()
+	assert (ROOT / "ifitwala_press" / "api" / "permission.py").is_file()
 	assert (ROOT / "ifitwala_press" / "install.py").is_file()
 
 
@@ -111,15 +112,52 @@ def test_operator_surface_js_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "public" / "js" / "tenant_environment.js").is_file()
 	assert (ROOT / "ifitwala_press" / "public" / "js" / "tenant_environment_list.js").is_file()
 	assert (ROOT / "ifitwala_press" / "public" / "css" / "ifitwala_press.css").is_file()
+	assert (ROOT / "ifitwala_press" / "public" / "images" / "ifitwala_press_logo.svg").is_file()
+
+
+def test_workspace_files_exist() -> None:
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "workspace" / "__init__.py").is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "workspace"
+		/ "ifitwala_press"
+		/ "ifitwala_press.json"
+	).is_file()
 
 
 def test_hooks_register_operator_surface_js() -> None:
 	hooks = (ROOT / "ifitwala_press" / "hooks.py").read_text()
 	assert 'app_include_css = "/assets/ifitwala_press/css/ifitwala_press.css"' in hooks
+	assert 'add_to_apps_screen = [' in hooks
+	assert '"route": "/app/ifitwala-press"' in hooks
+	assert '"has_permission": "ifitwala_press.api.permission.has_app_permission"' in hooks
 	assert '"Press Tenant": "public/js/press_tenant.js"' in hooks
 	assert '"Tenant Environment": "public/js/tenant_environment.js"' in hooks
 	assert '"Press Tenant": "public/js/press_tenant_list.js"' in hooks
 	assert '"Tenant Environment": "public/js/tenant_environment_list.js"' in hooks
+
+
+def test_workspace_includes_all_core_doctypes() -> None:
+	workspace_source = (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "workspace"
+		/ "ifitwala_press"
+		/ "ifitwala_press.json"
+	).read_text()
+	for doctype_name in (
+		"Press Tenant",
+		"Tenant Environment",
+		"Tenant Policy",
+		"Tenant Subscription",
+		"Tenant Usage Snapshot",
+		"Tenant Cost Snapshot",
+		"Tenant Transition Log",
+	):
+		assert doctype_name in workspace_source
 
 
 def test_view_api_files_exist() -> None:
