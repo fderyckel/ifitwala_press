@@ -8,7 +8,6 @@ from frappe.utils import now_datetime
 
 from ifitwala_press.ifitwala_press.services.transition_log_service import create_transition_log
 
-
 LEAD = "Lead"
 SANDBOX_PROVISIONING = "Sandbox Provisioning"
 SANDBOX_ACTIVE = "Sandbox Active"

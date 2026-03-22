@@ -6,14 +6,25 @@ import frappe
 
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	archive_environment as archive_environment_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	create_sandbox as create_sandbox_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	mark_live as mark_live_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	provision_production as provision_production_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	qualify_for_production as qualify_for_production_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	restore_environment as restore_environment_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	suspend_environment as suspend_environment_service,
 )
-
 
 ACTION_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Ops"}
 

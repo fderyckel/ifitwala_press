@@ -1,7 +1,6 @@
 .DS_Store
 .env
 .env.*
-.python-version
 .ruff_cache/
 .pytest_cache/
 .mypy_cache/
@@ -22,4 +21,3 @@ env/
 node_modules/
 assets/
 public/dist/
-

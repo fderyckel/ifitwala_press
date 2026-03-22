@@ -5,7 +5,6 @@ import re
 import frappe
 from frappe.model.document import Document
 
-
 TENANT_SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 

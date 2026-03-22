@@ -5,7 +5,6 @@ import re
 import frappe
 from frappe.model.document import Document
 
-
 SITE_NAME_PATTERN = re.compile(r"^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$")
 LIVE_STATE = "Live"
 

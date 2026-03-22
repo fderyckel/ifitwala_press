@@ -5,7 +5,6 @@ from typing import Any
 import frappe
 from frappe.utils import format_datetime, now_datetime
 
-
 SNAPSHOT_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Ops", "Ifitwala Press Support"}
 SUBSCRIPTION_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Sales", "Ifitwala Press Finance"}
 
