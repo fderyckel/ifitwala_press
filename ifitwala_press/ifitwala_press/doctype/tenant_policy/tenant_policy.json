@@ -98,7 +98,7 @@
       "fieldname": "default_database_mode",
       "fieldtype": "Select",
       "label": "Default Database Mode",
-      "options": "\nShared Cluster DB\nDedicated Instance",
+      "options": "\nShared DB Fleet\nDedicated DB Instance",
       "reqd": 1
     },
     {
