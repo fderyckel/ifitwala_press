@@ -96,6 +96,18 @@ frappe.ui.form.on("Press Tenant", {
 						label: __("Expiry Date"),
 					},
 					{
+						fieldname: "demo_seed_mode",
+						fieldtype: "Select",
+						label: __("Demo Seed Mode"),
+						options: "\nBlank Site\nRestore Demo Backup",
+						default: "Blank Site",
+					},
+					{
+						fieldname: "demo_seed_reference",
+						fieldtype: "Data",
+						label: __("Demo Seed Reference"),
+					},
+					{
 						fieldname: "status_reason",
 						fieldtype: "Small Text",
 						label: __("Reason"),
@@ -110,6 +122,8 @@ frappe.ui.form.on("Press Tenant", {
 							environment_name: values.environment_name,
 							policy: values.policy,
 							expiry_date: values.expiry_date,
+							demo_seed_mode: values.demo_seed_mode,
+							demo_seed_reference: values.demo_seed_reference,
 							status_reason: values.status_reason,
 						},
 						freeze: true,

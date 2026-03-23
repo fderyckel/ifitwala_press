@@ -13,6 +13,7 @@ class TenantEnvironment(Document):
 	def validate(self) -> None:
 		self._normalize_site_name()
 		self._normalize_runtime_fields()
+		self._validate_demo_seed_configuration()
 		self._validate_hosting_and_database_constraints()
 		self._validate_routing_constraints()
 		self._validate_live_requirements()
@@ -26,10 +27,22 @@ class TenantEnvironment(Document):
 			frappe.throw("Site Name must use lowercase letters, numbers, dots, and hyphens only.")
 
 	def _normalize_runtime_fields(self) -> None:
-		for fieldname in ("frappe_branch", "ifitwala_ed_branch", "ifitwala_drive_branch", "worker_profile"):
+		for fieldname in (
+			"frappe_branch",
+			"ifitwala_ed_branch",
+			"ifitwala_drive_branch",
+			"worker_profile",
+			"demo_seed_reference",
+			"runtime_reference",
+			"backup_export_path",
+		):
 			value = self.get(fieldname)
 			if isinstance(value, str):
 				self.set(fieldname, value.strip())
+
+	def _validate_demo_seed_configuration(self) -> None:
+		if self.demo_seed_mode == "Restore Demo Backup" and not self.demo_seed_reference:
+			frappe.throw("Demo Seed Reference is required when Demo Seed Mode is Restore Demo Backup.")
 
 	def _validate_hosting_and_database_constraints(self) -> None:
 		if self.hosting_tier == "VIP" and self.database_mode == "Shared DB Fleet":

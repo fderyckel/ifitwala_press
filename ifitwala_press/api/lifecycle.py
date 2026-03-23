@@ -14,6 +14,9 @@ from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import
 	create_sandbox as create_sandbox_service,
 )
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
+	expire_sandbox as expire_sandbox_service,
+)
+from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	mark_live as mark_live_service,
 )
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
@@ -57,6 +60,8 @@ def create_sandbox(
 	policy: str | None = None,
 	environment_name: str | None = None,
 	expiry_date: str | None = None,
+	demo_seed_mode: str | None = None,
+	demo_seed_reference: str | None = None,
 	status_reason: str | None = None,
 ) -> dict[str, Any]:
 	_require_lifecycle_role()
@@ -66,6 +71,8 @@ def create_sandbox(
 		policy=policy,
 		environment_name=environment_name,
 		expiry_date=expiry_date,
+		demo_seed_mode=demo_seed_mode,
+		demo_seed_reference=demo_seed_reference,
 		status_reason=status_reason,
 	)
 	return _serialize_document(document)
@@ -85,6 +92,8 @@ def complete_sandbox_provisioning(
 	provisioning_job_id: str | None = None,
 	last_provisioning_step: str | None = None,
 	provisioning_message: str | None = None,
+	runtime_reference: str | None = None,
+	backup_export_path: str | None = None,
 	status_reason: str | None = None,
 ) -> dict[str, Any]:
 	_require_lifecycle_role()
@@ -101,6 +110,8 @@ def complete_sandbox_provisioning(
 		provisioning_job_id=provisioning_job_id,
 		last_provisioning_step=last_provisioning_step,
 		provisioning_message=provisioning_message,
+		runtime_reference=runtime_reference,
+		backup_export_path=backup_export_path,
 		status_reason=status_reason,
 	)
 	return _serialize_document(document)
@@ -144,6 +155,27 @@ def mark_provisioning_failed(
 		last_provisioning_step=last_provisioning_step,
 		provisioning_job_id=provisioning_job_id,
 		provisioning_message=provisioning_message,
+	)
+	return _serialize_document(document)
+
+
+@frappe.whitelist()
+def expire_sandbox(
+	environment: str,
+	reason: str,
+	last_provisioning_step: str | None = None,
+	provisioning_message: str | None = None,
+	runtime_reference: str | None = None,
+	backup_export_path: str | None = None,
+) -> dict[str, Any]:
+	_require_lifecycle_role()
+	document = expire_sandbox_service(
+		environment,
+		reason=reason,
+		last_provisioning_step=last_provisioning_step,
+		provisioning_message=provisioning_message,
+		runtime_reference=runtime_reference,
+		backup_export_path=backup_export_path,
 	)
 	return _serialize_document(document)
 

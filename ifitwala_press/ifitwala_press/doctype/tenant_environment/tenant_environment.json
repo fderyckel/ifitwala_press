@@ -30,6 +30,8 @@
     "section_break_policy_tier",
     "policy",
     "hosting_tier",
+    "demo_seed_mode",
+    "demo_seed_reference",
     "placement_strategy",
     "column_break_policy_tier",
     "estimated_monthly_cost",
@@ -76,7 +78,9 @@
     "section_break_provisioning",
     "provisioning_job_id",
     "last_provisioning_step",
-    "provisioning_message"
+    "provisioning_message",
+    "runtime_reference",
+    "backup_export_path"
   ],
   "fields": [
     {
@@ -88,6 +92,7 @@
       "options": "ENV-.YYYY.-"
     },
     {
+      "description": "Select the customer record that owns and governs this environment.",
       "fieldname": "tenant",
       "fieldtype": "Link",
       "in_list_view": 1,
@@ -97,11 +102,13 @@
       "reqd": 1
     },
     {
+      "description": "Optional operator-friendly label used to distinguish this environment beyond the site name.",
       "fieldname": "environment_name",
       "fieldtype": "Data",
       "label": "Environment Name"
     },
     {
+      "description": "Classifies whether this environment is a disposable sandbox, live production site, or staging setup.",
       "fieldname": "environment_type",
       "fieldtype": "Select",
       "in_list_view": 1,
@@ -110,6 +117,7 @@
       "reqd": 1
     },
     {
+      "description": "Unique Frappe site identifier for this environment. This should stay stable once the environment exists.",
       "fieldname": "site_name",
       "fieldtype": "Data",
       "in_list_view": 1,
@@ -124,6 +132,7 @@
     },
     {
       "default": "Lead",
+      "description": "Current lifecycle state of the environment. Change this through controlled server-side actions, not casual manual edits.",
       "fieldname": "site_status",
       "fieldtype": "Select",
       "in_list_view": 1,
@@ -133,16 +142,19 @@
       "reqd": 1
     },
     {
+      "description": "Short explanation for the current lifecycle state, suspension, expiry, or failure condition.",
       "fieldname": "status_reason",
       "fieldtype": "Small Text",
       "label": "Status Reason"
     },
     {
+      "description": "Timestamp of the most recent controlled lifecycle transition.",
       "fieldname": "last_transition_on",
       "fieldtype": "Datetime",
       "label": "Last Transition On"
     },
     {
+      "description": "Operator or system user that performed the latest lifecycle transition.",
       "fieldname": "last_transition_by",
       "fieldtype": "Link",
       "label": "Last Transition By",
@@ -164,12 +176,14 @@
       "label": "Policy and Tier"
     },
     {
+      "description": "Policy record that defines default operational guardrails, quotas, and lifecycle rules for this environment.",
       "fieldname": "policy",
       "fieldtype": "Link",
       "label": "Policy",
       "options": "Tenant Policy"
     },
     {
+      "description": "Commercial and infrastructure tier for this environment, such as sandbox, standard, premium, or VIP.",
       "fieldname": "hosting_tier",
       "fieldtype": "Select",
       "in_list_view": 1,
@@ -177,6 +191,21 @@
       "options": "\nSandbox\nStandard\nPremium\nVIP"
     },
     {
+      "default": "Blank Site",
+      "description": "How a sandbox should be initialized for demos: either empty or restored from a prepared demo backup.",
+      "fieldname": "demo_seed_mode",
+      "fieldtype": "Select",
+      "label": "Demo Seed Mode",
+      "options": "\nBlank Site\nRestore Demo Backup"
+    },
+    {
+      "description": "Reference to the prepared demo backup or template used when seeding sandbox data.",
+      "fieldname": "demo_seed_reference",
+      "fieldtype": "Data",
+      "label": "Demo Seed Reference"
+    },
+    {
+      "description": "Placement intent for the environment so operators can see whether it runs on shared or more isolated infrastructure.",
       "fieldname": "placement_strategy",
       "fieldtype": "Select",
       "label": "Placement Strategy",
@@ -187,17 +216,20 @@
       "fieldtype": "Column Break"
     },
     {
+      "description": "Current estimated monthly infrastructure cost for this environment.",
       "fieldname": "estimated_monthly_cost",
       "fieldtype": "Currency",
       "label": "Estimated Monthly Cost"
     },
     {
+      "description": "Latest billing posture copied onto the environment for quick operator visibility.",
       "fieldname": "billing_status_snapshot",
       "fieldtype": "Select",
       "label": "Billing Status Snapshot",
       "options": "\nTrial\nBillable\nSuspended\nArchived"
     },
     {
+      "description": "When usage or cost indicators on this record were last refreshed.",
       "fieldname": "usage_snapshot_on",
       "fieldtype": "Datetime",
       "label": "Usage Snapshot On"
@@ -208,12 +240,14 @@
       "label": "Routing"
     },
     {
+      "description": "Primary hostname the environment should answer for when public routing is enabled.",
       "fieldname": "primary_domain",
       "fieldtype": "Data",
       "label": "Primary Domain"
     },
     {
       "default": "Pending",
+      "description": "Declares whether the environment is internal only, publicly routed, or still waiting for routing readiness.",
       "fieldname": "routing_mode",
       "fieldtype": "Select",
       "label": "Routing Mode",
@@ -221,17 +255,20 @@
     },
     {
       "default": "0",
+      "description": "Check when DNS records are in place and traffic can resolve to the intended entry point.",
       "fieldname": "dns_ready",
       "fieldtype": "Check",
       "label": "DNS Ready"
     },
     {
       "default": "0",
+      "description": "Check when valid TLS is provisioned for the primary hostname.",
       "fieldname": "tls_ready",
       "fieldtype": "Check",
       "label": "TLS Ready"
     },
     {
+      "description": "Expected host header value used by the router or ingress to match requests for this environment.",
       "fieldname": "host_header_value",
       "fieldtype": "Data",
       "label": "Host Header Value"
@@ -242,32 +279,38 @@
       "label": "Deployment"
     },
     {
+      "description": "Target deployment region or geography for this environment.",
       "fieldname": "region",
       "fieldtype": "Data",
       "label": "Region"
     },
     {
+      "description": "Frappe branch intended for this environment's runtime image or release line.",
       "fieldname": "frappe_branch",
       "fieldtype": "Data",
       "label": "Frappe Branch"
     },
     {
+      "description": "Ifitwala Ed branch intended for this environment's application release.",
       "fieldname": "ifitwala_ed_branch",
       "fieldtype": "Data",
       "label": "Ifitwala Ed Branch"
     },
     {
+      "description": "Ifitwala Drive branch intended for this environment when that app is part of the deployment.",
       "fieldname": "ifitwala_drive_branch",
       "fieldtype": "Data",
       "label": "Ifitwala Drive Branch"
     },
     {
+      "description": "Runtime isolation mode for the app layer. Use this to distinguish shared, reserved, and dedicated runtime placement.",
       "fieldname": "deployment_mode",
       "fieldtype": "Select",
       "label": "Deployment Mode",
       "options": "\nShared Runtime\nReserved Runtime\nDedicated Runtime"
     },
     {
+      "description": "Operator notes explaining why this deployment mode was chosen or any exceptions to the default model.",
       "fieldname": "deployment_mode_notes",
       "fieldtype": "Small Text",
       "label": "Deployment Mode Notes"
@@ -278,6 +321,7 @@
       "label": "Database"
     },
     {
+      "description": "Database isolation mode for the environment. Production defaults should remain explicit here.",
       "fieldname": "database_mode",
       "fieldtype": "Select",
       "in_list_view": 1,
@@ -285,22 +329,26 @@
       "options": "\nShared DB Fleet\nDedicated DB Instance"
     },
     {
+      "description": "Operational provider category for the database service backing this site.",
       "fieldname": "db_provider",
       "fieldtype": "Select",
       "label": "DB Provider",
       "options": "\nSelf Managed\nGoogle Managed\nOther Managed"
     },
     {
+      "description": "Database instance or cluster identifier used by operators to locate the environment's database placement.",
       "fieldname": "db_instance_name",
       "fieldtype": "Data",
       "label": "DB Instance Name"
     },
     {
+      "description": "Actual database name for this site's isolated database.",
       "fieldname": "db_name",
       "fieldtype": "Data",
       "label": "DB Name"
     },
     {
+      "description": "Database user allocated to this environment.",
       "fieldname": "db_user",
       "fieldtype": "Data",
       "label": "DB User"
@@ -311,16 +359,19 @@
     },
     {
       "default": "0",
+      "description": "Check when the database is configured with high-availability protections rather than a single-node profile.",
       "fieldname": "db_ha_enabled",
       "fieldtype": "Check",
       "label": "DB HA Enabled"
     },
     {
+      "description": "Most recent successful backup timestamp recorded for this environment's database.",
       "fieldname": "db_last_backup",
       "fieldtype": "Datetime",
       "label": "DB Last Backup"
     },
     {
+      "description": "Date of the latest verified restore test for this environment's database backups.",
       "fieldname": "db_restore_tested_on",
       "fieldtype": "Date",
       "label": "DB Restore Tested On"
@@ -332,11 +383,13 @@
     },
     {
       "default": "0",
+      "description": "Check when realtime and websocket services are enabled for this environment.",
       "fieldname": "socketio_enabled",
       "fieldtype": "Check",
       "label": "SocketIO Enabled"
     },
     {
+      "description": "Named worker sizing or queue-processing profile assigned to this environment.",
       "fieldname": "worker_profile",
       "fieldtype": "Data",
       "label": "Worker Profile"
@@ -347,17 +400,20 @@
       "label": "Storage"
     },
     {
+      "description": "Primary file storage backend used for site files and attachments.",
       "fieldname": "file_storage_provider",
       "fieldtype": "Select",
       "label": "File Storage Provider",
       "options": "\nGCS\nS3 Compatible\nLocal Temporary"
     },
     {
+      "description": "Allowed file storage quota for this environment in gigabytes.",
       "fieldname": "storage_quota_gb",
       "fieldtype": "Float",
       "label": "Storage Quota (GB)"
     },
     {
+      "description": "Expiry date for disposable environments such as trials or sandboxes.",
       "fieldname": "expires_on",
       "fieldtype": "Date",
       "label": "Expires On"
@@ -368,36 +424,43 @@
       "label": "Health and Capacity"
     },
     {
+      "description": "High-level health indicator used for fast operator triage.",
       "fieldname": "health_score",
       "fieldtype": "Float",
       "label": "Health Score"
     },
     {
+      "description": "When health, latency, and saturation indicators were last checked.",
       "fieldname": "last_health_check",
       "fieldtype": "Datetime",
       "label": "Last Health Check"
     },
     {
+      "description": "Average application response time in milliseconds from the latest observation window.",
       "fieldname": "avg_response_ms",
       "fieldtype": "Int",
       "label": "Avg Response (ms)"
     },
     {
+      "description": "Observed error rate for the latest monitoring window.",
       "fieldname": "error_rate_percent",
       "fieldtype": "Percent",
       "label": "Error Rate Percent"
     },
     {
+      "description": "Current queued job backlog across workers for this environment.",
       "fieldname": "queue_backlog_count",
       "fieldtype": "Int",
       "label": "Queue Backlog Count"
     },
     {
+      "description": "Count of slow database queries detected in the latest observation window.",
       "fieldname": "slow_query_count",
       "fieldtype": "Int",
       "label": "Slow Query Count"
     },
     {
+      "description": "Operator-facing capacity status derived from health, load, and saturation signals.",
       "fieldname": "capacity_state",
       "fieldtype": "Select",
       "label": "Capacity State",
@@ -409,19 +472,34 @@
       "label": "Provisioning"
     },
     {
+      "description": "External or internal job identifier for the latest provisioning workflow run.",
       "fieldname": "provisioning_job_id",
       "fieldtype": "Data",
       "label": "Provisioning Job ID"
     },
     {
+      "description": "Most recent provisioning step reached before completion, pause, or failure.",
       "fieldname": "last_provisioning_step",
       "fieldtype": "Data",
       "label": "Last Provisioning Step"
     },
     {
+      "description": "Latest provisioning outcome, warning, or failure detail visible to operators.",
       "fieldname": "provisioning_message",
       "fieldtype": "Small Text",
       "label": "Provisioning Message"
+    },
+    {
+      "description": "Container, compose project, or runtime identifier for the founder demo runtime used by this environment.",
+      "fieldname": "runtime_reference",
+      "fieldtype": "Data",
+      "label": "Runtime Reference"
+    },
+    {
+      "description": "Host or object-storage path where the latest exported site backup for this environment is stored outside the container.",
+      "fieldname": "backup_export_path",
+      "fieldtype": "Data",
+      "label": "Backup Export Path"
     }
   ],
   "grid_page_length": 50,

@@ -132,8 +132,10 @@ For the MVP internal operator flow, the immediate runtime target may be:
   - `frappe`
   - `ifitwala_ed`
   - `ifitwala_drive`
+- optional seeded demo data restored from a prepared Frappe site backup
 - manual or semi-automated site provisioning
 - manual or semi-automated credential handoff
+- early teardown of a demo runtime before expiry when needed, as long as the control-plane record and backup/export notes remain accurate
 
 This is acceptable for demos, internal rehearsals, and early prospect workflows.
 

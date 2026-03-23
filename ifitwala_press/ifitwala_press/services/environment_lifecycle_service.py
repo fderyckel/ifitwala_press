@@ -39,6 +39,8 @@ def create_sandbox(
 	policy: str | None = None,
 	environment_name: str | None = None,
 	expiry_date: str | None = None,
+	demo_seed_mode: str | None = None,
+	demo_seed_reference: str | None = None,
 	status_reason: str | None = None,
 ) -> Document:
 	tenant_doc = _as_doc("Press Tenant", tenant)
@@ -57,6 +59,8 @@ def create_sandbox(
 			"status_reason": status_reason,
 			"policy": policy or tenant_doc.default_policy,
 			"hosting_tier": "Sandbox",
+			"demo_seed_mode": demo_seed_mode or "Blank Site",
+			"demo_seed_reference": demo_seed_reference,
 			"placement_strategy": "Founder Shared Runtime",
 			"expires_on": expiry_date,
 		}
@@ -113,6 +117,8 @@ def complete_sandbox_provisioning(
 	provisioning_job_id: str | None = None,
 	last_provisioning_step: str | None = None,
 	provisioning_message: str | None = None,
+	runtime_reference: str | None = None,
+	backup_export_path: str | None = None,
 	status_reason: str | None = None,
 ) -> Document:
 	environment_doc = _as_doc("Tenant Environment", environment)
@@ -142,6 +148,10 @@ def complete_sandbox_provisioning(
 		environment_doc.last_provisioning_step = last_provisioning_step
 	if provisioning_message:
 		environment_doc.provisioning_message = provisioning_message
+	if runtime_reference:
+		environment_doc.runtime_reference = runtime_reference
+	if backup_export_path:
+		environment_doc.backup_export_path = backup_export_path
 	_transition_environment(
 		environment_doc,
 		SANDBOX_ACTIVE,
@@ -190,6 +200,34 @@ def mark_provisioning_failed(
 	if provisioning_message:
 		environment_doc.provisioning_message = provisioning_message
 	_transition_environment(environment_doc, PROVISIONING_FAILED, reason)
+	return environment_doc
+
+
+def expire_sandbox(
+	environment: str | Document,
+	*,
+	reason: str,
+	last_provisioning_step: str | None = None,
+	provisioning_message: str | None = None,
+	runtime_reference: str | None = None,
+	backup_export_path: str | None = None,
+) -> Document:
+	environment_doc = _as_doc("Tenant Environment", environment)
+	_assert_transition_allowed(environment_doc.site_status, SANDBOX_EXPIRED)
+
+	if environment_doc.environment_type != "Sandbox":
+		frappe.throw("Only sandbox environments can be expired.")
+
+	if last_provisioning_step:
+		environment_doc.last_provisioning_step = last_provisioning_step
+	if provisioning_message:
+		environment_doc.provisioning_message = provisioning_message
+	if runtime_reference:
+		environment_doc.runtime_reference = runtime_reference
+	if backup_export_path:
+		environment_doc.backup_export_path = backup_export_path
+
+	_transition_environment(environment_doc, SANDBOX_EXPIRED, reason)
 	return environment_doc
 
 

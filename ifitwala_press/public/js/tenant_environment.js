@@ -157,6 +157,18 @@ function addLifecycleButtons(frm) {
 						default: frm.doc.provisioning_message || "",
 					},
 					{
+						fieldname: "runtime_reference",
+						fieldtype: "Data",
+						label: __("Runtime Reference"),
+						default: frm.doc.runtime_reference || "",
+					},
+					{
+						fieldname: "backup_export_path",
+						fieldtype: "Data",
+						label: __("Backup Export Path"),
+						default: frm.doc.backup_export_path || "",
+					},
+					{
 						fieldname: "status_reason",
 						fieldtype: "Small Text",
 						label: __("Activation Note"),
@@ -283,6 +295,48 @@ function addLifecycleButtons(frm) {
 				(values) => callLifecycleMethod(frm, "suspend_environment", values, __("Suspending environment")),
 				__("Suspend Environment"),
 				__("Suspend")
+			);
+		}, __("Actions"));
+	}
+
+	if (status === "Sandbox Active") {
+		frm.add_custom_button(__("Expire Sandbox"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "runtime_reference",
+						fieldtype: "Data",
+						label: __("Runtime Reference"),
+						default: frm.doc.runtime_reference || "",
+					},
+					{
+						fieldname: "backup_export_path",
+						fieldtype: "Data",
+						label: __("Backup Export Path"),
+						default: frm.doc.backup_export_path || "",
+					},
+					{
+						fieldname: "last_provisioning_step",
+						fieldtype: "Data",
+						label: __("Last Runtime Step"),
+						default: frm.doc.last_provisioning_step || "Runtime teardown",
+					},
+					{
+						fieldname: "provisioning_message",
+						fieldtype: "Small Text",
+						label: __("Teardown Note"),
+						default: frm.doc.provisioning_message || "",
+					},
+					{
+						fieldname: "reason",
+						fieldtype: "Small Text",
+						label: __("Expiry Reason"),
+						reqd: 1,
+					},
+				],
+				(values) => callLifecycleMethod(frm, "expire_sandbox", values, __("Expiring sandbox")),
+				__("Expire Sandbox"),
+				__("Expire")
 			);
 		}, __("Actions"));
 	}

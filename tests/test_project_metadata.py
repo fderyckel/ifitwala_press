@@ -65,9 +65,13 @@ def test_environment_model_includes_founder_runtime_mvp_fields() -> None:
 		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "tenant_environment.json"
 	).read_text()
 	for field_name in (
+		"demo_seed_mode",
+		"demo_seed_reference",
 		"ifitwala_drive_branch",
 		"socketio_enabled",
 		"worker_profile",
+		"runtime_reference",
+		"backup_export_path",
 	):
 		assert field_name in environment_source
 
@@ -110,6 +114,7 @@ def test_role_bootstrap_and_lifecycle_api_are_declared() -> None:
 	for method_name in (
 		"create_sandbox",
 		"complete_sandbox_provisioning",
+		"expire_sandbox",
 		"qualify_for_production",
 		"mark_provisioning_failed",
 		"provision_production",
