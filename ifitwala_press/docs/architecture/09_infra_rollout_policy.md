@@ -88,6 +88,17 @@ Do not make Cloud SQL or similar provider automation a phase-1 dependency.
 - sandbox backups may be lighter-weight
 - restore discipline may be manual but must be real
 
+### Founder-mode backup note
+For founder-stage dockerized runtimes on one VM:
+
+- do not rely on backups remaining only inside the container filesystem
+- each environment must have its latest successful site backup copied or written to storage outside the container
+- the minimum acceptable target is a persistent host-mounted backup path
+- object storage is acceptable later, but is not a founder-mode requirement
+- for demos and sandbox environments, keeping the latest successful backup may be enough initially
+- for production environments, retention must follow the assigned policy and must not depend on container survival
+- manual restore from that exported backup must be possible even if the original container is gone
+
 ### Health monitoring expectation
 - simple health checks are acceptable
 - manual review and heuristic summaries are acceptable
@@ -119,6 +130,9 @@ Support normal live customer operations with stronger operational consistency an
 ### Backup expectation
 - production backup policy must be explicit
 - restore readiness should be reviewed on a schedule
+- the standard expectation should become off-container and preferably off-host backup storage
+- retention should be policy-driven rather than operator memory
+- backup freshness should become visible in the control plane
 
 ### Health monitoring expectation
 - scheduled summaries should replace purely manual checks
@@ -147,6 +161,8 @@ Support tenants that justify stronger isolation, clearer blast-radius control, a
 ### Backup expectation
 - stronger retention and restore discipline is expected
 - backup freshness and restore confidence should be visible
+- off-host backup storage is the expected baseline
+- restore testing should be tracked and reviewed explicitly
 
 ### Health monitoring expectation
 - monitoring should be more frequent and more reliable
