@@ -34,6 +34,12 @@ from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	suspend_environment as suspend_environment_service,
 )
+from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
+	provision_demo_runtime as provision_demo_runtime_service,
+)
+from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
+	teardown_demo_runtime as teardown_demo_runtime_service,
+)
 
 ACTION_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Ops"}
 
@@ -118,6 +124,43 @@ def complete_sandbox_provisioning(
 
 
 @frappe.whitelist()
+def provision_founder_demo_runtime(
+	environment: str,
+	status_reason: str | None = None,
+) -> dict[str, Any]:
+	_require_lifecycle_role()
+	try:
+		result = provision_demo_runtime_service(environment)
+	except Exception as exc:
+		mark_provisioning_failed_service(
+			environment,
+			reason=str(exc),
+			last_provisioning_step="Founder runtime provisioning",
+			provisioning_message=str(exc),
+		)
+		raise
+
+	document = complete_sandbox_provisioning_service(
+		environment,
+		site_name=result.get("site_name"),
+		primary_domain=result.get("primary_domain"),
+		routing_mode=result.get("routing_mode"),
+		dns_ready=result.get("dns_ready"),
+		tls_ready=result.get("tls_ready"),
+		host_header_value=result.get("host_header_value"),
+		db_name=result.get("db_name"),
+		db_user=result.get("db_user"),
+		provisioning_job_id=result.get("provisioning_job_id"),
+		last_provisioning_step=result.get("last_provisioning_step"),
+		provisioning_message=result.get("provisioning_message"),
+		runtime_reference=result.get("runtime_reference"),
+		backup_export_path=result.get("backup_export_path"),
+		status_reason=status_reason or result.get("status_reason") or "Founder demo runtime provisioned.",
+	)
+	return _serialize_document(document)
+
+
+@frappe.whitelist()
 def qualify_for_production(
 	environment: str,
 	hosting_tier: str,
@@ -176,6 +219,24 @@ def expire_sandbox(
 		provisioning_message=provisioning_message,
 		runtime_reference=runtime_reference,
 		backup_export_path=backup_export_path,
+	)
+	return _serialize_document(document)
+
+
+@frappe.whitelist()
+def teardown_founder_demo_runtime(
+	environment: str,
+	reason: str,
+) -> dict[str, Any]:
+	_require_lifecycle_role()
+	result = teardown_demo_runtime_service(environment, reason=reason)
+	document = expire_sandbox_service(
+		environment,
+		reason=reason,
+		last_provisioning_step=result.get("last_provisioning_step") or "Founder runtime teardown",
+		provisioning_message=result.get("provisioning_message"),
+		runtime_reference=result.get("runtime_reference"),
+		backup_export_path=result.get("backup_export_path"),
 	)
 	return _serialize_document(document)
 

@@ -86,6 +86,15 @@ function addLifecycleButtons(frm) {
 	}
 
 	if (status === "Sandbox Provisioning") {
+		frm.add_custom_button(__("Provision Founder Demo Runtime"), () => {
+			callLifecycleMethod(
+				frm,
+				"provision_founder_demo_runtime",
+				{},
+				__("Provisioning founder demo runtime")
+			);
+		}, __("Actions"));
+
 		frm.add_custom_button(__("Complete Sandbox Provisioning"), () => {
 			frappe.prompt(
 				[
@@ -300,6 +309,28 @@ function addLifecycleButtons(frm) {
 	}
 
 	if (status === "Sandbox Active") {
+		frm.add_custom_button(__("Teardown Founder Demo Runtime"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "reason",
+						fieldtype: "Small Text",
+						label: __("Teardown Reason"),
+						reqd: 1,
+					},
+				],
+				(values) =>
+					callLifecycleMethod(
+						frm,
+						"teardown_founder_demo_runtime",
+						values,
+						__("Tearing down founder demo runtime")
+					),
+				__("Teardown Founder Demo Runtime"),
+				__("Teardown")
+			);
+		}, __("Actions"));
+
 		frm.add_custom_button(__("Expire Sandbox"), () => {
 			frappe.prompt(
 				[

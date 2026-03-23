@@ -108,6 +108,12 @@ frappe.ui.form.on("Press Tenant", {
 						label: __("Demo Seed Reference"),
 					},
 					{
+						fieldname: "auto_provision_runtime",
+						fieldtype: "Check",
+						label: __("Provision Founder Demo Runtime"),
+						default: 1,
+					},
+					{
 						fieldname: "status_reason",
 						fieldtype: "Small Text",
 						label: __("Reason"),
@@ -139,6 +145,32 @@ frappe.ui.form.on("Press Tenant", {
 							});
 							frm.reload_doc();
 							frappe.set_route("Form", "Tenant Environment", message.name);
+
+							if (!values.auto_provision_runtime) {
+								return;
+							}
+
+							frappe.call({
+								method: "ifitwala_press.api.lifecycle.provision_founder_demo_runtime",
+								args: {
+									environment: message.name,
+								},
+								freeze: true,
+								freeze_message: __("Provisioning founder demo runtime"),
+								callback: () => {
+									frappe.show_alert({
+										message: __("Founder demo runtime provisioned"),
+										indicator: "green",
+									});
+									if (
+										window.cur_frm &&
+										cur_frm.doctype === "Tenant Environment" &&
+										cur_frm.doc.name === message.name
+									) {
+										cur_frm.reload_doc();
+									}
+								},
+							});
 						},
 					});
 				},

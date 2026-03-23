@@ -22,6 +22,7 @@ def test_architecture_docs_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "08_initial_build_order.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "10_mvp_execution_plan.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "12_upstream_frappe_alignment_2026_q1.md").is_file()
+	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "13_founder_runtime_adapter_contract.md").is_file()
 
 
 def test_runtime_baseline_metadata_is_consistent() -> None:
@@ -82,6 +83,7 @@ def test_service_layer_files_exist() -> None:
 	assert (
 		ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "environment_lifecycle_service.py"
 	).is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "founder_runtime_service.py").is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "transition_log_service.py").is_file()
 
 
@@ -115,7 +117,9 @@ def test_role_bootstrap_and_lifecycle_api_are_declared() -> None:
 	for method_name in (
 		"create_sandbox",
 		"complete_sandbox_provisioning",
+		"provision_founder_demo_runtime",
 		"expire_sandbox",
+		"teardown_founder_demo_runtime",
 		"qualify_for_production",
 		"mark_provisioning_failed",
 		"provision_production",
