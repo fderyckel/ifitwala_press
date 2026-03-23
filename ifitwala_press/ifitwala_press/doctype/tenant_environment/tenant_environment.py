@@ -12,6 +12,7 @@ LIVE_STATE = "Live"
 class TenantEnvironment(Document):
 	def validate(self) -> None:
 		self._normalize_site_name()
+		self._normalize_runtime_fields()
 		self._validate_hosting_and_database_constraints()
 		self._validate_routing_constraints()
 		self._validate_live_requirements()
@@ -23,6 +24,12 @@ class TenantEnvironment(Document):
 		self.site_name = self.site_name.strip().lower()
 		if not SITE_NAME_PATTERN.fullmatch(self.site_name):
 			frappe.throw("Site Name must use lowercase letters, numbers, dots, and hyphens only.")
+
+	def _normalize_runtime_fields(self) -> None:
+		for fieldname in ("frappe_branch", "ifitwala_ed_branch", "ifitwala_drive_branch", "worker_profile"):
+			value = self.get(fieldname)
+			if isinstance(value, str):
+				self.set(fieldname, value.strip())
 
 	def _validate_hosting_and_database_constraints(self) -> None:
 		if self.hosting_tier == "VIP" and self.database_mode == "Shared DB Fleet":
@@ -42,8 +49,14 @@ class TenantEnvironment(Document):
 		if not self.policy:
 			frappe.throw("Policy is required before an environment can be marked Live.")
 
+		if not self.deployment_mode:
+			frappe.throw("Deployment Mode is required before an environment can be marked Live.")
+
 		if not self.database_mode:
 			frappe.throw("Database Mode is required before an environment can be marked Live.")
+
+		if not self.ifitwala_ed_branch:
+			frappe.throw("Ifitwala Ed Branch is required before an environment can be marked Live.")
 
 		if self.database_mode == "Dedicated DB Instance" and not self.db_instance_name:
 			frappe.throw("DB Instance Name is required before a dedicated environment can be marked Live.")

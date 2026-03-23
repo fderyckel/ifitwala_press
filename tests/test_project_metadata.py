@@ -57,6 +57,18 @@ def test_core_phase_one_doctype_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "tenant_cost_snapshot.json").is_file()
 
 
+def test_environment_model_includes_founder_runtime_mvp_fields() -> None:
+	environment_source = (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "tenant_environment.json"
+	).read_text()
+	for field_name in (
+		"ifitwala_drive_branch",
+		"socketio_enabled",
+		"worker_profile",
+	):
+		assert field_name in environment_source
+
+
 def test_service_layer_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "__init__.py").is_file()
 	assert (

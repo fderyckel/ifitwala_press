@@ -45,6 +45,7 @@
     "region",
     "frappe_branch",
     "ifitwala_ed_branch",
+    "ifitwala_drive_branch",
     "deployment_mode",
     "deployment_mode_notes",
     "section_break_database",
@@ -57,6 +58,9 @@
     "db_ha_enabled",
     "db_last_backup",
     "db_restore_tested_on",
+    "section_break_runtime_services",
+    "socketio_enabled",
+    "worker_profile",
     "section_break_storage",
     "file_storage_provider",
     "storage_quota_gb",
@@ -253,6 +257,11 @@
       "label": "Ifitwala Ed Branch"
     },
     {
+      "fieldname": "ifitwala_drive_branch",
+      "fieldtype": "Data",
+      "label": "Ifitwala Drive Branch"
+    },
+    {
       "fieldname": "deployment_mode",
       "fieldtype": "Select",
       "label": "Deployment Mode",
@@ -315,6 +324,22 @@
       "fieldname": "db_restore_tested_on",
       "fieldtype": "Date",
       "label": "DB Restore Tested On"
+    },
+    {
+      "fieldname": "section_break_runtime_services",
+      "fieldtype": "Section Break",
+      "label": "Runtime Services"
+    },
+    {
+      "default": "0",
+      "fieldname": "socketio_enabled",
+      "fieldtype": "Check",
+      "label": "SocketIO Enabled"
+    },
+    {
+      "fieldname": "worker_profile",
+      "fieldtype": "Data",
+      "label": "Worker Profile"
     },
     {
       "fieldname": "section_break_storage",

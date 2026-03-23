@@ -123,6 +123,25 @@ At minimum, phase-1 procedures should make explicit:
 
 Shared runtime means shared only across environments with a compatible approved app bundle.
 
+### 5.1 MVP founder runtime shape
+
+For the MVP internal operator flow, the immediate runtime target may be:
+
+- one same-VM dockerized founder runtime
+- one minimal approved app bundle containing:
+  - `frappe`
+  - `ifitwala_ed`
+  - `ifitwala_drive`
+- manual or semi-automated site provisioning
+- manual or semi-automated credential handoff
+
+This is acceptable for demos, internal rehearsals, and early prospect workflows.
+
+It does not replace the later target shape for paying customers:
+- stronger runtime / DB separation
+- stronger Redis isolation
+- fuller orchestration
+
 ---
 
 ## 6. Routing contract
