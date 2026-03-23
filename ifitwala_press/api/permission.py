@@ -12,4 +12,5 @@ PRESS_APP_ROLES = (
 
 
 def has_app_permission() -> bool:
-	return any(frappe.has_role(role_name) for role_name in PRESS_APP_ROLES)
+	user_roles = set(frappe.get_roles())
+	return not set(PRESS_APP_ROLES).isdisjoint(user_roles)

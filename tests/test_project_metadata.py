@@ -1,4 +1,7 @@
+import importlib
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import ifitwala_press
 
@@ -192,3 +195,16 @@ def test_business_api_methods_are_declared() -> None:
 		"record_cost_snapshot",
 	):
 		assert f"def {method_name}(" in business_api_source
+
+
+def test_app_permission_uses_server_role_lookup(monkeypatch) -> None:
+	fake_frappe = SimpleNamespace(get_roles=lambda: ["Ifitwala Press Ops"])
+	monkeypatch.setitem(sys.modules, "frappe", fake_frappe)
+	sys.modules.pop("ifitwala_press.api.permission", None)
+
+	permission = importlib.import_module("ifitwala_press.api.permission")
+
+	assert permission.has_app_permission() is True
+
+	fake_frappe.get_roles = lambda: ["System Manager"]
+	assert permission.has_app_permission() is False
