@@ -21,6 +21,7 @@ def test_architecture_docs_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "00_control_plane_model.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "08_initial_build_order.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "10_mvp_execution_plan.md").is_file()
+	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "12_upstream_frappe_alignment_2026_q1.md").is_file()
 
 
 def test_runtime_baseline_metadata_is_consistent() -> None:
