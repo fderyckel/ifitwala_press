@@ -26,14 +26,24 @@ It translates those documents into:
 
 As of this plan:
 - architecture and rollout docs are substantially defined
-- `Tenant Policy` exists as the first real DocType
-- the remaining control-plane backbone is not yet implemented
-- lifecycle actions are defined in docs, but not yet embodied in code
-- founder-mode deployment is acceptable by policy
+- the core control-plane backbone now exists in code
+- `Tenant Policy`, `Press Tenant`, `Tenant Environment`, and `Tenant Transition Log` are implemented
+- `Tenant Subscription`, `Tenant Usage Snapshot`, and `Tenant Cost Snapshot` also exist
+- lifecycle actions are implemented in the service and API layers
+- role bootstrap and baseline Desk/operator surfaces are implemented
+- a founder-mode lifecycle flow has already been proven on the control plane
 
-This means the next work is not deeper infrastructure automation.
+What remains incomplete is no longer the basic control-plane backbone.
 
-The next work is to make the control-plane backbone real.
+What remains incomplete is:
+- the MariaDB 11.8 compatibility proof on a supported founder runtime
+- explicit founder-runtime app bundle and cache topology intent
+- real provisioning of `ifitwala_ed` + `ifitwala_drive` environments
+- a governed founder-mode runbook that maps control-plane actions to real runtime work
+
+This means the next work is not more basic DocType scaffolding.
+
+The next work is to connect the control plane to a real founder runtime without drifting into premature full orchestration.
 
 ---
 
@@ -71,9 +81,9 @@ The control plane must still record:
 
 ---
 
-## 3. Immediate gate before feature build
+## 3. Immediate gate before provisioning build
 
-Before deeper implementation, run a short compatibility spike around the chosen DB baseline.
+Before deeper provisioning implementation, run a short compatibility spike around the chosen runtime baseline.
 
 ### Gate
 
@@ -99,6 +109,7 @@ The spike must happen before:
 - deployment scripts
 - managed DB automation
 - deeper provisioning logic
+- semi-automated docker provisioning from the control plane
 
 This spike should use the founder-mode self-managed MariaDB posture, not a managed DB assumption.
 
@@ -113,7 +124,9 @@ The implementation sequence for the MVP is:
 3. implement the workflow backbone
 4. make the operator surfaces usable
 5. prove one manual end-to-end lifecycle flow
-6. only then add subscription, usage, cost, and health follow-ups
+6. extend the environment model for real founder-runtime deployment intent
+7. prove one real founder-mode runtime for `ifitwala_ed` + `ifitwala_drive`
+8. only then add deeper provisioning automation and remote orchestration
 
 This follows the existing build-order rules.
 
@@ -185,12 +198,14 @@ Initial service files should include:
 Build these first and no more:
 
 1. Create Sandbox
-2. Qualify for Production
-3. Provision Production
-4. Mark Live
-5. Suspend Environment
-6. Restore Environment
-7. Archive Environment
+2. Complete Sandbox Provisioning
+3. Qualify for Production
+4. Mark Provisioning Failed
+5. Provision Production
+6. Mark Live
+7. Suspend Environment
+8. Restore Environment
+9. Archive Environment
 
 ### Required outcome
 
@@ -280,6 +295,18 @@ The goal is:
 - the transition history is trustworthy
 - the manual runbook matches the control-plane model
 
+### Current status
+
+This control-plane proof has already been achieved.
+
+The still-open proof is different:
+- a real founder-mode runtime exists
+- `ifitwala_ed` installs successfully there
+- `ifitwala_drive` installs successfully there
+- one real demo environment can be provisioned and then reflected back into the control plane
+
+That runtime proof is now the live MVP gap.
+
 ---
 
 ## 10. What is explicitly deferred
@@ -298,21 +325,24 @@ These may come later after the backbone is proven.
 
 ---
 
-## 11. File-by-file implementation order
+## 11. Next file-by-file implementation order
 
 Use this order unless real implementation friction forces a small adjustment:
 
-1. `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/doctype/press_tenant/`
-2. `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/doctype/tenant_environment/`
-3. `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/doctype/tenant_transition_log/`
-4. `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/services/environment_lifecycle_service.py`
-5. `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/services/transition_log_service.py`
-6. server action wiring for the backbone lifecycle actions
-7. list/detail usability improvements for tenant and environment
-8. only after that, `Tenant Subscription`
-9. then `Tenant Usage Snapshot`
-10. then `Tenant Cost Snapshot`
-11. then health-check structure
+1. update this execution plan and related docs so they reflect the implemented backbone
+2. extend `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/doctype/tenant_environment/`
+   to capture the real founder runtime shape:
+   - app bundle intent
+   - `ifitwala_drive` install intent or branch
+   - cache / queue topology intent
+   - founder runtime profile notes
+3. add or refine a service contract in
+   `/Users/francois.de/Documents/ifitwala_press/ifitwala_press/ifitwala_press/services/environment_lifecycle_service.py`
+   for founder-mode provisioning completion and failure capture
+4. document the founder runtime runbook for a same-VM dockerized runtime using an approved app bundle
+5. prove one real runtime with `ifitwala_ed` + `ifitwala_drive`
+6. only after that, build a semi-automated provisioning adapter
+7. only after the adapter works, evaluate Agent-style remote execution and later multi-host orchestration
 
 ---
 
@@ -327,5 +357,6 @@ The MVP is "done enough" when all of the following are true:
 - transition logs are written consistently
 - one tenant can be taken from lead to live through a manual but governed founder-mode workflow
 - operators can review the history and current posture without digging through raw implementation details
+- one real founder runtime for `ifitwala_ed` + `ifitwala_drive` has been proven operationally
 
 If those conditions are not true, the platform is not yet ready for deeper infra automation.
