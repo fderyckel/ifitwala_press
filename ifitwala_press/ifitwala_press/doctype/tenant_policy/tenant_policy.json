@@ -20,6 +20,12 @@
     "policy_type",
     "column_break_identity",
     "default_region",
+    "section_break_provider_defaults",
+    "default_primary_cloud_provider",
+    "default_runtime_provider",
+    "column_break_provider_defaults",
+    "default_object_storage_provider",
+    "default_dns_provider",
     "section_break_hosting_defaults",
     "default_database_mode",
     "default_deployment_mode",
@@ -92,6 +98,43 @@
       "fieldname": "default_region",
       "fieldtype": "Data",
       "label": "Default Region"
+    },
+    {
+      "fieldname": "section_break_provider_defaults",
+      "fieldtype": "Section Break",
+      "label": "Provider Defaults"
+    },
+    {
+      "default": "Google Cloud",
+      "fieldname": "default_primary_cloud_provider",
+      "fieldtype": "Select",
+      "label": "Default Primary Cloud Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "default": "Google Cloud",
+      "fieldname": "default_runtime_provider",
+      "fieldtype": "Select",
+      "label": "Default Runtime Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "fieldname": "column_break_provider_defaults",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "Google Cloud",
+      "fieldname": "default_object_storage_provider",
+      "fieldtype": "Select",
+      "label": "Default Object Storage Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "default": "Google Cloud DNS",
+      "fieldname": "default_dns_provider",
+      "fieldtype": "Select",
+      "label": "Default DNS Provider",
+      "options": "\nGoogle Cloud DNS\nOVH DNS\nOther"
     },
     {
       "fieldname": "section_break_hosting_defaults",

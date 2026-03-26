@@ -93,6 +93,14 @@ enable_docker() {
     fi
 }
 
+install_diagnostics() {
+    install -d -m 0755 "${install_root}/diagnostics"
+    install -m 0755 "${ops_root}/diagnostics/gcp-platform-doctor.sh" "${install_root}/diagnostics/gcp-platform-doctor.sh"
+    install -m 0755 "${ops_root}/diagnostics/founder-runtime-doctor.sh" "${install_root}/diagnostics/founder-runtime-doctor.sh"
+    install -m 0755 "${ops_root}/diagnostics/storage-backup-doctor.sh" "${install_root}/diagnostics/storage-backup-doctor.sh"
+    install -m 0644 "${ops_root}/diagnostics/lib.sh" "${install_root}/diagnostics/lib.sh"
+}
+
 install_backup_timer() {
     INSTALL_ROOT="${install_root}" \
     ADAPTER_ENV_PATH="${adapter_env_path}" \
@@ -109,7 +117,8 @@ print_next_steps() {
     printf '%s\n' "1. Edit ${adapter_env_path} and pin IFITWALA_FOUNDER_RUNTIME_IMAGE to the published runtime image tag."
     printf '%s\n' "2. Authenticate gcloud on this host and confirm access to the configured Cloud DNS zone."
     printf '%s\n' "3. Restart the control-plane process with the adapter env loaded."
-    printf '%s\n' "4. Run one sandbox provision from Ifitwala_Press and verify DNS, shared edge proxy routing, and S3-backed file writes."
+    printf '%s\n' "4. Run /usr/local/lib/ifitwala-founder-runtime/diagnostics/gcp-platform-doctor.sh ${adapter_env_path}."
+    printf '%s\n' "5. Run one sandbox provision from Ifitwala_Press and verify DNS, shared edge proxy routing, and Cloud-Storage-backed file writes."
 
     if [[ -n "${operator_user}" ]] && id "${operator_user}" >/dev/null 2>&1; then
         printf '%s\n' "User ${operator_user} was added to the docker group. A new login session is required before docker commands work without sudo."
@@ -122,5 +131,6 @@ install_adapter_env
 runtime_root="$(load_runtime_root)"
 ensure_runtime_dirs "${runtime_root}"
 enable_docker
+install_diagnostics
 install_backup_timer
 print_next_steps "${runtime_root}"

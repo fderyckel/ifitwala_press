@@ -9,6 +9,7 @@ class TenantPolicy(Document):
 		self._validate_quota_values()
 		self._validate_lifecycle_rules()
 		self._validate_backup_rules()
+		self._validate_provider_defaults()
 		self._validate_storage_defaults()
 		self._validate_policy_constraints()
 
@@ -44,6 +45,19 @@ class TenantPolicy(Document):
 
 		if self.requires_restore_test and not self.restore_test_frequency_days:
 			frappe.throw("Restore Test Frequency Days is required when Requires Restore Test is enabled.")
+
+	def _validate_provider_defaults(self) -> None:
+		if self.policy_type != "Sandbox" and self.default_primary_cloud_provider == "OVH":
+			frappe.throw("Only Sandbox policies can default Primary Cloud Provider to OVH.")
+
+		if self.policy_type != "Sandbox" and self.default_runtime_provider == "OVH":
+			frappe.throw("Only Sandbox policies can default Runtime Provider to OVH.")
+
+		if self.default_file_storage_provider == "GCS" and self.default_object_storage_provider != "Google Cloud":
+			frappe.throw("GCS file storage requires Default Object Storage Provider to be Google Cloud.")
+
+		if self.default_backup_storage_provider == "GCS" and self.default_object_storage_provider != "Google Cloud":
+			frappe.throw("GCS backup storage requires Default Object Storage Provider to be Google Cloud.")
 
 	def _validate_storage_defaults(self) -> None:
 		if self.default_file_storage_provider == "Local Temporary" and self.policy_type != "Sandbox":

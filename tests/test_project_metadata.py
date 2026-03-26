@@ -27,6 +27,8 @@ def test_architecture_docs_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "15_founder_runtime_docker_stack.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "16_founder_edge_proxy_contract.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "17_founder_runtime_image_and_host_bootstrap.md").is_file()
+	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "18_founder_gcp_diagnostics.md").is_file()
+	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "19_hybrid_provider_placement_contract.md").is_file()
 
 
 def test_runtime_baseline_metadata_is_consistent() -> None:
@@ -81,6 +83,10 @@ def test_environment_model_includes_founder_runtime_mvp_fields() -> None:
 		"backup_storage_class",
 		"runtime_reference",
 		"backup_export_path",
+		"primary_cloud_provider",
+		"runtime_provider",
+		"object_storage_provider",
+		"dns_provider",
 	):
 		assert field_name in environment_source
 
@@ -94,6 +100,10 @@ def test_policy_model_includes_s3_storage_defaults() -> None:
 		"default_file_storage_class",
 		"default_backup_storage_provider",
 		"default_backup_storage_class",
+		"default_primary_cloud_provider",
+		"default_runtime_provider",
+		"default_object_storage_provider",
+		"default_dns_provider",
 	):
 		assert field_name in policy_source
 
@@ -121,6 +131,11 @@ def test_founder_runtime_ops_assets_exist() -> None:
 		"ops/founder_runtime/host/install-backup-timer.sh",
 		"ops/founder_runtime/host/systemd/ifitwala-founder-backup.service.template",
 		"ops/founder_runtime/host/systemd/ifitwala-founder-backup.timer.template",
+		"ops/founder_runtime/diagnostics/README.md",
+		"ops/founder_runtime/diagnostics/lib.sh",
+		"ops/founder_runtime/diagnostics/gcp-platform-doctor.sh",
+		"ops/founder_runtime/diagnostics/founder-runtime-doctor.sh",
+		"ops/founder_runtime/diagnostics/storage-backup-doctor.sh",
 		"ops/founder_runtime/edge_proxy/README.md",
 		"ops/founder_runtime/edge_proxy/compose.yaml",
 		"ops/founder_runtime/edge_proxy/nginx.conf",
@@ -143,11 +158,16 @@ def test_founder_runtime_payload_includes_storage_contract() -> None:
 	).read_text()
 	for token in (
 		'"policy"',
+		'"providers"',
 		'"storage"',
 		'"file_storage_class"',
 		'"backup_storage_provider"',
 		'"backup_storage_class"',
 		'"site_storage_apps"',
+		'"primary_cloud_provider"',
+		'"runtime_provider"',
+		'"object_storage_provider"',
+		'"dns_provider"',
 	):
 		assert token in service_source
 
@@ -207,6 +227,36 @@ def test_founder_host_bootstrap_doc_mentions_image_and_backup_timer() -> None:
 		"`gcloud`",
 	):
 		assert token in host_doc
+
+
+def test_founder_gcp_diagnostics_doc_mentions_google_cloud_tools() -> None:
+	diagnostics_doc = (
+		ROOT / "ifitwala_press" / "docs" / "architecture" / "18_founder_gcp_diagnostics.md"
+	).read_text()
+	for token in (
+		"`gcp-platform-doctor.sh`",
+		"`founder-runtime-doctor.sh`",
+		"`storage-backup-doctor.sh`",
+		"Cloud Storage",
+		"Compute Engine",
+		"Cloud DNS",
+	):
+		assert token in diagnostics_doc
+
+
+def test_hybrid_provider_placement_doc_mentions_gcp_and_ovh() -> None:
+	provider_doc = (
+		ROOT / "ifitwala_press" / "docs" / "architecture" / "19_hybrid_provider_placement_contract.md"
+	).read_text()
+	for token in (
+		"`primary_cloud_provider`",
+		"`runtime_provider`",
+		"`object_storage_provider`",
+		"`dns_provider`",
+		"Google Cloud",
+		"OVH",
+	):
+		assert token in provider_doc
 
 
 def test_api_and_install_files_exist() -> None:

@@ -11,6 +11,10 @@ S3_COMPATIBLE = "S3 Compatible"
 LOCAL_TEMPORARY = "Local Temporary"
 FREQUENT_ACCESS = "Frequent Access"
 INFREQUENT_ACCESS = "Infrequent Access"
+GCS = "GCS"
+GOOGLE_CLOUD = "Google Cloud"
+OVH = "OVH"
+GOOGLE_CLOUD_DNS = "Google Cloud DNS"
 
 
 class TenantEnvironment(Document):
@@ -19,6 +23,7 @@ class TenantEnvironment(Document):
 		self._normalize_runtime_fields()
 		self._validate_demo_seed_configuration()
 		self._validate_hosting_and_database_constraints()
+		self._validate_provider_constraints()
 		self._validate_storage_constraints()
 		self._validate_routing_constraints()
 		self._validate_live_requirements()
@@ -40,6 +45,10 @@ class TenantEnvironment(Document):
 			"demo_seed_reference",
 			"runtime_reference",
 			"backup_export_path",
+			"primary_cloud_provider",
+			"runtime_provider",
+			"object_storage_provider",
+			"dns_provider",
 		):
 			value = self.get(fieldname)
 			if isinstance(value, str):
@@ -55,6 +64,19 @@ class TenantEnvironment(Document):
 
 		if self.database_mode == "Dedicated DB Instance" and not self.db_instance_name:
 			frappe.throw("DB Instance Name is required for Dedicated DB Instance mode.")
+
+	def _validate_provider_constraints(self) -> None:
+		if self.environment_type != "Sandbox" and self.primary_cloud_provider == OVH:
+			frappe.throw("Only sandbox environments can currently place Primary Cloud Provider on OVH.")
+
+		if self.environment_type != "Sandbox" and self.runtime_provider == OVH:
+			frappe.throw("Only sandbox environments can currently place Runtime Provider on OVH.")
+
+		if self.file_storage_provider == GCS and self.object_storage_provider != GOOGLE_CLOUD:
+			frappe.throw("GCS file storage requires Object Storage Provider to be Google Cloud.")
+
+		if self.backup_storage_provider == GCS and self.object_storage_provider != GOOGLE_CLOUD:
+			frappe.throw("GCS backup storage requires Object Storage Provider to be Google Cloud.")
 
 	def _validate_storage_constraints(self) -> None:
 		if self.file_storage_provider == LOCAL_TEMPORARY and self.environment_type != "Sandbox":
@@ -81,6 +103,9 @@ class TenantEnvironment(Document):
 		if self.routing_mode == "Public" and not self.primary_domain:
 			frappe.throw("Primary Domain is required when Routing Mode is Public.")
 
+		if self.routing_mode == "Public" and not self.dns_provider:
+			frappe.throw("DNS Provider is required when Routing Mode is Public.")
+
 	def _validate_live_requirements(self) -> None:
 		if self.site_status != LIVE_STATE:
 			return
@@ -99,6 +124,30 @@ class TenantEnvironment(Document):
 
 		if not self.ifitwala_drive_branch:
 			frappe.throw("Ifitwala Drive Branch is required before an environment can be marked Live.")
+
+		if not self.primary_cloud_provider:
+			frappe.throw("Primary Cloud Provider is required before an environment can be marked Live.")
+
+		if not self.runtime_provider:
+			frappe.throw("Runtime Provider is required before an environment can be marked Live.")
+
+		if not self.object_storage_provider:
+			frappe.throw("Object Storage Provider is required before an environment can be marked Live.")
+
+		if not self.dns_provider:
+			frappe.throw("DNS Provider is required before an environment can be marked Live.")
+
+		if self.primary_cloud_provider != GOOGLE_CLOUD:
+			frappe.throw("Primary Cloud Provider must be Google Cloud before an environment can be marked Live.")
+
+		if self.runtime_provider != GOOGLE_CLOUD:
+			frappe.throw("Runtime Provider must be Google Cloud before an environment can be marked Live.")
+
+		if self.object_storage_provider != GOOGLE_CLOUD:
+			frappe.throw("Object Storage Provider must be Google Cloud before an environment can be marked Live.")
+
+		if self.dns_provider != GOOGLE_CLOUD_DNS:
+			frappe.throw("DNS Provider must be Google Cloud DNS before an environment can be marked Live.")
 
 		if self.file_storage_provider != S3_COMPATIBLE:
 			frappe.throw("File Storage Provider must be S3 Compatible before an environment can be marked Live.")

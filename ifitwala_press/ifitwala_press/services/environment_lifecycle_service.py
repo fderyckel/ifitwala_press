@@ -22,6 +22,10 @@ DEFAULT_FILE_STORAGE_PROVIDER = "S3 Compatible"
 DEFAULT_FILE_STORAGE_CLASS = "Frequent Access"
 DEFAULT_BACKUP_STORAGE_PROVIDER = "S3 Compatible"
 DEFAULT_BACKUP_STORAGE_CLASS = "Infrequent Access"
+DEFAULT_PRIMARY_CLOUD_PROVIDER = "Google Cloud"
+DEFAULT_RUNTIME_PROVIDER = "Google Cloud"
+DEFAULT_OBJECT_STORAGE_PROVIDER = "Google Cloud"
+DEFAULT_DNS_PROVIDER = "Google Cloud DNS"
 
 ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 	LEAD: {SANDBOX_PROVISIONING, PRODUCTION_QUALIFICATION, ARCHIVED},
@@ -71,6 +75,7 @@ def create_sandbox(
 			"expires_on": expiry_date,
 		}
 	)
+	_apply_provider_defaults(environment, policy_doc)
 	_apply_storage_defaults(environment, policy_doc)
 	_update_transition_metadata(environment, status_reason)
 	environment.insert()
@@ -94,6 +99,10 @@ def qualify_for_production(
 	conversion_strategy: str,
 	policy: str | None = None,
 	region: str | None = None,
+	primary_cloud_provider: str | None = None,
+	runtime_provider: str | None = None,
+	object_storage_provider: str | None = None,
+	dns_provider: str | None = None,
 	status_reason: str | None = None,
 ) -> Document:
 	environment_doc = _as_doc("Tenant Environment", environment)
@@ -107,7 +116,16 @@ def qualify_for_production(
 	environment_doc.database_mode = database_mode
 	environment_doc.policy = policy_name
 	environment_doc.region = region or environment_doc.region
+	if primary_cloud_provider:
+		environment_doc.primary_cloud_provider = primary_cloud_provider
+	if runtime_provider:
+		environment_doc.runtime_provider = runtime_provider
+	if object_storage_provider:
+		environment_doc.object_storage_provider = object_storage_provider
+	if dns_provider:
+		environment_doc.dns_provider = dns_provider
 	environment_doc.status_reason = status_reason or conversion_strategy
+	_apply_provider_defaults(environment_doc, policy_doc)
 	_apply_storage_defaults(environment_doc, policy_doc)
 	_transition_environment(environment_doc, PRODUCTION_QUALIFICATION, status_reason or conversion_strategy)
 	return environment_doc
@@ -128,6 +146,10 @@ def complete_sandbox_provisioning(
 	last_provisioning_step: str | None = None,
 	provisioning_message: str | None = None,
 	runtime_reference: str | None = None,
+	primary_cloud_provider: str | None = None,
+	runtime_provider: str | None = None,
+	object_storage_provider: str | None = None,
+	dns_provider: str | None = None,
 	file_storage_provider: str | None = None,
 	file_storage_class: str | None = None,
 	backup_storage_provider: str | None = None,
@@ -164,6 +186,14 @@ def complete_sandbox_provisioning(
 		environment_doc.provisioning_message = provisioning_message
 	if runtime_reference:
 		environment_doc.runtime_reference = runtime_reference
+	if primary_cloud_provider:
+		environment_doc.primary_cloud_provider = primary_cloud_provider
+	if runtime_provider:
+		environment_doc.runtime_provider = runtime_provider
+	if object_storage_provider:
+		environment_doc.object_storage_provider = object_storage_provider
+	if dns_provider:
+		environment_doc.dns_provider = dns_provider
 	if file_storage_provider:
 		environment_doc.file_storage_provider = file_storage_provider
 	if file_storage_class:
@@ -341,6 +371,31 @@ def _apply_storage_defaults(environment: Document, policy: Document | None) -> N
 		environment.backup_storage_class
 		or getattr(policy, "default_backup_storage_class", None)
 		or DEFAULT_BACKUP_STORAGE_CLASS
+	)
+
+
+def _apply_provider_defaults(environment: Document, policy: Document | None) -> None:
+	environment.primary_cloud_provider = (
+		environment.primary_cloud_provider
+		or getattr(policy, "default_primary_cloud_provider", None)
+		or DEFAULT_PRIMARY_CLOUD_PROVIDER
+	)
+	environment.runtime_provider = (
+		environment.runtime_provider
+		or getattr(policy, "default_runtime_provider", None)
+		or environment.primary_cloud_provider
+		or DEFAULT_RUNTIME_PROVIDER
+	)
+	environment.object_storage_provider = (
+		environment.object_storage_provider
+		or getattr(policy, "default_object_storage_provider", None)
+		or environment.primary_cloud_provider
+		or DEFAULT_OBJECT_STORAGE_PROVIDER
+	)
+	environment.dns_provider = (
+		environment.dns_provider
+		or getattr(policy, "default_dns_provider", None)
+		or DEFAULT_DNS_PROVIDER
 	)
 
 	if not environment.storage_quota_gb and policy and policy.storage_quota_gb not in (None, ""):

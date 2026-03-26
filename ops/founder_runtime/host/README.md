@@ -28,3 +28,4 @@ The founder host contract is:
 4. Authenticate `gcloud` on the founder VM and verify the DNS zone access.
 5. Point `IFITWALA_FOUNDER_RUNTIME_IMAGE` at the published image tag.
 6. Run one real sandbox provision from `ifitwala_press`.
+7. Run the diagnostics in `../diagnostics/` whenever provisioning or runtime issues need fast triage.

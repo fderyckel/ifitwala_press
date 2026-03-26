@@ -37,6 +37,12 @@
     "estimated_monthly_cost",
     "billing_status_snapshot",
     "usage_snapshot_on",
+    "section_break_provider_placement",
+    "primary_cloud_provider",
+    "runtime_provider",
+    "column_break_provider_placement",
+    "object_storage_provider",
+    "dns_provider",
     "section_break_routing",
     "primary_domain",
     "routing_mode",
@@ -237,6 +243,43 @@
       "fieldname": "usage_snapshot_on",
       "fieldtype": "Datetime",
       "label": "Usage Snapshot On"
+    },
+    {
+      "fieldname": "section_break_provider_placement",
+      "fieldtype": "Section Break",
+      "label": "Provider Placement"
+    },
+    {
+      "description": "Primary infrastructure provider this environment should be associated with for lifecycle and placement decisions.",
+      "fieldname": "primary_cloud_provider",
+      "fieldtype": "Select",
+      "label": "Primary Cloud Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "description": "Runtime host provider for the application layer. This can differ from the primary provider for low-cost sandbox placement.",
+      "fieldname": "runtime_provider",
+      "fieldtype": "Select",
+      "label": "Runtime Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "fieldname": "column_break_provider_placement",
+      "fieldtype": "Column Break"
+    },
+    {
+      "description": "Underlying provider for the object storage account backing files and retained backups.",
+      "fieldname": "object_storage_provider",
+      "fieldtype": "Select",
+      "label": "Object Storage Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "description": "Operational DNS authority for this environment's hostname intent.",
+      "fieldname": "dns_provider",
+      "fieldtype": "Select",
+      "label": "DNS Provider",
+      "options": "\nGoogle Cloud DNS\nOVH DNS\nOther"
     },
     {
       "fieldname": "section_break_routing",

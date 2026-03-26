@@ -83,6 +83,7 @@ The payload contains:
 - tenant summary
 - policy summary
 - environment summary
+- provider placement
 - storage contract
 - site name
 - branch intent

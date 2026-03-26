@@ -24,6 +24,8 @@ The intended operating model is:
   Immutable runtime image build context for `frappe` + `ifitwala_ed` + `ifitwala_drive`
 - `host/`
   Founder GCE VM bootstrap and daily backup timer installation assets
+- `diagnostics/`
+  Google-Cloud-focused incident and health checks for the founder runtime
 - `templates/compose.yaml`
   Same-VM Docker Compose layout for one tenant runtime
 - `templates/nginx-default.conf`
