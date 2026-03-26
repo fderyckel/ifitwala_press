@@ -99,6 +99,10 @@ def complete_sandbox_provisioning(
 	last_provisioning_step: str | None = None,
 	provisioning_message: str | None = None,
 	runtime_reference: str | None = None,
+	file_storage_provider: str | None = None,
+	file_storage_class: str | None = None,
+	backup_storage_provider: str | None = None,
+	backup_storage_class: str | None = None,
 	backup_export_path: str | None = None,
 	status_reason: str | None = None,
 ) -> dict[str, Any]:
@@ -117,6 +121,10 @@ def complete_sandbox_provisioning(
 		last_provisioning_step=last_provisioning_step,
 		provisioning_message=provisioning_message,
 		runtime_reference=runtime_reference,
+		file_storage_provider=file_storage_provider,
+		file_storage_class=file_storage_class,
+		backup_storage_provider=backup_storage_provider,
+		backup_storage_class=backup_storage_class,
 		backup_export_path=backup_export_path,
 		status_reason=status_reason,
 	)
@@ -154,6 +162,10 @@ def provision_founder_demo_runtime(
 		last_provisioning_step=result.get("last_provisioning_step"),
 		provisioning_message=result.get("provisioning_message"),
 		runtime_reference=result.get("runtime_reference"),
+		file_storage_provider=result.get("file_storage_provider"),
+		file_storage_class=result.get("file_storage_class"),
+		backup_storage_provider=result.get("backup_storage_provider"),
+		backup_storage_class=result.get("backup_storage_class"),
 		backup_export_path=result.get("backup_export_path"),
 		status_reason=status_reason or result.get("status_reason") or "Founder demo runtime provisioned.",
 	)

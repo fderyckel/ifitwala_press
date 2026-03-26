@@ -68,6 +68,14 @@ That bundle may include:
 Those apps must be governed, versioned, and baked into images.
 They must not be installed ad hoc into running production containers.
 
+### 3.1 Phase 1 storage baseline
+For phase 1 / MVP, tenant file storage is standardized on **S3-compatible object storage**.
+
+- live site files and attachments use the **Frequent Access** storage class
+- retained site/database backups use the **Infrequent Access** storage class
+- the storage contract is site-scoped and shared across approved apps in the site, including `ifitwala_ed` and `ifitwala_drive`
+- daily backup exports must leave the container/runtime and land in the backup storage tier
+
 ### 4. Hybrid hosting strategy
 Not all customers should get the same infrastructure.
 

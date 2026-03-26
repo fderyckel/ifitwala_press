@@ -18,6 +18,10 @@ LIVE = "Live"
 SUSPENDED = "Suspended"
 ARCHIVED = "Archived"
 PROVISIONING_FAILED = "Provisioning Failed"
+DEFAULT_FILE_STORAGE_PROVIDER = "S3 Compatible"
+DEFAULT_FILE_STORAGE_CLASS = "Frequent Access"
+DEFAULT_BACKUP_STORAGE_PROVIDER = "S3 Compatible"
+DEFAULT_BACKUP_STORAGE_CLASS = "Infrequent Access"
 
 ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 	LEAD: {SANDBOX_PROVISIONING, PRODUCTION_QUALIFICATION, ARCHIVED},
@@ -44,6 +48,8 @@ def create_sandbox(
 	status_reason: str | None = None,
 ) -> Document:
 	tenant_doc = _as_doc("Press Tenant", tenant)
+	policy_name = policy or tenant_doc.default_policy
+	policy_doc = _get_policy_doc(policy_name)
 
 	if tenant_doc.tenant_status == ARCHIVED:
 		frappe.throw("Archived tenants cannot enter sandbox provisioning.")
@@ -57,7 +63,7 @@ def create_sandbox(
 			"site_name": site_name,
 			"site_status": SANDBOX_PROVISIONING,
 			"status_reason": status_reason,
-			"policy": policy or tenant_doc.default_policy,
+			"policy": policy_name,
 			"hosting_tier": "Sandbox",
 			"demo_seed_mode": demo_seed_mode or "Blank Site",
 			"demo_seed_reference": demo_seed_reference,
@@ -65,6 +71,7 @@ def create_sandbox(
 			"expires_on": expiry_date,
 		}
 	)
+	_apply_storage_defaults(environment, policy_doc)
 	_update_transition_metadata(environment, status_reason)
 	environment.insert()
 
@@ -91,14 +98,17 @@ def qualify_for_production(
 ) -> Document:
 	environment_doc = _as_doc("Tenant Environment", environment)
 	_assert_transition_allowed(environment_doc.site_status, PRODUCTION_QUALIFICATION)
+	policy_name = policy or environment_doc.policy
+	policy_doc = _get_policy_doc(policy_name)
 
 	if environment_doc.environment_type != "Production":
 		environment_doc.environment_type = "Production"
 	environment_doc.hosting_tier = hosting_tier
 	environment_doc.database_mode = database_mode
-	environment_doc.policy = policy or environment_doc.policy
+	environment_doc.policy = policy_name
 	environment_doc.region = region or environment_doc.region
 	environment_doc.status_reason = status_reason or conversion_strategy
+	_apply_storage_defaults(environment_doc, policy_doc)
 	_transition_environment(environment_doc, PRODUCTION_QUALIFICATION, status_reason or conversion_strategy)
 	return environment_doc
 
@@ -118,6 +128,10 @@ def complete_sandbox_provisioning(
 	last_provisioning_step: str | None = None,
 	provisioning_message: str | None = None,
 	runtime_reference: str | None = None,
+	file_storage_provider: str | None = None,
+	file_storage_class: str | None = None,
+	backup_storage_provider: str | None = None,
+	backup_storage_class: str | None = None,
 	backup_export_path: str | None = None,
 	status_reason: str | None = None,
 ) -> Document:
@@ -150,6 +164,14 @@ def complete_sandbox_provisioning(
 		environment_doc.provisioning_message = provisioning_message
 	if runtime_reference:
 		environment_doc.runtime_reference = runtime_reference
+	if file_storage_provider:
+		environment_doc.file_storage_provider = file_storage_provider
+	if file_storage_class:
+		environment_doc.file_storage_class = file_storage_class
+	if backup_storage_provider:
+		environment_doc.backup_storage_provider = backup_storage_provider
+	if backup_storage_class:
+		environment_doc.backup_storage_class = backup_storage_class
 	if backup_export_path:
 		environment_doc.backup_export_path = backup_export_path
 	_transition_environment(
@@ -297,6 +319,38 @@ def _assert_transition_allowed(from_state: str, to_state: str) -> None:
 	allowed_states = ALLOWED_TRANSITIONS.get(from_state, set())
 	if to_state not in allowed_states:
 		frappe.throw(f"Transition from {from_state} to {to_state} is not allowed.")
+
+
+def _apply_storage_defaults(environment: Document, policy: Document | None) -> None:
+	environment.file_storage_provider = (
+		environment.file_storage_provider
+		or getattr(policy, "default_file_storage_provider", None)
+		or DEFAULT_FILE_STORAGE_PROVIDER
+	)
+	environment.file_storage_class = (
+		environment.file_storage_class
+		or getattr(policy, "default_file_storage_class", None)
+		or DEFAULT_FILE_STORAGE_CLASS
+	)
+	environment.backup_storage_provider = (
+		environment.backup_storage_provider
+		or getattr(policy, "default_backup_storage_provider", None)
+		or DEFAULT_BACKUP_STORAGE_PROVIDER
+	)
+	environment.backup_storage_class = (
+		environment.backup_storage_class
+		or getattr(policy, "default_backup_storage_class", None)
+		or DEFAULT_BACKUP_STORAGE_CLASS
+	)
+
+	if not environment.storage_quota_gb and policy and policy.storage_quota_gb not in (None, ""):
+		environment.storage_quota_gb = policy.storage_quota_gb
+
+
+def _get_policy_doc(policy_name: str | None) -> Document | None:
+	if not policy_name:
+		return None
+	return frappe.get_doc("Tenant Policy", policy_name)
 
 
 def _as_doc(doctype: str, document_or_name: str | Document) -> Document:

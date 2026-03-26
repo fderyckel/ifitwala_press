@@ -23,6 +23,7 @@ The current contract is:
 - the public site and the control plane must not be the same Frappe site
 - self-managed MariaDB 11.8 is the current database baseline
 - one database per site remains mandatory
+- S3-compatible object storage is the phase-1 baseline for live files and retained backups
 - routing automation is optional in phase 1
 - provisioning may be manual or semi-automated in phase 1
 
@@ -123,6 +124,16 @@ At minimum, phase-1 procedures should make explicit:
 
 Shared runtime means shared only across environments with a compatible approved app bundle.
 
+### 5.0A Storage contract
+
+Phase 1 uses one site-scoped S3-compatible storage contract for approved apps in the runtime bundle.
+
+- live files and attachments must use the frequent-access storage class
+- retained backups must use the less-frequent storage class
+- the same site storage namespace must serve `ifitwala_ed` and `ifitwala_drive`
+- exact bucket names, credentials, and lifecycle rules stay outside DocTypes and inside runtime/adapter configuration
+- `Tenant Environment` still records the logical provider/class contract so operators can verify the intended posture
+
 ### 5.1 MVP founder runtime shape
 
 For the MVP internal operator flow, the immediate runtime target may be:
@@ -132,6 +143,8 @@ For the MVP internal operator flow, the immediate runtime target may be:
   - `frappe`
   - `ifitwala_ed`
   - `ifitwala_drive`
+- S3-compatible site storage for active files
+- daily backup export to the less-frequent S3 storage tier
 - optional seeded demo data restored from a prepared Frappe site backup
 - manual or semi-automated site provisioning
 - manual or semi-automated credential handoff

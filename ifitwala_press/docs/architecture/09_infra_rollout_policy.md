@@ -93,8 +93,8 @@ For founder-stage dockerized runtimes on one VM:
 
 - do not rely on backups remaining only inside the container filesystem
 - each environment must have its latest successful site backup copied or written to storage outside the container
-- the minimum acceptable target is a persistent host-mounted backup path
-- object storage is acceptable later, but is not a founder-mode requirement
+- the phase-1 / MVP baseline is S3-compatible object storage rather than container-local or host-only retention
+- live site files should use the frequent-access class, while retained daily backups should use the less-frequent class
 - for demos and sandbox environments, keeping the latest successful backup may be enough initially
 - for production environments, retention must follow the assigned policy and must not depend on container survival
 - manual restore from that exported backup must be possible even if the original container is gone
@@ -130,7 +130,7 @@ Support normal live customer operations with stronger operational consistency an
 ### Backup expectation
 - production backup policy must be explicit
 - restore readiness should be reviewed on a schedule
-- the standard expectation should become off-container and preferably off-host backup storage
+- the standard expectation is off-container, S3-compatible backup storage
 - retention should be policy-driven rather than operator memory
 - backup freshness should become visible in the control plane
 

@@ -30,7 +30,9 @@
     "worker_quota",
     "web_quota",
     "storage_quota_gb",
+    "default_file_storage_provider",
     "column_break_resource_controls",
+    "default_file_storage_class",
     "max_background_jobs",
     "max_file_size_mb",
     "section_break_lifecycle_rules",
@@ -43,7 +45,9 @@
     "section_break_backup_retention",
     "backup_frequency",
     "backup_retention_days",
+    "default_backup_storage_provider",
     "column_break_backup_retention",
+    "default_backup_storage_class",
     "requires_restore_test",
     "restore_test_frequency_days",
     "section_break_monitoring_support",
@@ -145,8 +149,24 @@
       "label": "Storage Quota (GB)"
     },
     {
+      "default": "S3 Compatible",
+      "description": "Default object storage backend for site files and attachments created under this policy.",
+      "fieldname": "default_file_storage_provider",
+      "fieldtype": "Select",
+      "label": "Default File Storage Provider",
+      "options": "\nGCS\nS3 Compatible\nLocal Temporary"
+    },
+    {
       "fieldname": "column_break_resource_controls",
       "fieldtype": "Column Break"
+    },
+    {
+      "default": "Frequent Access",
+      "description": "Access class for active site files. Phase-1 S3 storage keeps live files on the frequent-access tier.",
+      "fieldname": "default_file_storage_class",
+      "fieldtype": "Select",
+      "label": "Default File Storage Class",
+      "options": "\nFrequent Access\nInfrequent Access"
     },
     {
       "fieldname": "max_background_jobs",
@@ -212,8 +232,24 @@
       "label": "Backup Retention Days"
     },
     {
+      "default": "S3 Compatible",
+      "description": "Default backend used for retained exported backups when this policy enables backups.",
+      "fieldname": "default_backup_storage_provider",
+      "fieldtype": "Select",
+      "label": "Default Backup Storage Provider",
+      "options": "\nGCS\nS3 Compatible\nLocal Temporary"
+    },
+    {
       "fieldname": "column_break_backup_retention",
       "fieldtype": "Column Break"
+    },
+    {
+      "default": "Infrequent Access",
+      "description": "Access class for retained backups. Phase-1 S3 storage keeps daily backups on the less-frequent tier.",
+      "fieldname": "default_backup_storage_class",
+      "fieldtype": "Select",
+      "label": "Default Backup Storage Class",
+      "options": "\nFrequent Access\nInfrequent Access"
     },
     {
       "default": "0",

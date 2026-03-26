@@ -38,6 +38,7 @@ What remains incomplete is no longer the basic control-plane backbone.
 What remains incomplete is:
 - the MariaDB 11.8 compatibility proof on a supported founder runtime
 - explicit founder-runtime app bundle and cache topology intent
+- the phase-1 S3 storage contract for live files and daily backups
 - real provisioning of `ifitwala_ed` + `ifitwala_drive` environments
 - a governed founder-mode runbook that maps control-plane actions to real runtime work
 
@@ -55,7 +56,8 @@ The MVP should follow the already-approved founder-mode shape:
 - one low-cost shared runtime is acceptable
 - one database per site remains mandatory
 - manual and semi-automated execution is acceptable
-- manual backups and restore discipline are acceptable at small scale
+- S3-compatible object storage is the MVP baseline for live files and retained backups
+- daily backup exports to the less-frequent storage class are acceptable at small scale
 - routing may be manually maintained in phase 1
 - full Cloud SQL, Traefik, Redis, and CI/CD automation are not phase-1 blockers
 
@@ -334,6 +336,7 @@ Use this order unless real implementation friction forces a small adjustment:
    to capture the real founder runtime shape:
    - app bundle intent
    - `ifitwala_drive` install intent or branch
+   - S3 storage provider/class intent for live files and retained backups
    - cache / queue topology intent
    - founder runtime profile notes
 3. add or refine a service contract in
@@ -355,6 +358,7 @@ The MVP is "done enough" when all of the following are true:
 - `Press Tenant`, `Tenant Policy`, `Tenant Environment`, and `Tenant Transition Log` all exist
 - lifecycle transitions are server-authoritative
 - transition logs are written consistently
+- the phase-1 S3 storage contract is explicit in policy, environment, and founder-runtime payloads
 - one tenant can be taken from lead to live through a manual but governed founder-mode workflow
 - operators can review the history and current posture without digging through raw implementation details
 - one real founder runtime for `ifitwala_ed` + `ifitwala_drive` has been proven operationally

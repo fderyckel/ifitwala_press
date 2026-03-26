@@ -206,7 +206,7 @@ Tenant-specific state should live outside the app image:
 
 - databases
 - redis/cache/queue/socket services
-- object/file storage
+- object/file storage, with phase-1 S3-compatible storage split into frequent-access live files and less-frequent backup storage
 - environment config
 - routing config
 

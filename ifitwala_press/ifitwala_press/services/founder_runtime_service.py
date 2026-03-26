@@ -9,6 +9,10 @@ from typing import Any
 import frappe
 from frappe.model.document import Document
 
+from ifitwala_press.ifitwala_press.services.runtime_storage_profile_service import (
+	build_drive_storage_profile,
+)
+
 ADAPTER_CONFIG_KEY = "ifitwala_press_founder_runtime_adapter"
 TIMEOUT_CONFIG_KEY = "ifitwala_press_founder_runtime_timeout"
 DEFAULT_TIMEOUT_SECONDS = 1800
@@ -35,6 +39,8 @@ def teardown_demo_runtime(environment: str | Document, *, reason: str) -> dict[s
 
 
 def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
+	policy_doc = frappe.get_doc("Tenant Policy", environment.policy) if environment.policy else None
+	drive_storage_profile = build_drive_storage_profile(environment)
 	return {
 		"tenant": {
 			"name": tenant.name,
@@ -50,6 +56,13 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"estimated_staff": tenant.estimated_staff,
 			"estimated_guardians": tenant.estimated_guardians,
 			"estimated_peak_concurrency": tenant.estimated_peak_concurrency,
+		},
+		"policy": {
+			"name": policy_doc.name if policy_doc else environment.policy,
+			"backup_frequency": policy_doc.backup_frequency if policy_doc else None,
+			"backup_retention_days": policy_doc.backup_retention_days if policy_doc else None,
+			"storage_quota_gb": policy_doc.storage_quota_gb if policy_doc else environment.storage_quota_gb,
+			"max_file_size_mb": policy_doc.max_file_size_mb if policy_doc else None,
 		},
 		"environment": {
 			"name": environment.name,
@@ -75,11 +88,29 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"socketio_enabled": environment.socketio_enabled,
 			"worker_profile": environment.worker_profile,
 			"file_storage_provider": environment.file_storage_provider,
+			"file_storage_class": environment.file_storage_class,
+			"backup_storage_provider": environment.backup_storage_provider,
+			"backup_storage_class": environment.backup_storage_class,
 			"expires_on": str(environment.expires_on) if environment.expires_on else None,
 			"demo_seed_mode": environment.demo_seed_mode,
 			"demo_seed_reference": environment.demo_seed_reference,
 			"runtime_reference": environment.runtime_reference,
 			"backup_export_path": environment.backup_export_path,
+		},
+		"storage": {
+			"file_storage_provider": environment.file_storage_provider,
+			"file_storage_class": environment.file_storage_class,
+			"backup_storage_provider": environment.backup_storage_provider,
+			"backup_storage_class": environment.backup_storage_class,
+			"backup_frequency": policy_doc.backup_frequency if policy_doc else None,
+			"backup_retention_days": policy_doc.backup_retention_days if policy_doc else None,
+			"storage_quota_gb": environment.storage_quota_gb or (policy_doc.storage_quota_gb if policy_doc else None),
+			"shared_site_storage": True,
+			"site_storage_apps": ["ifitwala_ed", "ifitwala_drive"],
+			"drive_storage_profile": drive_storage_profile,
+		},
+		"runtime": {
+			"drive_storage_profile": drive_storage_profile,
 		},
 	}
 

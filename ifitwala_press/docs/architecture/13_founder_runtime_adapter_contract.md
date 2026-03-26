@@ -81,7 +81,9 @@ The JSON payload is sent on stdin.
 The payload contains:
 
 - tenant summary
+- policy summary
 - environment summary
+- storage contract
 - site name
 - branch intent
 - deployment / database intent
@@ -109,6 +111,10 @@ Suggested fields:
 - `last_provisioning_step`
 - `provisioning_message`
 - `runtime_reference`
+- `file_storage_provider`
+- `file_storage_class`
+- `backup_storage_provider`
+- `backup_storage_class`
 - `backup_export_path`
 - `status_reason`
 
@@ -180,6 +186,9 @@ The adapter must not treat container-local backups as sufficient.
 
 At minimum for founder mode:
 
+- site files for `ifitwala_ed` and `ifitwala_drive` should be configured against the same site-scoped S3-compatible object storage target
+- the live file tier should be configured for frequent access
+- retained daily backups should be written to the less-frequent storage tier
 - the latest successful site backup must be exported outside the container
 - the returned `backup_export_path` must refer to persistent host or off-container storage
 

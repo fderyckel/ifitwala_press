@@ -1,0 +1,12 @@
+[Unit]
+Description=Export daily Ifitwala founder runtime backups
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+ConditionPathExists=__ADAPTER_ENV_PATH__
+
+[Service]
+Type=oneshot
+EnvironmentFile=__ADAPTER_ENV_PATH__
+WorkingDirectory=__INSTALL_ROOT__
+ExecStart=__INSTALL_ROOT__/backup-all-sites.sh
