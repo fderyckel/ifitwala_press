@@ -16,11 +16,13 @@ Phase 1 now requires one immutable runtime image that contains:
 - `frappe`
 - `ifitwala_ed`
 - `ifitwala_drive`
+- native `libmagic` support for governed upload MIME validation
 
 That image should:
 
 - start from an approved `frappe_docker`-style worker image
 - bake the approved app refs into the image ahead of provisioning
+- bake native runtime dependencies required by the app contract, including `libmagic`
 - avoid tenant-specific credentials or storage settings
 - be published under one pinned image tag
 
