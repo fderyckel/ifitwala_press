@@ -33,6 +33,7 @@ def test_architecture_docs_exist() -> None:
 	assert (
 		ROOT / "ifitwala_press" / "docs" / "architecture" / "21_error_event_ingestion_implementation_plan.md"
 	).is_file()
+	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "22_runtime_libmagic_contract.md").is_file()
 
 
 def test_runtime_baseline_metadata_is_consistent() -> None:
@@ -205,6 +206,28 @@ def test_founder_runtime_docker_doc_mentions_gcloud_dns() -> None:
 		assert token in docker_doc
 
 
+def test_founder_runtime_image_build_locks_libmagic_contract() -> None:
+	dockerfile = (ROOT / "ops" / "founder_runtime" / "image" / "Dockerfile").read_text()
+	for token in (
+		"libmagic1",
+		'env/bin/python -c "import magic; print(magic.from_buffer(b\'%PDF-1.7\', mime=True))"',
+	):
+		assert token in dockerfile
+
+
+def test_founder_host_bootstrap_locks_ubuntu_baseline() -> None:
+	host_readme = (ROOT / "ops" / "founder_runtime" / "host" / "README.md").read_text()
+	assert "Ubuntu Minimal 25.04" in host_readme
+
+	bootstrap_script = (ROOT / "ops" / "founder_runtime" / "host" / "bootstrap-founder-vm.sh").read_text()
+	for token in (
+		"/etc/os-release",
+		'ID:-}" != "ubuntu"',
+		'VERSION_ID:-}" != "25.04"',
+	):
+		assert token in bootstrap_script
+
+
 def test_founder_edge_proxy_doc_mentions_shared_routing_bridge() -> None:
 	edge_doc = (
 		ROOT / "ifitwala_press" / "docs" / "architecture" / "16_founder_edge_proxy_contract.md"
@@ -223,6 +246,7 @@ def test_founder_host_bootstrap_doc_mentions_image_and_backup_timer() -> None:
 		ROOT / "ifitwala_press" / "docs" / "architecture" / "17_founder_runtime_image_and_host_bootstrap.md"
 	).read_text()
 	for token in (
+		"Ubuntu Minimal 25.04",
 		"immutable runtime image",
 		"`ifitwala_ed`",
 		"`ifitwala_drive`",

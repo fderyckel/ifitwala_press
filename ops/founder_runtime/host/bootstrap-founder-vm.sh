@@ -14,6 +14,25 @@ adapter_env_path="${ADAPTER_ENV_PATH:-/etc/ifitwala-founder-runtime/adapter.env}
 operator_user="${FOUNDER_OPERATOR_USER:-${SUDO_USER:-}}"
 runtime_root_default="${IFITWALA_FOUNDER_RUNTIME_ROOT:-/srv/ifitwala-founder-runtime}"
 
+check_supported_host() {
+    if [[ ! -r /etc/os-release ]]; then
+        printf '%s\n' "Unable to read /etc/os-release. Founder host bootstrap expects Ubuntu Minimal 25.04." >&2
+        exit 1
+    fi
+
+    # shellcheck disable=SC1091
+    source /etc/os-release
+
+    if [[ "${ID:-}" != "ubuntu" ]]; then
+        printf '%s\n' "Founder host bootstrap currently supports Ubuntu Minimal 25.04. Detected ${PRETTY_NAME:-unknown}." >&2
+        exit 1
+    fi
+
+    if [[ "${VERSION_ID:-}" != "25.04" ]]; then
+        printf '%s\n' "Warning: approved founder host baseline is Ubuntu Minimal 25.04. Detected Ubuntu ${VERSION_ID:-unknown}." >&2
+    fi
+}
+
 install_base_packages() {
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
@@ -125,6 +144,7 @@ print_next_steps() {
     fi
 }
 
+check_supported_host
 install_base_packages
 install_gcloud
 install_adapter_env

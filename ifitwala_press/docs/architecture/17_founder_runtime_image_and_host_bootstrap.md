@@ -36,6 +36,7 @@ The founder runtime host is still one same-VM founder deployment target.
 
 For phase 1, the host must provide:
 
+- one Ubuntu Minimal 25.04 VM baseline
 - Docker Engine with `docker compose`
 - `mariadb-client`
 - `gcloud`

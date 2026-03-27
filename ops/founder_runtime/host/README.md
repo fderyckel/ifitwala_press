@@ -4,7 +4,7 @@ This directory holds the founder GCE VM bootstrap assets for phase 1.
 
 The founder host contract is:
 
-- one Debian or Ubuntu VM
+- one Ubuntu Minimal 25.04 VM
 - Docker Engine with `docker compose`
 - `mariadb-client` for DB provisioning
 - `gcloud` for Cloud DNS updates
@@ -29,3 +29,6 @@ The founder host contract is:
 5. Point `IFITWALA_FOUNDER_RUNTIME_IMAGE` at the published image tag.
 6. Run one real sandbox provision from `ifitwala_press`.
 7. Run the diagnostics in `../diagnostics/` whenever provisioning or runtime issues need fast triage.
+
+The bootstrap script validates that the host is Ubuntu and warns when the detected
+release does not match the current approved founder baseline of `25.04`.

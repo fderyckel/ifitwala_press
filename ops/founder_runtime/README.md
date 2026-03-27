@@ -45,6 +45,7 @@ The intended operating model is:
 
 This scaffolding assumes:
 
+- the founder runtime host currently uses Ubuntu Minimal 25.04
 - Docker Compose runs on the founder runtime host
 - `gcloud` is available on that host for Cloud DNS changes
 - `aws` CLI or equivalent S3 tooling is available on that host for backup export

@@ -6,6 +6,7 @@ The runtime image contract is:
 
 - start from a `frappe_docker`-style worker image
 - bake `ifitwala_ed` and `ifitwala_drive` into that image
+- bake native `libmagic` support required by `ifitwala_drive` governed MIME validation
 - keep site state and S3 credentials out of the image
 - publish one pinned tag, then reference that tag from `IFITWALA_FOUNDER_RUNTIME_IMAGE`
 
@@ -27,3 +28,7 @@ The runtime image contract is:
 5. Update `IFITWALA_FOUNDER_RUNTIME_IMAGE` in the founder host adapter env once the tag is published.
 
 This keeps the image immutable and keeps deployment-specific configuration in the adapter env and runtime payload.
+
+The Docker build now fails if the bench Python environment cannot import `python-magic`
+and detect `application/pdf` from a sample PDF header. That keeps the runtime contract
+aligned with the `ifitwala_drive` upload-governance requirement.
