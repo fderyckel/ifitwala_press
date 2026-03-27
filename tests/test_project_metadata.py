@@ -215,6 +215,27 @@ def test_founder_runtime_image_build_locks_libmagic_contract() -> None:
 		assert token in dockerfile
 
 
+def test_founder_runtime_env_examples_lock_current_founder_refs() -> None:
+	build_env = (ROOT / "ops" / "founder_runtime" / "image" / "build.env.example").read_text()
+	for token in (
+		"ghcr.io/fderyckel/ifitwala-founder-runtime:2026-03-27-libmagic",
+		"https://github.com/fderyckel/ifitwala_ed.git",
+		"IFITWALA_ED_REF=2026-week13",
+		"https://github.com/fderyckel/ifitwala_drive.git",
+		"IFITWALA_DRIVE_REF=26-week14",
+	):
+		assert token in build_env
+
+	adapter_env = (ROOT / "ops" / "founder_runtime" / "adapter.env.example").read_text()
+	for token in (
+		"ghcr.io/fderyckel/ifitwala-founder-runtime:2026-03-27-libmagic",
+		"IFITWALA_FOUNDER_RUNTIME_DOMAIN_SUFFIX=ifitwala.com",
+		"IFITWALA_FOUNDER_RUNTIME_DNS_ZONE=change-me",
+		"IFITWALA_FOUNDER_RUNTIME_DNS_TARGET_IP=change-me",
+	):
+		assert token in adapter_env
+
+
 def test_founder_host_bootstrap_locks_ubuntu_baseline() -> None:
 	host_readme = (ROOT / "ops" / "founder_runtime" / "host" / "README.md").read_text()
 	assert "Ubuntu Minimal 25.04" in host_readme
