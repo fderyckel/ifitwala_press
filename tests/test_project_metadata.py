@@ -29,6 +29,10 @@ def test_architecture_docs_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "17_founder_runtime_image_and_host_bootstrap.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "18_founder_gcp_diagnostics.md").is_file()
 	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "19_hybrid_provider_placement_contract.md").is_file()
+	assert (ROOT / "ifitwala_press" / "docs" / "architecture" / "20_error_event_ingestion_and_triage.md").is_file()
+	assert (
+		ROOT / "ifitwala_press" / "docs" / "architecture" / "21_error_event_ingestion_implementation_plan.md"
+	).is_file()
 
 
 def test_runtime_baseline_metadata_is_consistent() -> None:
