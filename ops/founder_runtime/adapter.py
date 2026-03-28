@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from string import Template
 from typing import Any
@@ -67,8 +68,8 @@ class RuntimePlan:
 
 def main(argv: list[str] | None = None) -> int:
 	args = list(argv or sys.argv[1:])
-	if len(args) != 1 or args[0] not in {"provision-demo-runtime", "teardown-demo-runtime"}:
-		print("Usage: adapter.py [provision-demo-runtime|teardown-demo-runtime]", file=sys.stderr)
+	if len(args) != 1 or args[0] not in {"provision-demo-runtime", "teardown-demo-runtime", "restore-demo-runtime"}:
+		print("Usage: adapter.py [provision-demo-runtime|teardown-demo-runtime|restore-demo-runtime]", file=sys.stderr)
 		return 2
 
 	payload = _load_payload()
@@ -76,6 +77,8 @@ def main(argv: list[str] | None = None) -> int:
 
 	if args[0] == "provision-demo-runtime":
 		result = provision_demo_runtime(payload, settings)
+	elif args[0] == "restore-demo-runtime":
+		result = restore_demo_runtime(payload, settings)
 	else:
 		result = teardown_demo_runtime(payload, settings)
 
@@ -168,6 +171,34 @@ def teardown_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) ->
 		"provisioning_message": message,
 		"runtime_reference": f"compose:ifw-{project_slug}",
 		"backup_export_path": payload.get("environment", {}).get("backup_export_path"),
+	}
+
+
+def restore_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -> dict[str, Any]:
+	plan = _build_plan(payload, settings)
+	if not plan.runtime_dir.exists():
+		raise SystemExit(f"Runtime directory not found for restore: {plan.runtime_dir}")
+
+	backup_export_path = str(payload.get("environment", {}).get("backup_export_path") or "").strip() or plan.backup_export_prefix
+	last_step = "Restore planned"
+	message = "Restore planned. Execution not requested."
+	restored_manifest_uri = f"{backup_export_path.rstrip('/')}/manifest-latest.json"
+
+	if settings.execute:
+		_require_command("gcloud")
+		_require_command("docker")
+		_require_command("jq")
+		_restore_site(plan, backup_export_path)
+		last_step = "Site restore completed"
+		message = "Founder runtime restored from exported backup."
+
+	return {
+		"last_provisioning_step": last_step,
+		"provisioning_message": message,
+		"runtime_reference": f"compose:{plan.compose_project_name}",
+		"backup_export_path": backup_export_path,
+		"restored_backup_manifest": restored_manifest_uri,
+		"db_restore_tested_on": date.today().isoformat() if settings.execute else None,
 	}
 
 
@@ -399,6 +430,18 @@ def _bootstrap_site(plan: RuntimePlan) -> None:
 			"backend",
 			"/bin/bash",
 			"/workspace/founder_runtime/scripts/init-site.sh",
+		],
+		cwd=plan.runtime_dir,
+	)
+
+
+def _restore_site(plan: RuntimePlan, backup_export_path: str) -> None:
+	_run(
+		[
+			"bash",
+			str(SCRIPTS_DIR / "restore-site.sh"),
+			str(plan.runtime_dir),
+			backup_export_path,
 		],
 		cwd=plan.runtime_dir,
 	)

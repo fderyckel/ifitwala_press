@@ -40,6 +40,8 @@ The intended operating model is:
   Founder-mode scheduler process
 - `scripts/backup-site.sh`
   Host-side daily backup export helper
+- `scripts/restore-site.sh`
+  Host-side restore helper that rehydrates one site from the exported backup manifest
 
 ## Important boundary
 

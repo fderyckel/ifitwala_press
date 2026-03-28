@@ -157,6 +157,7 @@ Suggested fields:
 - `provisioning_message`
 - `runtime_reference`
 - `backup_export_path`
+- `db_restore_tested_on`
 
 After success, the control plane expires the sandbox through a governed lifecycle action.
 

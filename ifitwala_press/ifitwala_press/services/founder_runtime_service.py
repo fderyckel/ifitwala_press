@@ -38,6 +38,17 @@ def teardown_demo_runtime(environment: str | Document, *, reason: str) -> dict[s
 	)
 
 
+def restore_demo_runtime(environment: str | Document, *, reason: str) -> dict[str, Any]:
+	environment_doc = _as_doc("Tenant Environment", environment)
+	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
+	payload = _build_payload(environment_doc, tenant_doc)
+	payload["restore_reason"] = reason
+	return _run_adapter(
+		"restore-demo-runtime",
+		payload,
+	)
+
+
 def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 	policy_doc = frappe.get_doc("Tenant Policy", environment.policy) if environment.policy else None
 	drive_storage_profile = build_drive_storage_profile(environment)

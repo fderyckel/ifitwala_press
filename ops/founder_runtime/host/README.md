@@ -20,6 +20,8 @@ The founder host contract is:
 - `systemd/`
   Templates used for the founder backup service and timer
 
+The host-side restore helper lives under `../scripts/restore-site.sh` and is part of the pilot recovery path.
+
 ## Expected run order
 
 1. Build and publish the immutable runtime image from `../image/`.

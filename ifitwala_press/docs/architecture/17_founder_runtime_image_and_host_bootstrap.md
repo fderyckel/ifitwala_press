@@ -57,6 +57,7 @@ Daily backups are no longer only a manual note.
 The founder host now installs:
 
 - a host-side `backup-all-sites.sh` runner
+- a host-side `restore-site.sh` helper
 - a systemd service for backup execution
 - a systemd timer for daily backup cadence
 

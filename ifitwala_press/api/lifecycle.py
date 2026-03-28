@@ -38,6 +38,9 @@ from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
 	provision_demo_runtime as provision_demo_runtime_service,
 )
 from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
+	restore_demo_runtime as restore_demo_runtime_service,
+)
+from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
 	teardown_demo_runtime as teardown_demo_runtime_service,
 )
 
@@ -309,7 +312,27 @@ def suspend_environment(environment: str, reason: str) -> dict[str, Any]:
 @frappe.whitelist()
 def restore_environment(environment: str, reason: str) -> dict[str, Any]:
 	_require_lifecycle_role()
+	environment_doc = frappe.get_doc("Tenant Environment", environment)
+	runtime_reference = str(getattr(environment_doc, "runtime_reference", "") or "").strip()
+	if not runtime_reference.startswith("compose:"):
+		frappe.throw("Restore workflow is currently implemented only for founder runtimes.")
+
+	if not getattr(environment_doc, "backup_export_path", None):
+		frappe.throw("Backup Export Path is required before a founder runtime can be restored.")
+
+	result = restore_demo_runtime_service(environment_doc, reason=reason)
 	document = restore_environment_service(environment, reason=reason)
+	if result.get("last_provisioning_step"):
+		document.last_provisioning_step = result.get("last_provisioning_step")
+	if result.get("provisioning_message"):
+		document.provisioning_message = result.get("provisioning_message")
+	if result.get("runtime_reference"):
+		document.runtime_reference = result.get("runtime_reference")
+	if result.get("backup_export_path"):
+		document.backup_export_path = result.get("backup_export_path")
+	if result.get("db_restore_tested_on"):
+		document.db_restore_tested_on = result.get("db_restore_tested_on")
+	document.save()
 	return _serialize_document(document)
 
 

@@ -173,6 +173,7 @@ def test_founder_runtime_ops_assets_exist() -> None:
 		"ops/founder_runtime/scripts/run-scheduler.sh",
 		"ops/founder_runtime/scripts/backup-site.sh",
 		"ops/founder_runtime/scripts/backup-all-sites.sh",
+		"ops/founder_runtime/scripts/restore-site.sh",
 	):
 		assert (ROOT / relative_path).is_file()
 

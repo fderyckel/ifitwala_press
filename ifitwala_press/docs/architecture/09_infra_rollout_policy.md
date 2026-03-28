@@ -44,7 +44,7 @@ Founder mode does not permit collapsing all surfaces into one site.
 
 The minimum required separation is:
 - one public-facing site for `ifitwala.com`
-- one internal control-plane site for `press.ifitwala.com` or `ops.ifitwala.com`
+- one internal control-plane site for `press.ifitwala.com`
 
 These may temporarily share founder-stage infrastructure if necessary.
 They must not be the same Frappe site.

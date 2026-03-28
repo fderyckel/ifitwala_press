@@ -99,3 +99,80 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 	assert common_site_config["approved_apps"] == ["frappe", "ifitwala_ed", "ifitwala_drive"]
 	assert common_site_config["gcs_files_bucket"] == "ifitwala-files"
 	assert common_site_config["gcs_backups_bucket"] == "ifitwala-backups"
+
+
+def test_founder_runtime_adapter_dry_run_restore_returns_planned_result(tmp_path: Path) -> None:
+	payload = {
+		"tenant": {
+			"name": "TEN-2026-0001",
+			"tenant_name": "Alpha School",
+			"tenant_slug": "alpha-school",
+		},
+		"policy": {
+			"name": "Standard GCS",
+			"backup_frequency": "Daily",
+			"backup_retention_days": 14,
+		},
+		"environment": {
+			"name": "ENV-2026-0001",
+			"environment_name": "Alpha School Sandbox",
+			"environment_type": "Sandbox",
+			"site_name": "alpha-school-sandbox",
+			"site_status": "Suspended",
+			"runtime_reference": "compose:ifw-alpha-school-sandbox",
+			"backup_export_path": "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/",
+			"primary_cloud_provider": "OVH",
+			"runtime_provider": "OVH",
+			"object_storage_provider": "Google Cloud",
+			"dns_provider": "Google Cloud DNS",
+			"ifitwala_ed_branch": "main",
+			"ifitwala_drive_branch": "main",
+			"file_storage_provider": "GCS",
+			"file_storage_class": "Frequent Access",
+			"backup_storage_provider": "GCS",
+			"backup_storage_class": "Infrequent Access",
+		},
+	}
+	env = os.environ.copy()
+	env.update(
+		{
+			"IFITWALA_FOUNDER_RUNTIME_ROOT": str(tmp_path / "runtime"),
+			"IFITWALA_FOUNDER_RUNTIME_IMAGE": "registry.example.com/ifitwala/runtime:latest",
+			"IFITWALA_FOUNDER_RUNTIME_DB_HOST": "127.0.0.1",
+			"IFITWALA_FOUNDER_RUNTIME_DB_PORT": "3306",
+			"IFITWALA_FOUNDER_RUNTIME_DB_ROOT_USER": "root",
+			"IFITWALA_FOUNDER_RUNTIME_DB_ROOT_PASSWORD": "secret",
+			"IFITWALA_FOUNDER_RUNTIME_ADMIN_PASSWORD": "admin-secret",
+			"IFITWALA_FOUNDER_RUNTIME_GCS_FILES_BUCKET": "ifitwala-files",
+			"IFITWALA_FOUNDER_RUNTIME_GCS_BACKUPS_BUCKET": "ifitwala-backups",
+			"IFITWALA_FOUNDER_RUNTIME_DOMAIN_SUFFIX": "ifitwala.com",
+			"IFITWALA_FOUNDER_RUNTIME_EDGE_PROXY_MODE": "shared_nginx_proxy",
+			"IFITWALA_FOUNDER_RUNTIME_EXECUTE": "0",
+		}
+	)
+
+	subprocess.run(
+		[sys.executable, str(ADAPTER), "provision-demo-runtime"],
+		input=json.dumps(payload),
+		text=True,
+		capture_output=True,
+		check=True,
+		env=env,
+	)
+
+	result = subprocess.run(
+		[sys.executable, str(ADAPTER), "restore-demo-runtime"],
+		input=json.dumps(payload),
+		text=True,
+		capture_output=True,
+		check=True,
+		env=env,
+	)
+
+	parsed = json.loads(result.stdout)
+
+	assert parsed["last_provisioning_step"] == "Restore planned"
+	assert parsed["runtime_reference"] == "compose:ifw-alpha-school-sandbox"
+	assert parsed["backup_export_path"] == "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/"
+	assert parsed["restored_backup_manifest"] == "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/manifest-latest.json"
+	assert parsed["db_restore_tested_on"] is None

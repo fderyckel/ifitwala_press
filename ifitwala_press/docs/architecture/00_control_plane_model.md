@@ -149,7 +149,7 @@ The public site and the control plane must not be the same Frappe site.
 The expected hostname shape is:
 
 - `ifitwala.com` for the public site
-- `press.ifitwala.com` or `ops.ifitwala.com` for the control plane
+- `press.ifitwala.com` for the control plane
 - `*.ifitwala.com` for tenant environments
 
 Host-level separation is recommended early.

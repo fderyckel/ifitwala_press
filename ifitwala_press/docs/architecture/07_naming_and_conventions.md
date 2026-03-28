@@ -233,7 +233,7 @@ Do not use one site to mean all three.
 Use these hostname conventions unless explicitly revised:
 
 - `ifitwala.com` for the public brand/docs surface
-- `press.ifitwala.com` or `ops.ifitwala.com` for the internal control plane
+- `press.ifitwala.com` for the internal control plane
 - `*.ifitwala.com` for tenant environments
 
 Do not place the control plane on the same hostname or Frappe site as the public website.

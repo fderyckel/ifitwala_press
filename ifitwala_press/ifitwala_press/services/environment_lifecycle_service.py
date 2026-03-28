@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from types import SimpleNamespace
 
 import frappe
 from frappe.model.document import Document
@@ -18,6 +19,7 @@ LIVE = "Live"
 SUSPENDED = "Suspended"
 ARCHIVED = "Archived"
 PROVISIONING_FAILED = "Provisioning Failed"
+LIFECYCLE_GUARD_FLAG = "ifitwala_allow_lifecycle_transition"
 DEFAULT_FILE_STORAGE_PROVIDER = "GCS"
 DEFAULT_FILE_STORAGE_CLASS = "Frequent Access"
 DEFAULT_BACKUP_STORAGE_PROVIDER = "GCS"
@@ -35,7 +37,7 @@ ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 	PRODUCTION_QUALIFICATION: {PRODUCTION_PROVISIONING, ARCHIVED, SANDBOX_ACTIVE},
 	PRODUCTION_PROVISIONING: {LIVE, PROVISIONING_FAILED, ARCHIVED},
 	LIVE: {SUSPENDED, ARCHIVED},
-	SUSPENDED: {LIVE, ARCHIVED},
+	SUSPENDED: {SANDBOX_ACTIVE, LIVE, ARCHIVED},
 	PROVISIONING_FAILED: {SANDBOX_PROVISIONING, PRODUCTION_PROVISIONING, ARCHIVED},
 }
 
@@ -309,8 +311,9 @@ def suspend_environment(environment: str | Document, *, reason: str) -> Document
 
 def restore_environment(environment: str | Document, *, reason: str) -> Document:
 	environment_doc = _as_doc("Tenant Environment", environment)
-	_assert_transition_allowed(environment_doc.site_status, LIVE)
-	_transition_environment(environment_doc, LIVE, reason)
+	target_state = SANDBOX_ACTIVE if environment_doc.environment_type == "Sandbox" else LIVE
+	_assert_transition_allowed(environment_doc.site_status, target_state)
+	_transition_environment(environment_doc, target_state, reason)
 	return environment_doc
 
 
@@ -326,7 +329,13 @@ def _transition_environment(environment: Document, to_state: str, reason: str | 
 	environment.site_status = to_state
 	environment.status_reason = reason
 	_update_transition_metadata(environment, reason)
-	environment.save()
+	if not hasattr(environment, "flags"):
+		environment.flags = SimpleNamespace()
+	setattr(environment.flags, LIFECYCLE_GUARD_FLAG, True)
+	try:
+		environment.save()
+	finally:
+		setattr(environment.flags, LIFECYCLE_GUARD_FLAG, False)
 
 	create_transition_log(
 		tenant=environment.tenant,

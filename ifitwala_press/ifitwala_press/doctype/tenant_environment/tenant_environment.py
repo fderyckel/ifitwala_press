@@ -14,11 +14,13 @@ GCS = "GCS"
 GOOGLE_CLOUD = "Google Cloud"
 OVH = "OVH"
 GOOGLE_CLOUD_DNS = "Google Cloud DNS"
+LIFECYCLE_GUARD_FLAG = "ifitwala_allow_lifecycle_transition"
 
 
 class TenantEnvironment(Document):
 	def validate(self) -> None:
 		self._normalize_site_name()
+		self._validate_lifecycle_edit_discipline()
 		self._normalize_runtime_fields()
 		self._validate_demo_seed_configuration()
 		self._validate_hosting_and_database_constraints()
@@ -34,6 +36,27 @@ class TenantEnvironment(Document):
 		self.site_name = self.site_name.strip().lower()
 		if not SITE_NAME_PATTERN.fullmatch(self.site_name):
 			frappe.throw("Site Name must use lowercase letters, numbers, dots, and hyphens only.")
+
+	def _validate_lifecycle_edit_discipline(self) -> None:
+		if self.is_new():
+			return
+
+		allow_transition = bool(getattr(getattr(self, "flags", None), LIFECYCLE_GUARD_FLAG, False))
+		if allow_transition:
+			return
+
+		previous = self.get_doc_before_save()
+		if not previous:
+			return
+
+		if getattr(previous, "site_status", None) != getattr(self, "site_status", None):
+			frappe.throw("Site Status must be changed through Ifitwala Press lifecycle actions.")
+
+		if getattr(previous, "last_transition_on", None) != getattr(self, "last_transition_on", None):
+			frappe.throw("Last Transition On is system-managed and cannot be edited directly.")
+
+		if getattr(previous, "last_transition_by", None) != getattr(self, "last_transition_by", None):
+			frappe.throw("Last Transition By is system-managed and cannot be edited directly.")
 
 	def _normalize_runtime_fields(self) -> None:
 		for fieldname in (
