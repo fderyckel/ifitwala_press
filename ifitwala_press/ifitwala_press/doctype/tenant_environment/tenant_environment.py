@@ -7,7 +7,6 @@ from frappe.model.document import Document
 
 SITE_NAME_PATTERN = re.compile(r"^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$")
 LIVE_STATE = "Live"
-S3_COMPATIBLE = "S3 Compatible"
 LOCAL_TEMPORARY = "Local Temporary"
 FREQUENT_ACCESS = "Frequent Access"
 INFREQUENT_ACCESS = "Infrequent Access"
@@ -82,8 +81,8 @@ class TenantEnvironment(Document):
 		if self.file_storage_provider == LOCAL_TEMPORARY and self.environment_type != "Sandbox":
 			frappe.throw("Only sandbox environments can use Local Temporary file storage.")
 
-		if self.file_storage_provider == S3_COMPATIBLE and self.file_storage_class != FREQUENT_ACCESS:
-			frappe.throw("S3-compatible file storage must use Frequent Access for live site files in phase 1.")
+		if self.file_storage_provider == GCS and self.file_storage_class != FREQUENT_ACCESS:
+			frappe.throw("GCS file storage must use Frequent Access for live site files.")
 
 		if bool(self.backup_storage_provider) != bool(self.backup_storage_class):
 			frappe.throw("Backup Storage Provider and Backup Storage Class must be set together.")
@@ -91,8 +90,8 @@ class TenantEnvironment(Document):
 		if self.backup_storage_provider == LOCAL_TEMPORARY:
 			frappe.throw("Retained backups cannot use Local Temporary storage.")
 
-		if self.backup_storage_provider == S3_COMPATIBLE and self.backup_storage_class != INFREQUENT_ACCESS:
-			frappe.throw("S3-compatible backup storage must use Infrequent Access for phase-1 daily backups.")
+		if self.backup_storage_provider == GCS and self.backup_storage_class != INFREQUENT_ACCESS:
+			frappe.throw("GCS backup storage must use Infrequent Access for daily retained backups.")
 
 		if self.policy:
 			policy_doc = frappe.get_doc("Tenant Policy", self.policy)
@@ -149,14 +148,14 @@ class TenantEnvironment(Document):
 		if self.dns_provider != GOOGLE_CLOUD_DNS:
 			frappe.throw("DNS Provider must be Google Cloud DNS before an environment can be marked Live.")
 
-		if self.file_storage_provider != S3_COMPATIBLE:
-			frappe.throw("File Storage Provider must be S3 Compatible before an environment can be marked Live.")
+		if self.file_storage_provider != GCS:
+			frappe.throw("File Storage Provider must be GCS before an environment can be marked Live.")
 
 		if self.file_storage_class != FREQUENT_ACCESS:
 			frappe.throw("File Storage Class must be Frequent Access before an environment can be marked Live.")
 
-		if self.backup_storage_provider != S3_COMPATIBLE:
-			frappe.throw("Backup Storage Provider must be S3 Compatible before an environment can be marked Live.")
+		if self.backup_storage_provider != GCS:
+			frappe.throw("Backup Storage Provider must be GCS before an environment can be marked Live.")
 
 		if self.backup_storage_class != INFREQUENT_ACCESS:
 			frappe.throw("Backup Storage Class must be Infrequent Access before an environment can be marked Live.")
@@ -164,6 +163,12 @@ class TenantEnvironment(Document):
 		policy_doc = frappe.get_doc("Tenant Policy", self.policy)
 		if policy_doc.backup_frequency == "None":
 			frappe.throw("Policy must retain backups before an environment can be marked Live.")
+
+		if not self.backup_export_path:
+			frappe.throw("Backup Export Path is required before an environment can be marked Live.")
+
+		if not self.db_restore_tested_on:
+			frappe.throw("DB Restore Tested On is required before an environment can be marked Live.")
 
 		if self.database_mode == "Dedicated DB Instance" and not self.db_instance_name:
 			frappe.throw("DB Instance Name is required before a dedicated environment can be marked Live.")

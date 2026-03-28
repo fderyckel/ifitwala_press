@@ -9,7 +9,7 @@ The intended operating model is:
 - the runtime image already contains `frappe`, `ifitwala_ed`, and `ifitwala_drive`
 - MariaDB remains an explicit external dependency
 - Redis stays local to the compose stack for founder mode
-- S3-compatible storage is injected through runtime configuration, not DocTypes
+- GCS storage is injected through runtime configuration, not DocTypes
 - Cloud DNS record changes are handled through `gcloud dns ...`
 - a shared founder edge proxy can route hostnames to each environment's loopback nginx port
 - the founder host installs a daily backup timer that exports every active environment to the backup tier
@@ -45,11 +45,14 @@ The intended operating model is:
 
 This scaffolding assumes:
 
-- the founder runtime host currently uses Ubuntu Minimal 25.04
+- the founder runtime host currently uses Ubuntu 24.04 LTS
 - Docker Compose runs on the founder runtime host
 - `gcloud` is available on that host for Cloud DNS changes
-- `aws` CLI or equivalent S3 tooling is available on that host for backup export
+- `gcloud storage` is available on that host for backup export
 - the shared founder edge proxy in `edge_proxy/` or a later Traefik layer will route hostnames to the per-environment loopback nginx ports
+
+This current per-environment founder stack is acceptable for small pilot cohorts only.
+It is not the default broad free-trial architecture.
 
 The adapter can now render and manage both DNS records and shared founder proxy routes.
 The host bootstrap assets can now prepare the VM for Docker, Cloud DNS, and daily backup execution.

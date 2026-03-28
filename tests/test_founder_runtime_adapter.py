@@ -18,7 +18,7 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 			"tenant_slug": "alpha-school",
 		},
 		"policy": {
-			"name": "Standard S3",
+			"name": "Standard GCS",
 			"backup_frequency": "Daily",
 			"backup_retention_days": 14,
 		},
@@ -34,9 +34,9 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 				"dns_provider": "Google Cloud DNS",
 				"ifitwala_ed_branch": "main",
 				"ifitwala_drive_branch": "main",
-				"file_storage_provider": "S3 Compatible",
+				"file_storage_provider": "GCS",
 				"file_storage_class": "Frequent Access",
-				"backup_storage_provider": "S3 Compatible",
+				"backup_storage_provider": "GCS",
 				"backup_storage_class": "Infrequent Access",
 			},
 			"providers": {
@@ -46,9 +46,9 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 				"dns_provider": "Google Cloud DNS",
 			},
 			"storage": {
-				"file_storage_provider": "S3 Compatible",
+				"file_storage_provider": "GCS",
 				"file_storage_class": "Frequent Access",
-			"backup_storage_provider": "S3 Compatible",
+			"backup_storage_provider": "GCS",
 			"backup_storage_class": "Infrequent Access",
 		},
 	}
@@ -62,12 +62,8 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 			"IFITWALA_FOUNDER_RUNTIME_DB_ROOT_USER": "root",
 			"IFITWALA_FOUNDER_RUNTIME_DB_ROOT_PASSWORD": "secret",
 			"IFITWALA_FOUNDER_RUNTIME_ADMIN_PASSWORD": "admin-secret",
-			"IFITWALA_FOUNDER_RUNTIME_S3_ENDPOINT": "https://s3.example.com",
-			"IFITWALA_FOUNDER_RUNTIME_S3_REGION": "eu-west-1",
-			"IFITWALA_FOUNDER_RUNTIME_S3_ACCESS_KEY": "key",
-			"IFITWALA_FOUNDER_RUNTIME_S3_SECRET_KEY": "secret-key",
-			"IFITWALA_FOUNDER_RUNTIME_S3_FILES_BUCKET": "ifitwala-files",
-			"IFITWALA_FOUNDER_RUNTIME_S3_BACKUPS_BUCKET": "ifitwala-backups",
+			"IFITWALA_FOUNDER_RUNTIME_GCS_FILES_BUCKET": "ifitwala-files",
+			"IFITWALA_FOUNDER_RUNTIME_GCS_BACKUPS_BUCKET": "ifitwala-backups",
 			"IFITWALA_FOUNDER_RUNTIME_DOMAIN_SUFFIX": "ifitwala.com",
 			"IFITWALA_FOUNDER_RUNTIME_EDGE_PROXY_MODE": "shared_nginx_proxy",
 			"IFITWALA_FOUNDER_RUNTIME_EXECUTE": "0",
@@ -90,7 +86,7 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 	assert parsed["routing_mode"] == "Pending"
 	assert parsed["dns_ready"] == 0
 	assert parsed["runtime_reference"] == "compose:ifw-alpha-school-sandbox"
-	assert parsed["backup_export_path"] == "s3://ifitwala-backups/sites/alpha-school-sandbox/daily/"
+	assert parsed["backup_export_path"] == "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/"
 	assert (runtime_dir / "compose.yaml").is_file()
 	assert (runtime_dir / ".env").is_file()
 	assert (runtime_dir / "sites" / "common_site_config.json").is_file()
@@ -101,5 +97,5 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 
 	common_site_config = json.loads((runtime_dir / "sites" / "common_site_config.json").read_text())
 	assert common_site_config["approved_apps"] == ["frappe", "ifitwala_ed", "ifitwala_drive"]
-	assert common_site_config["s3_files_bucket"] == "ifitwala-files"
-	assert common_site_config["s3_backups_bucket"] == "ifitwala-backups"
+	assert common_site_config["gcs_files_bucket"] == "ifitwala-files"
+	assert common_site_config["gcs_backups_bucket"] == "ifitwala-backups"

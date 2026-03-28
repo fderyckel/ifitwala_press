@@ -187,11 +187,12 @@ The adapter must not treat container-local backups as sufficient.
 
 At minimum for founder mode:
 
-- site files for `ifitwala_ed` and `ifitwala_drive` should be configured against the same site-scoped S3-compatible object storage target
+- site files for `ifitwala_ed` and `ifitwala_drive` should be configured against the same site-scoped GCS target
 - the live file tier should be configured for frequent access
 - retained daily backups should be written to the less-frequent storage tier
 - the latest successful site backup must be exported outside the container
 - the returned `backup_export_path` must refer to persistent host or off-container storage
+- one restore rehearsal must be possible from that exported backup before an environment is treated as ready
 
 This aligns with the phased backup policy already locked in the rollout notes.
 
@@ -206,6 +207,7 @@ The first implementation should stay simple:
 - approved custom app image or app bundle
 - synchronous founder-mode execution is acceptable initially
 - SSH-free local execution on the host is acceptable initially
+- this per-environment founder stack is acceptable only for small pilot cohorts
 
 Do not jump straight to:
 

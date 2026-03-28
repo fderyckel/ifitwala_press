@@ -459,14 +459,12 @@ Defer to phase 2 unless clearly needed in the UI or action contracts:
 ### Storage section
 - `file_storage_provider` — Select
   - GCS
-  - S3 Compatible
   - Local Temporary
 - `file_storage_class` — Select
   - Frequent Access
   - Infrequent Access
 - `backup_storage_provider` — Select
   - GCS
-  - S3 Compatible
   - Local Temporary
 - `backup_storage_class` — Select
   - Frequent Access

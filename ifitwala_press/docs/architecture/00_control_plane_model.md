@@ -206,7 +206,7 @@ Tenant-specific state should live outside the app image:
 
 - databases
 - redis/cache/queue/socket services
-- object/file storage, with phase-1 S3-compatible storage split into frequent-access live files and less-frequent backup storage
+- object/file storage, with GCS split into frequent-access live files and less-frequent retained backups
 - environment config
 - routing config
 
@@ -217,6 +217,9 @@ Until revenue, contractual obligations, and uptime commitments justify stronger 
 
 Cheap early implementation is acceptable.
 Architecture drift is not.
+
+Broad free-trial economics still matter.
+Do not assume the current heavy per-environment founder stack is the default long-term demo posture.
 
 ---
 

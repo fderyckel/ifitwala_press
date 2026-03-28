@@ -36,10 +36,10 @@ set -a
 source "${runtime_dir}/.env"
 set +a
 
-site_bucket_uri="gs://${S3_FILES_BUCKET}"
-backup_bucket_uri="gs://${S3_BACKUPS_BUCKET}"
-files_prefix_uri="${site_bucket_uri}/${S3_FILES_PREFIX}"
-backups_prefix_uri="${backup_bucket_uri}/${S3_BACKUPS_PREFIX}"
+site_bucket_uri="gs://${GCS_FILES_BUCKET}"
+backup_bucket_uri="gs://${GCS_BACKUPS_BUCKET}"
+files_prefix_uri="${site_bucket_uri}/${GCS_FILES_PREFIX}"
+backups_prefix_uri="${backup_bucket_uri}/${GCS_BACKUPS_PREFIX}"
 
 if ((has_gcloud)); then
     if gcloud storage ls "${site_bucket_uri}" >/dev/null 2>&1; then

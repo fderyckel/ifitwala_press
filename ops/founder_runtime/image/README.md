@@ -7,7 +7,7 @@ The runtime image contract is:
 - start from a `frappe_docker`-style worker image
 - bake `ifitwala_ed` and `ifitwala_drive` into that image
 - bake native `libmagic` support required by `ifitwala_drive` governed MIME validation
-- keep site state and S3 credentials out of the image
+- keep site state and GCS configuration out of the image
 - publish one pinned tag, then reference that tag from `IFITWALA_FOUNDER_RUNTIME_IMAGE`
 
 ## Files

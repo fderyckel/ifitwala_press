@@ -17,14 +17,14 @@ The founder runtime for phase 1 should use:
   - `frappe`
   - `ifitwala_ed`
   - `ifitwala_drive`
-- one external MariaDB 11.8 baseline
+- one external MariaDB 11.4 baseline
 - local Redis containers for founder mode
 - one per-environment nginx bound to a loopback host port
-- one site-scoped S3-compatible storage contract
+- one site-scoped GCS storage contract
 - Google Cloud DNS changes through `gcloud dns ...`
 
 This is intentionally founder-stage.
-It is not the final multi-host or Traefik architecture.
+It is not the final multi-host or Traefik architecture, and it is not the default broad free-trial runtime posture.
 
 ---
 
@@ -36,7 +36,7 @@ It gives us:
 
 - a concrete runtime shape we can render from `ifitwala_press`
 - a direct path to proving `ifitwala_ed` + `ifitwala_drive` together
-- explicit S3 runtime configuration outside DocTypes
+- explicit GCS runtime configuration outside DocTypes
 - DNS automation via the Google Cloud CLI without forcing full GCP API orchestration
 - a clear future migration path toward Traefik, with a shared founder nginx edge proxy now bridging hostname routing
 
@@ -73,6 +73,7 @@ The founder Compose stack contains:
 - `redis-socketio`
 
 This is a founder-mode operational split, not the final production split.
+It is acceptable for a small pilot cohort, not as the default wide trial architecture.
 
 It is sufficient for:
 
@@ -108,7 +109,7 @@ That means:
 
 ## 6. Storage posture
 
-The runtime consumes the S3 storage contract already locked elsewhere:
+The runtime consumes the GCS storage contract already locked elsewhere:
 
 - live files use the frequent-access class
 - retained daily backups use the less-frequent class

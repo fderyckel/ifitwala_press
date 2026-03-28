@@ -16,7 +16,7 @@ runtime_root_default="${IFITWALA_FOUNDER_RUNTIME_ROOT:-/srv/ifitwala-founder-run
 
 check_supported_host() {
     if [[ ! -r /etc/os-release ]]; then
-        printf '%s\n' "Unable to read /etc/os-release. Founder host bootstrap expects Ubuntu Minimal 25.04." >&2
+        printf '%s\n' "Unable to read /etc/os-release. Founder host bootstrap expects Ubuntu 24.04 LTS." >&2
         exit 1
     fi
 
@@ -24,19 +24,18 @@ check_supported_host() {
     source /etc/os-release
 
     if [[ "${ID:-}" != "ubuntu" ]]; then
-        printf '%s\n' "Founder host bootstrap currently supports Ubuntu Minimal 25.04. Detected ${PRETTY_NAME:-unknown}." >&2
+        printf '%s\n' "Founder host bootstrap currently supports Ubuntu 24.04 LTS. Detected ${PRETTY_NAME:-unknown}." >&2
         exit 1
     fi
 
-    if [[ "${VERSION_ID:-}" != "25.04" ]]; then
-        printf '%s\n' "Warning: approved founder host baseline is Ubuntu Minimal 25.04. Detected Ubuntu ${VERSION_ID:-unknown}." >&2
+    if [[ "${VERSION_ID:-}" != "24.04" ]]; then
+        printf '%s\n' "Warning: approved founder host baseline is Ubuntu 24.04 LTS. Detected Ubuntu ${VERSION_ID:-unknown}." >&2
     fi
 }
 
 install_base_packages() {
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
-        awscli \
         ca-certificates \
         curl \
         docker.io \

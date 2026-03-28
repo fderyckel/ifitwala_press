@@ -73,6 +73,6 @@ addopts = "-q"
 
 [tool.ifitwala_press.runtime]
 python = "3.14"
-mariadb = "11.8"
+mariadb = "11.4"
 node = "24+"
 javascript_package_manager = "yarn"

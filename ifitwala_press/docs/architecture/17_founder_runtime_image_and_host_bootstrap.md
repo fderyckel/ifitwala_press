@@ -36,11 +36,11 @@ The founder runtime host is still one same-VM founder deployment target.
 
 For phase 1, the host must provide:
 
-- one Ubuntu Minimal 25.04 VM baseline
+- one Ubuntu 24.04 LTS VM baseline
 - Docker Engine with `docker compose`
 - `mariadb-client`
 - `gcloud`
-- `aws` CLI or equivalent S3-compatible upload tooling
+- `gcloud storage` for backup export
 - one runtime root containing:
   - per-environment Docker stacks
   - the shared edge proxy files
@@ -64,10 +64,11 @@ The backup flow is:
 
 1. iterate every rendered founder runtime environment
 2. run the site backup through `docker compose exec`
-3. export the resulting archive to the S3-compatible backup tier
+3. export the resulting archive to the GCS backup tier
 4. record a backup manifest under the founder runtime root
 
 This makes the phase-1 backup posture operationally real on the founder VM.
+No environment should be treated as ready until one restore rehearsal succeeds from that exported backup.
 
 ---
 

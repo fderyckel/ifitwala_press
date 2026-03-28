@@ -35,12 +35,8 @@ class RuntimeSettings:
 	db_root_user: str
 	db_root_password: str
 	admin_password: str
-	s3_endpoint: str
-	s3_region: str
-	s3_access_key: str
-	s3_secret_key: str
-	s3_files_bucket: str
-	s3_backups_bucket: str
+	gcs_files_bucket: str
+	gcs_backups_bucket: str
 	domain_suffix: str | None
 	dns_zone: str | None
 	dns_target_ip: str | None
@@ -130,9 +126,9 @@ def provision_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -
 		"last_provisioning_step": last_step,
 		"provisioning_message": message,
 		"runtime_reference": f"compose:{plan.compose_project_name}",
-		"file_storage_provider": payload.get("environment", {}).get("file_storage_provider") or "S3 Compatible",
+		"file_storage_provider": payload.get("environment", {}).get("file_storage_provider") or "GCS",
 		"file_storage_class": payload.get("environment", {}).get("file_storage_class") or "Frequent Access",
-		"backup_storage_provider": payload.get("environment", {}).get("backup_storage_provider") or "S3 Compatible",
+		"backup_storage_provider": payload.get("environment", {}).get("backup_storage_provider") or "GCS",
 		"backup_storage_class": payload.get("environment", {}).get("backup_storage_class") or "Infrequent Access",
 		"backup_export_path": plan.backup_export_prefix,
 		"status_reason": "Founder runtime scaffolded for Docker Compose and gcloud-backed DNS handling.",
@@ -197,12 +193,8 @@ def _load_settings() -> RuntimeSettings:
 		db_root_user=_env("IFITWALA_FOUNDER_RUNTIME_DB_ROOT_USER", required=True),
 		db_root_password=_env("IFITWALA_FOUNDER_RUNTIME_DB_ROOT_PASSWORD", required=True),
 		admin_password=_env("IFITWALA_FOUNDER_RUNTIME_ADMIN_PASSWORD", required=True),
-		s3_endpoint=_env("IFITWALA_FOUNDER_RUNTIME_S3_ENDPOINT", required=True),
-		s3_region=_env("IFITWALA_FOUNDER_RUNTIME_S3_REGION", required=True),
-		s3_access_key=_env("IFITWALA_FOUNDER_RUNTIME_S3_ACCESS_KEY", required=True),
-		s3_secret_key=_env("IFITWALA_FOUNDER_RUNTIME_S3_SECRET_KEY", required=True),
-		s3_files_bucket=_env("IFITWALA_FOUNDER_RUNTIME_S3_FILES_BUCKET", required=True),
-		s3_backups_bucket=_env("IFITWALA_FOUNDER_RUNTIME_S3_BACKUPS_BUCKET", required=True),
+		gcs_files_bucket=_env("IFITWALA_FOUNDER_RUNTIME_GCS_FILES_BUCKET", required=True),
+		gcs_backups_bucket=_env("IFITWALA_FOUNDER_RUNTIME_GCS_BACKUPS_BUCKET", required=True),
 		domain_suffix=_env("IFITWALA_FOUNDER_RUNTIME_DOMAIN_SUFFIX", default=None),
 		dns_zone=_env("IFITWALA_FOUNDER_RUNTIME_DNS_ZONE", default=None),
 		dns_target_ip=_env("IFITWALA_FOUNDER_RUNTIME_DNS_TARGET_IP", default=None),
@@ -247,7 +239,7 @@ def _build_plan(payload: dict[str, Any], settings: RuntimeSettings) -> RuntimePl
 		db_password=db_password,
 		files_prefix=files_prefix,
 		backups_prefix=backups_prefix,
-		backup_export_prefix=f"s3://{settings.s3_backups_bucket}/{backups_prefix}",
+		backup_export_prefix=f"gs://{settings.gcs_backups_bucket}/{backups_prefix}",
 	)
 
 
@@ -306,18 +298,15 @@ def _render_env(plan: RuntimePlan, payload: dict[str, Any], settings: RuntimeSet
 			"REDIS_CACHE_URL=redis://redis-cache:6379",
 			"REDIS_QUEUE_URL=redis://redis-queue:6379",
 			"REDIS_SOCKETIO_URL=redis://redis-socketio:6379",
-			f"FILE_STORAGE_PROVIDER={environment.get('file_storage_provider') or 'S3 Compatible'}",
+			f"FILE_STORAGE_PROVIDER={environment.get('file_storage_provider') or 'GCS'}",
 			f"FILE_STORAGE_CLASS={environment.get('file_storage_class') or 'Frequent Access'}",
-			f"BACKUP_STORAGE_PROVIDER={environment.get('backup_storage_provider') or 'S3 Compatible'}",
+			f"BACKUP_STORAGE_PROVIDER={environment.get('backup_storage_provider') or 'GCS'}",
 			f"BACKUP_STORAGE_CLASS={environment.get('backup_storage_class') or 'Infrequent Access'}",
-			f"S3_ENDPOINT={settings.s3_endpoint}",
-			f"S3_REGION={settings.s3_region}",
-			f"S3_ACCESS_KEY={settings.s3_access_key}",
-			f"S3_SECRET_KEY={settings.s3_secret_key}",
-			f"S3_FILES_BUCKET={settings.s3_files_bucket}",
-			f"S3_FILES_PREFIX={plan.files_prefix}",
-			f"S3_BACKUPS_BUCKET={settings.s3_backups_bucket}",
-			f"S3_BACKUPS_PREFIX={plan.backups_prefix}",
+			f"GCS_PROJECT={settings.gcloud_project or ''}",
+			f"GCS_FILES_BUCKET={settings.gcs_files_bucket}",
+			f"GCS_FILES_PREFIX={plan.files_prefix}",
+			f"GCS_BACKUPS_BUCKET={settings.gcs_backups_bucket}",
+			f"GCS_BACKUPS_PREFIX={plan.backups_prefix}",
 			"",
 		]
 	)
@@ -333,16 +322,15 @@ def _render_common_site_config(plan: RuntimePlan, payload: dict[str, Any], setti
 		"redis_socketio": "redis://redis-socketio:6379",
 		"webserver_port": 8000,
 		"socketio_port": 9000,
-		"file_storage_provider": environment.get("file_storage_provider") or "S3 Compatible",
+		"file_storage_provider": environment.get("file_storage_provider") or "GCS",
 		"file_storage_class": environment.get("file_storage_class") or "Frequent Access",
-		"backup_storage_provider": environment.get("backup_storage_provider") or "S3 Compatible",
+		"backup_storage_provider": environment.get("backup_storage_provider") or "GCS",
 		"backup_storage_class": environment.get("backup_storage_class") or "Infrequent Access",
-		"s3_endpoint": settings.s3_endpoint,
-		"s3_region": settings.s3_region,
-		"s3_files_bucket": settings.s3_files_bucket,
-		"s3_files_prefix": plan.files_prefix,
-		"s3_backups_bucket": settings.s3_backups_bucket,
-		"s3_backups_prefix": plan.backups_prefix,
+		"gcs_project": settings.gcloud_project,
+		"gcs_files_bucket": settings.gcs_files_bucket,
+		"gcs_files_prefix": plan.files_prefix,
+		"gcs_backups_bucket": settings.gcs_backups_bucket,
+		"gcs_backups_prefix": plan.backups_prefix,
 		"approved_apps": ["frappe", "ifitwala_ed", "ifitwala_drive"],
 	}
 	return json.dumps(config, indent=2, sort_keys=True)
@@ -367,9 +355,9 @@ def _render_runtime_plan(plan: RuntimePlan, payload: dict[str, Any], settings: R
 		"db_name": plan.db_name,
 		"db_user": plan.db_user,
 		"runtime_image": settings.runtime_image,
-		"files_bucket": settings.s3_files_bucket,
+		"files_bucket": settings.gcs_files_bucket,
 		"files_prefix": plan.files_prefix,
-		"backups_bucket": settings.s3_backups_bucket,
+		"backups_bucket": settings.gcs_backups_bucket,
 		"backups_prefix": plan.backups_prefix,
 		"edge_proxy_mode": settings.edge_proxy_mode,
 		"payload_environment": payload.get("environment", {}),

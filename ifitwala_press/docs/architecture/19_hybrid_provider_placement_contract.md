@@ -8,6 +8,8 @@ The near-term operating posture is:
 
 - Google Cloud is the main production provider
 - OVH may be used for low-cost sandbox and trial runtime placement
+- Google Cloud Storage remains the only current object-storage provider
+- Google Cloud DNS remains the default DNS authority
 - the control plane remains provider-aware but provider-neutral in its lifecycle model
 
 ---

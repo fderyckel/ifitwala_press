@@ -63,8 +63,8 @@ class TenantPolicy(Document):
 		if self.default_file_storage_provider == "Local Temporary" and self.policy_type != "Sandbox":
 			frappe.throw("Only Sandbox policies can default File Storage Provider to Local Temporary.")
 
-		if self.default_file_storage_provider == "S3 Compatible" and self.default_file_storage_class != "Frequent Access":
-			frappe.throw("S3-compatible file storage must use Frequent Access for live site files in phase 1.")
+		if self.default_file_storage_provider == "GCS" and self.default_file_storage_class != "Frequent Access":
+			frappe.throw("GCS file storage must use Frequent Access for live site files.")
 
 		if self.backup_frequency != "None" and not self.default_backup_storage_provider:
 			frappe.throw("Default Backup Storage Provider is required when backups are enabled.")
@@ -75,8 +75,8 @@ class TenantPolicy(Document):
 		if self.backup_frequency != "None" and self.default_backup_storage_provider == "Local Temporary":
 			frappe.throw("Retained backups cannot use Local Temporary storage.")
 
-		if self.default_backup_storage_provider == "S3 Compatible" and self.default_backup_storage_class != "Infrequent Access":
-			frappe.throw("S3-compatible backup storage must use Infrequent Access for phase-1 daily backups.")
+		if self.default_backup_storage_provider == "GCS" and self.default_backup_storage_class != "Infrequent Access":
+			frappe.throw("GCS backup storage must use Infrequent Access for daily retained backups.")
 
 	def _validate_policy_constraints(self) -> None:
 		if self.policy_type == "VIP" and self.default_database_mode == "Shared DB Fleet":

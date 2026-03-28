@@ -201,7 +201,8 @@ The next implementation steps should follow this order:
 3. wire the first founder provisioning adapter from `ifitwala_press` actions to the founder runtime
 4. support early sandbox teardown through governed action
 5. only after this flow is real, evaluate `agent` for remote execution
-6. only after remote execution exists, borrow more Press-grade orchestration patterns
+6. only after remote execution exists, move broad trial density to a shared demo runtime instead of keeping one heavy stack per environment by default
+7. only after that, borrow more Press-grade orchestration patterns
 
 This keeps the MVP honest:
 

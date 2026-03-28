@@ -4,11 +4,11 @@ This directory holds the founder GCE VM bootstrap assets for phase 1.
 
 The founder host contract is:
 
-- one Ubuntu Minimal 25.04 VM
+- one Ubuntu 24.04 LTS VM
 - Docker Engine with `docker compose`
 - `mariadb-client` for DB provisioning
 - `gcloud` for Cloud DNS updates
-- `aws` CLI or equivalent S3 tooling for daily backup export
+- `gcloud storage` for daily backup export
 - systemd-managed daily backup execution
 
 ## Files
@@ -31,4 +31,4 @@ The founder host contract is:
 7. Run the diagnostics in `../diagnostics/` whenever provisioning or runtime issues need fast triage.
 
 The bootstrap script validates that the host is Ubuntu and warns when the detected
-release does not match the current approved founder baseline of `25.04`.
+release does not match the current approved founder baseline of `24.04`.

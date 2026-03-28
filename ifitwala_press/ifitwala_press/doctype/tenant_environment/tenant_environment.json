@@ -447,16 +447,16 @@
       "label": "Storage"
     },
     {
-      "default": "S3 Compatible",
+      "default": "GCS",
       "description": "Primary object storage backend used for live site files and attachments shared across Ifitwala Ed and Ifitwala Drive.",
       "fieldname": "file_storage_provider",
       "fieldtype": "Select",
       "label": "File Storage Provider",
-      "options": "\nGCS\nS3 Compatible\nLocal Temporary"
+      "options": "\nGCS\nLocal Temporary"
     },
     {
       "default": "Frequent Access",
-      "description": "Access class used for live file/object reads. Phase-1 S3 storage keeps active files on the frequent-access tier.",
+      "description": "Access class used for live file/object reads. The current GCS baseline keeps active files on the frequent-access tier.",
       "fieldname": "file_storage_class",
       "fieldtype": "Select",
       "label": "File Storage Class",
@@ -473,16 +473,16 @@
       "fieldtype": "Column Break"
     },
     {
-      "default": "S3 Compatible",
+      "default": "GCS",
       "description": "Object storage backend used for retained exported backups outside the runtime container.",
       "fieldname": "backup_storage_provider",
       "fieldtype": "Select",
       "label": "Backup Storage Provider",
-      "options": "\nGCS\nS3 Compatible\nLocal Temporary"
+      "options": "\nGCS\nLocal Temporary"
     },
     {
       "default": "Infrequent Access",
-      "description": "Access class used for retained daily backups. Phase-1 S3 storage keeps backups on the less-frequent tier.",
+      "description": "Access class used for retained daily backups. The current GCS baseline keeps backups on the less-frequent tier.",
       "fieldname": "backup_storage_class",
       "fieldtype": "Select",
       "label": "Backup Storage Class",

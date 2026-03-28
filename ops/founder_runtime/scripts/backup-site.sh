@@ -12,10 +12,8 @@ docker compose -f "${runtime_dir}/compose.yaml" --project-directory "${runtime_d
 
 latest_backup="$(ls -1t "${runtime_dir}/sites/${SITE_NAME}/private/backups"/*.tgz | head -n 1)"
 backup_name="$(basename "${latest_backup}")"
-backup_target="s3://${S3_BACKUPS_BUCKET}/${S3_BACKUPS_PREFIX}${backup_name}"
+backup_target="gs://${GCS_BACKUPS_BUCKET}/${GCS_BACKUPS_PREFIX}${backup_name}"
 
-AWS_ACCESS_KEY_ID="${S3_ACCESS_KEY}" \
-AWS_SECRET_ACCESS_KEY="${S3_SECRET_KEY}" \
-aws --endpoint-url "${S3_ENDPOINT}" s3 cp "${latest_backup}" "${backup_target}"
+gcloud storage cp "${latest_backup}" "${backup_target}"
 
 printf '%s\n' "${backup_target}"

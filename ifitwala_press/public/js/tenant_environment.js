@@ -231,8 +231,8 @@ function addLifecycleButtons(frm) {
 							fieldname: "file_storage_provider",
 							fieldtype: "Select",
 							label: __("File Storage Provider"),
-						options: "\nGCS\nS3 Compatible\nLocal Temporary",
-						default: frm.doc.file_storage_provider || "S3 Compatible",
+						options: "\nGCS\nLocal Temporary",
+						default: frm.doc.file_storage_provider || "GCS",
 					},
 					{
 						fieldname: "file_storage_class",
@@ -245,8 +245,8 @@ function addLifecycleButtons(frm) {
 						fieldname: "backup_storage_provider",
 						fieldtype: "Select",
 						label: __("Backup Storage Provider"),
-						options: "\nGCS\nS3 Compatible\nLocal Temporary",
-						default: frm.doc.backup_storage_provider || "S3 Compatible",
+						options: "\nGCS\nLocal Temporary",
+						default: frm.doc.backup_storage_provider || "GCS",
 					},
 					{
 						fieldname: "backup_storage_class",

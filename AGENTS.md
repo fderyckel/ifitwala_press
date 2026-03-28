@@ -68,6 +68,31 @@ If a proposed feature does not strengthen that mission, challenge it.
 
 ---
 
+## Locked Infrastructure Baseline
+
+Until explicitly revised in this repository, the operating baseline is:
+
+- **MariaDB 11.4** only
+- **Google Cloud Storage (GCS)** as the only current object-storage provider
+- **Google Cloud DNS** as the default DNS authority
+- **Google Cloud** as the default production provider
+- **OVH** as an optional later sandbox/runtime placement provider, not the production default
+- **Ubuntu 24.04 LTS** as the founder-host baseline
+
+Additional launch-gate rules are also locked:
+
+- the current per-environment founder Docker stack is acceptable only for small pilot cohorts
+- broad free trials must not default to a full heavy per-environment runtime
+- no environment is operationally ready until off-runtime backup export and at least one restore rehearsal have been proven
+
+Agents must not:
+
+- reintroduce AWS, S3, Cloud SQL, RDS, or Amazon terminology unless the task is explicitly about comparison or migration
+- drift the database baseline away from MariaDB 11.4
+- describe GCS as "S3 storage" at the architecture or contract layer
+
+---
+
 ## Non-Negotiable Architectural Principles
 
 ### 1. Frappe app first

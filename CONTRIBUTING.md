@@ -10,7 +10,7 @@ Before changing code or docs, read:
 
 The current project baseline is:
 - Python 3.14
-- MariaDB 11.8
+- MariaDB 11.4
 - Node 24+
 - Yarn
 
@@ -18,14 +18,14 @@ Python tooling is defined in [pyproject.toml](/Users/francois.de/Documents/ifitw
 
 ## Database Baseline Rule
 
-`MariaDB 11.8` is the current repository baseline.
+`MariaDB 11.4` is the current repository baseline.
 
 Treat this as an explicit project decision, not a loose suggestion.
 
 That means:
 - do not reintroduce older MariaDB recommendations elsewhere in the repo without an explicit architecture decision
 - do not assume generic Frappe guidance overrides this repository baseline automatically
-- any rollout plan for Frappe v16 must include a compatibility spike proving site creation, migrations, and app install behavior on MariaDB 11.8 before production rollout
+- any rollout plan for Frappe v16 must include a compatibility spike proving site creation, migrations, and app install behavior on MariaDB 11.4 before production rollout
 
 ## Runtime Tooling Rule
 
@@ -75,6 +75,7 @@ make pre-commit-run
 - Do not invent lifecycle states, DocTypes, or workflows without grounding them in the current architecture docs.
 - Prefer server-authoritative actions over manual status editing.
 - Keep provider-specific infrastructure details out of phase-1 core models unless they are operationally necessary.
+- Keep Google Cloud Storage and Google Cloud DNS as the default storage and DNS contracts unless an explicit architecture change is made.
 - Treat auditability, recoverability, and operator clarity as first-class constraints.
 
 ## Scope Discipline

@@ -21,7 +21,7 @@ These commands are intentionally:
 
 - read-only
 - founder-host focused
-- compatible with the current runtime contract, even where object-storage env names still use `S3_*`
+- aligned with the current runtime contract, where object-storage env names use `GCS_*`
 - opinionated toward Google Cloud services such as Compute Engine, Cloud DNS, Cloud Storage, and Artifact Registry
 
 Exit code `0` means no failures.
