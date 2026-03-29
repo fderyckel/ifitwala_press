@@ -135,7 +135,7 @@ Press should not define our phase-1 scope at the product level.
 
 We do not need in MVP:
 
-- public self-serve platform complexity
+- public self-serve provisioning complexity
 - full marketplace behavior
 - full billing orchestration
 - full server-fleet automation

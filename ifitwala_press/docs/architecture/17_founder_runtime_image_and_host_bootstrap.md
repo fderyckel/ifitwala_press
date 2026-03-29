@@ -81,6 +81,6 @@ This still does not provide:
 - automated TLS issuance
 - multi-host orchestration
 - Traefik
-- GKE rollout
+- agent-style multi-host rollout
 
 Those remain later steps after one real founder runtime is brought up and verified end to end.

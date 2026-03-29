@@ -126,14 +126,16 @@ That means it must optimize for:
 
 The current founder runtime is acceptable for a small pilot cohort only.
 
-Before broader trial volume, the platform must hold these lines:
+This is a founder-managed demo phase for manually approved prospect environments.
+
+Before a larger number of manually approved demo environments, the platform must hold these lines:
 
 - Ubuntu 24.04 LTS for the founder host baseline
 - MariaDB 11.4 as the documented database baseline
 - GCS as the only current object storage provider
 - Google Cloud DNS as the default DNS authority
 - off-runtime backup export plus at least one successful restore rehearsal
-- no default trial architecture that gives every demo a full heavy dedicated stack
+- no default demo architecture that gives every manually approved sandbox a full heavy dedicated stack
 
 ## Current product intent
 

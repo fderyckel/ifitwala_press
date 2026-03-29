@@ -54,7 +54,7 @@ This scaffolding assumes:
 - the shared founder edge proxy in `edge_proxy/` or a later Traefik layer will route hostnames to the per-environment loopback nginx ports
 
 This current per-environment founder stack is acceptable for small pilot cohorts only.
-It is not the default broad free-trial architecture.
+It is not the default architecture for a larger founder-managed demo cohort.
 
 The adapter can now render and manage both DNS records and shared founder proxy routes.
 The host bootstrap assets can now prepare the VM for Docker, Cloud DNS, and daily backup execution.

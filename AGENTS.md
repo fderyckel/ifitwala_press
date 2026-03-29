@@ -82,8 +82,31 @@ Until explicitly revised in this repository, the operating baseline is:
 Additional launch-gate rules are also locked:
 
 - the current per-environment founder Docker stack is acceptable only for small pilot cohorts
-- broad free trials must not default to a full heavy per-environment runtime
+- manually approved demo environments must not default to a full heavy per-environment runtime
 - no environment is operationally ready until off-runtime backup export and at least one restore rehearsal have been proven
+
+## Founder-stage operating model
+
+Ifitwala_Press is **not** a public self-serve platform.
+
+Current operating model:
+- interested schools are reviewed manually by the founder
+- the founder decides which prospects receive a demo environment
+- demo/sandbox environments are provisioned under founder control from Ifitwala_Press
+- there is no public self-serve signup or automatic external provisioning flow
+
+Architecture implications:
+- do not design for a mass free-trial fleet
+- do not introduce Kubernetes or GKE
+- do not assume public onboarding pipelines
+- use VM + Docker / Docker Compose + Press-governed lifecycle
+- keep the system modeled on Frappe Press, Frappe Agent, and frappe_docker
+- treat the current demo phase as a controlled founder-managed demo workflow
+
+When writing notes, proposals, or code guidance, describe the system as:
+- an internal control plane
+- for a small number of manually approved demo tenants
+- with later conversion to paying production tenants
 
 Agents must not:
 
@@ -192,7 +215,7 @@ The control plane must store:
 But it must not prematurely hardcode all architecture to one proxy implementation.
 
 Ifitwala_Press owns **routing intent**.
-The infra layer later applies that intent via Traefik / Ingress / deployment adapters.
+The infra layer later applies that intent via Traefik / shared founder edge proxy / deployment adapters.
 
 ### 8. Safety over convenience
 This platform manages real school customers and potentially sensitive/VIP institutions.
@@ -523,8 +546,8 @@ that change must be attributable.
 ### 1. Model intent first
 We target Google Cloud, and likely later:
 - Traefik
-- GKE
-- Cloud SQL
+- founder runtime adapters
+- Docker Compose-managed runtimes
 - GCS
 
 But the Frappe data model must describe **control-plane intent first**, not bury infrastructure assumptions everywhere.

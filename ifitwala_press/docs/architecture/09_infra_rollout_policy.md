@@ -109,7 +109,7 @@ For founder-stage dockerized runtimes on one VM:
 - manual and semi-automated actions are acceptable
 - provisioning checklists or operator-run procedures are acceptable
 - provider API automation is explicitly optional
-- the current per-environment founder runtime remains acceptable only for small pilot cohorts, not as the default broad free-trial architecture
+- the current per-environment founder runtime remains acceptable only for small pilot cohorts, not as the default architecture for a larger manually approved demo cohort
 
 ---
 

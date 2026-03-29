@@ -218,8 +218,8 @@ Until revenue, contractual obligations, and uptime commitments justify stronger 
 Cheap early implementation is acceptable.
 Architecture drift is not.
 
-Broad free-trial economics still matter.
-Do not assume the current heavy per-environment founder stack is the default long-term demo posture.
+Founder-managed demo economics still matter.
+Do not assume the current heavy per-environment founder stack is the default long-term posture for manually approved demo environments.
 
 ---
 
@@ -451,7 +451,7 @@ Ifitwala_Press should own:
 ### 10.2 What infra later owns
 The infra layer can later translate that intent into:
 - Traefik config
-- Kubernetes Ingress
+- shared founder edge proxy routes
 - Docker labels
 - certificates
 - routing resources

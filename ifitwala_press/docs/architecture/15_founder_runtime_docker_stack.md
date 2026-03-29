@@ -24,7 +24,7 @@ The founder runtime for phase 1 should use:
 - Google Cloud DNS changes through `gcloud dns ...`
 
 This is intentionally founder-stage.
-It is not the final multi-host or Traefik architecture, and it is not the default broad free-trial runtime posture.
+It is not the final multi-host or Traefik architecture, and it is not the default runtime posture for manually approved demo environments.
 
 ---
 
@@ -73,7 +73,7 @@ The founder Compose stack contains:
 - `redis-socketio`
 
 This is a founder-mode operational split, not the final production split.
-It is acceptable for a small pilot cohort, not as the default wide trial architecture.
+It is acceptable for a small pilot cohort, not as the default architecture for a wide manually approved demo cohort.
 
 It is sufficient for:
 
