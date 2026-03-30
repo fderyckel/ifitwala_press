@@ -68,32 +68,36 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"estimated_guardians": tenant.estimated_guardians,
 			"estimated_peak_concurrency": tenant.estimated_peak_concurrency,
 		},
-			"policy": {
-				"name": policy_doc.name if policy_doc else environment.policy,
-				"backup_frequency": policy_doc.backup_frequency if policy_doc else None,
-				"backup_retention_days": policy_doc.backup_retention_days if policy_doc else None,
-				"storage_quota_gb": policy_doc.storage_quota_gb if policy_doc else environment.storage_quota_gb,
-				"max_file_size_mb": policy_doc.max_file_size_mb if policy_doc else None,
-				"default_primary_cloud_provider": policy_doc.default_primary_cloud_provider if policy_doc else None,
-				"default_runtime_provider": policy_doc.default_runtime_provider if policy_doc else None,
-				"default_object_storage_provider": policy_doc.default_object_storage_provider if policy_doc else None,
-				"default_dns_provider": policy_doc.default_dns_provider if policy_doc else None,
-			},
-			"environment": {
+		"policy": {
+			"name": policy_doc.name if policy_doc else environment.policy,
+			"backup_frequency": policy_doc.backup_frequency if policy_doc else None,
+			"backup_retention_days": policy_doc.backup_retention_days if policy_doc else None,
+			"storage_quota_gb": policy_doc.storage_quota_gb if policy_doc else environment.storage_quota_gb,
+			"max_file_size_mb": policy_doc.max_file_size_mb if policy_doc else None,
+			"default_primary_cloud_provider": policy_doc.default_primary_cloud_provider
+			if policy_doc
+			else None,
+			"default_runtime_provider": policy_doc.default_runtime_provider if policy_doc else None,
+			"default_object_storage_provider": policy_doc.default_object_storage_provider
+			if policy_doc
+			else None,
+			"default_dns_provider": policy_doc.default_dns_provider if policy_doc else None,
+		},
+		"environment": {
 			"name": environment.name,
 			"environment_name": environment.environment_name,
 			"environment_type": environment.environment_type,
 			"site_name": environment.site_name,
 			"site_status": environment.site_status,
 			"policy": environment.policy,
-				"hosting_tier": environment.hosting_tier,
-				"placement_strategy": environment.placement_strategy,
-				"primary_cloud_provider": environment.primary_cloud_provider,
-				"runtime_provider": environment.runtime_provider,
-				"object_storage_provider": environment.object_storage_provider,
-				"dns_provider": environment.dns_provider,
-				"primary_domain": environment.primary_domain,
-				"routing_mode": environment.routing_mode,
+			"hosting_tier": environment.hosting_tier,
+			"placement_strategy": environment.placement_strategy,
+			"primary_cloud_provider": environment.primary_cloud_provider,
+			"runtime_provider": environment.runtime_provider,
+			"object_storage_provider": environment.object_storage_provider,
+			"dns_provider": environment.dns_provider,
+			"primary_domain": environment.primary_domain,
+			"routing_mode": environment.routing_mode,
 			"region": environment.region,
 			"frappe_branch": environment.frappe_branch,
 			"ifitwala_ed_branch": environment.ifitwala_ed_branch,
@@ -113,24 +117,25 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"expires_on": str(environment.expires_on) if environment.expires_on else None,
 			"demo_seed_mode": environment.demo_seed_mode,
 			"demo_seed_reference": environment.demo_seed_reference,
-				"runtime_reference": environment.runtime_reference,
-				"backup_export_path": environment.backup_export_path,
-			},
-			"providers": {
-				"primary_cloud_provider": environment.primary_cloud_provider,
-				"runtime_provider": environment.runtime_provider,
-				"object_storage_provider": environment.object_storage_provider,
-				"dns_provider": environment.dns_provider,
-				"db_provider": environment.db_provider,
-			},
-			"storage": {
+			"runtime_reference": environment.runtime_reference,
+			"backup_export_path": environment.backup_export_path,
+		},
+		"providers": {
+			"primary_cloud_provider": environment.primary_cloud_provider,
+			"runtime_provider": environment.runtime_provider,
+			"object_storage_provider": environment.object_storage_provider,
+			"dns_provider": environment.dns_provider,
+			"db_provider": environment.db_provider,
+		},
+		"storage": {
 			"file_storage_provider": environment.file_storage_provider,
 			"file_storage_class": environment.file_storage_class,
 			"backup_storage_provider": environment.backup_storage_provider,
 			"backup_storage_class": environment.backup_storage_class,
 			"backup_frequency": policy_doc.backup_frequency if policy_doc else None,
 			"backup_retention_days": policy_doc.backup_retention_days if policy_doc else None,
-			"storage_quota_gb": environment.storage_quota_gb or (policy_doc.storage_quota_gb if policy_doc else None),
+			"storage_quota_gb": environment.storage_quota_gb
+			or (policy_doc.storage_quota_gb if policy_doc else None),
 			"shared_site_storage": True,
 			"site_storage_apps": ["ifitwala_ed", "ifitwala_drive"],
 			"drive_storage_profile": drive_storage_profile,
@@ -174,7 +179,9 @@ def _run_adapter(action: str, payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def _get_adapter_command() -> list[str]:
-	configured = frappe.conf.get(ADAPTER_CONFIG_KEY) or os.environ.get("IFITWALA_PRESS_FOUNDER_RUNTIME_ADAPTER")
+	configured = frappe.conf.get(ADAPTER_CONFIG_KEY) or os.environ.get(
+		"IFITWALA_PRESS_FOUNDER_RUNTIME_ADAPTER"
+	)
 	if not configured:
 		frappe.throw(
 			"Founder runtime adapter is not configured. Set "
@@ -193,13 +200,15 @@ def _get_adapter_command() -> list[str]:
 
 
 def _get_timeout_seconds() -> int:
-	configured = frappe.conf.get(TIMEOUT_CONFIG_KEY) or os.environ.get("IFITWALA_PRESS_FOUNDER_RUNTIME_TIMEOUT")
+	configured = frappe.conf.get(TIMEOUT_CONFIG_KEY) or os.environ.get(
+		"IFITWALA_PRESS_FOUNDER_RUNTIME_TIMEOUT"
+	)
 	if configured is None:
 		return DEFAULT_TIMEOUT_SECONDS
 
 	try:
 		timeout = int(configured)
-	except (TypeError, ValueError):
+	except TypeError, ValueError:
 		frappe.throw("Founder runtime adapter timeout must be an integer number of seconds.")
 
 	if timeout <= 0:

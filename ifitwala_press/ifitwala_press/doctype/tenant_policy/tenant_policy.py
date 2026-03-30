@@ -53,17 +53,26 @@ class TenantPolicy(Document):
 		if self.policy_type != "Sandbox" and self.default_runtime_provider == "OVH":
 			frappe.throw("Only Sandbox policies can default Runtime Provider to OVH.")
 
-		if self.default_file_storage_provider == "GCS" and self.default_object_storage_provider != "Google Cloud":
+		if (
+			self.default_file_storage_provider == "GCS"
+			and self.default_object_storage_provider != "Google Cloud"
+		):
 			frappe.throw("GCS file storage requires Default Object Storage Provider to be Google Cloud.")
 
-		if self.default_backup_storage_provider == "GCS" and self.default_object_storage_provider != "Google Cloud":
+		if (
+			self.default_backup_storage_provider == "GCS"
+			and self.default_object_storage_provider != "Google Cloud"
+		):
 			frappe.throw("GCS backup storage requires Default Object Storage Provider to be Google Cloud.")
 
 	def _validate_storage_defaults(self) -> None:
 		if self.default_file_storage_provider == "Local Temporary" and self.policy_type != "Sandbox":
 			frappe.throw("Only Sandbox policies can default File Storage Provider to Local Temporary.")
 
-		if self.default_file_storage_provider == "GCS" and self.default_file_storage_class != "Frequent Access":
+		if (
+			self.default_file_storage_provider == "GCS"
+			and self.default_file_storage_class != "Frequent Access"
+		):
 			frappe.throw("GCS file storage must use Frequent Access for live site files.")
 
 		if self.backup_frequency != "None" and not self.default_backup_storage_provider:
@@ -75,7 +84,10 @@ class TenantPolicy(Document):
 		if self.backup_frequency != "None" and self.default_backup_storage_provider == "Local Temporary":
 			frappe.throw("Retained backups cannot use Local Temporary storage.")
 
-		if self.default_backup_storage_provider == "GCS" and self.default_backup_storage_class != "Infrequent Access":
+		if (
+			self.default_backup_storage_provider == "GCS"
+			and self.default_backup_storage_class != "Infrequent Access"
+		):
 			frappe.throw("GCS backup storage must use Infrequent Access for daily retained backups.")
 
 	def _validate_policy_constraints(self) -> None:

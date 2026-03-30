@@ -22,32 +22,32 @@ def test_founder_runtime_adapter_dry_run_renders_runtime_assets(tmp_path: Path) 
 			"backup_frequency": "Daily",
 			"backup_retention_days": 14,
 		},
-			"environment": {
-				"name": "ENV-2026-0001",
-				"environment_name": "Alpha School Sandbox",
-				"environment_type": "Sandbox",
-				"site_name": "alpha-school-sandbox",
-				"site_status": "Sandbox Provisioning",
-				"primary_cloud_provider": "OVH",
-				"runtime_provider": "OVH",
-				"object_storage_provider": "Google Cloud",
-				"dns_provider": "Google Cloud DNS",
-				"ifitwala_ed_branch": "main",
-				"ifitwala_drive_branch": "main",
-				"file_storage_provider": "GCS",
-				"file_storage_class": "Frequent Access",
-				"backup_storage_provider": "GCS",
-				"backup_storage_class": "Infrequent Access",
-			},
-			"providers": {
-				"primary_cloud_provider": "OVH",
-				"runtime_provider": "OVH",
-				"object_storage_provider": "Google Cloud",
-				"dns_provider": "Google Cloud DNS",
-			},
-			"storage": {
-				"file_storage_provider": "GCS",
-				"file_storage_class": "Frequent Access",
+		"environment": {
+			"name": "ENV-2026-0001",
+			"environment_name": "Alpha School Sandbox",
+			"environment_type": "Sandbox",
+			"site_name": "alpha-school-sandbox",
+			"site_status": "Sandbox Provisioning",
+			"primary_cloud_provider": "OVH",
+			"runtime_provider": "OVH",
+			"object_storage_provider": "Google Cloud",
+			"dns_provider": "Google Cloud DNS",
+			"ifitwala_ed_branch": "main",
+			"ifitwala_drive_branch": "main",
+			"file_storage_provider": "GCS",
+			"file_storage_class": "Frequent Access",
+			"backup_storage_provider": "GCS",
+			"backup_storage_class": "Infrequent Access",
+		},
+		"providers": {
+			"primary_cloud_provider": "OVH",
+			"runtime_provider": "OVH",
+			"object_storage_provider": "Google Cloud",
+			"dns_provider": "Google Cloud DNS",
+		},
+		"storage": {
+			"file_storage_provider": "GCS",
+			"file_storage_class": "Frequent Access",
 			"backup_storage_provider": "GCS",
 			"backup_storage_class": "Infrequent Access",
 		},
@@ -174,5 +174,8 @@ def test_founder_runtime_adapter_dry_run_restore_returns_planned_result(tmp_path
 	assert parsed["last_provisioning_step"] == "Restore planned"
 	assert parsed["runtime_reference"] == "compose:ifw-alpha-school-sandbox"
 	assert parsed["backup_export_path"] == "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/"
-	assert parsed["restored_backup_manifest"] == "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/manifest-latest.json"
+	assert (
+		parsed["restored_backup_manifest"]
+		== "gs://ifitwala-backups/sites/alpha-school-sandbox/daily/manifest-latest.json"
+	)
 	assert parsed["db_restore_tested_on"] is None

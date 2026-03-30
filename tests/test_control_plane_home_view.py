@@ -10,7 +10,7 @@ import pytest
 
 def _load_views_module(monkeypatch: pytest.MonkeyPatch):
 	fake_frappe = ModuleType("frappe")
-	fake_frappe.whitelist = lambda *args, **kwargs: (lambda fn: fn)  # type: ignore[attr-defined]
+	fake_frappe.whitelist = lambda *args, **kwargs: lambda fn: fn  # type: ignore[attr-defined]
 	fake_utils = ModuleType("frappe.utils")
 	fake_utils.format_datetime = lambda value: str(value)  # type: ignore[attr-defined]
 

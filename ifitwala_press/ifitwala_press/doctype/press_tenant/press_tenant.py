@@ -26,7 +26,11 @@ class PressTenant(Document):
 			frappe.throw("Tenant Slug must use lowercase letters, numbers, and hyphens only.")
 
 	def _validate_contract_dates(self) -> None:
-		if self.contract_start_date and self.contract_end_date and self.contract_end_date < self.contract_start_date:
+		if (
+			self.contract_start_date
+			and self.contract_end_date
+			and self.contract_end_date < self.contract_start_date
+		):
 			frappe.throw("Contract End Date cannot be before Contract Start Date.")
 
 	def _validate_vip_constraints(self) -> None:

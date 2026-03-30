@@ -22,7 +22,9 @@ def _load_tenant_environment_module(monkeypatch: pytest.MonkeyPatch):
 	monkeypatch.setitem(sys.modules, "frappe.model", fake_model)
 	monkeypatch.setitem(sys.modules, "frappe.model.document", fake_document)
 	sys.modules.pop("ifitwala_press.ifitwala_press.doctype.tenant_environment.tenant_environment", None)
-	return importlib.import_module("ifitwala_press.ifitwala_press.doctype.tenant_environment.tenant_environment")
+	return importlib.import_module(
+		"ifitwala_press.ifitwala_press.doctype.tenant_environment.tenant_environment"
+	)
 
 
 def test_manual_site_status_edit_is_blocked(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -37,7 +39,9 @@ def test_manual_site_status_edit_is_blocked(monkeypatch: pytest.MonkeyPatch) -> 
 		get_doc_before_save=lambda: previous,
 	)
 
-	with pytest.raises(RuntimeError, match="Site Status must be changed through Ifitwala Press lifecycle actions"):
+	with pytest.raises(
+		RuntimeError, match="Site Status must be changed through Ifitwala Press lifecycle actions"
+	):
 		module.TenantEnvironment._validate_lifecycle_edit_discipline(current)
 
 

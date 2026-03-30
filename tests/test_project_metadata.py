@@ -102,28 +102,117 @@ def test_contributing_defines_pre_merge_gate() -> None:
 def test_core_phase_one_doctype_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "__init__.py").is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "__init__.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "press_tenant.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "press_tenant.json").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "__init__.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "tenant_environment.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "tenant_environment.json").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "__init__.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "tenant_transition_log.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "tenant_transition_log.json").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "__init__.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "tenant_subscription.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "tenant_subscription.json").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "__init__.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "tenant_usage_snapshot.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "tenant_usage_snapshot.json").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "__init__.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "tenant_cost_snapshot.py").is_file()
-	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "tenant_cost_snapshot.json").is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "press_tenant.py"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "press_tenant.json"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "__init__.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_environment"
+		/ "tenant_environment.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_environment"
+		/ "tenant_environment.json"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "__init__.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_transition_log"
+		/ "tenant_transition_log.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_transition_log"
+		/ "tenant_transition_log.json"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_subscription" / "__init__.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_subscription"
+		/ "tenant_subscription.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_subscription"
+		/ "tenant_subscription.json"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_usage_snapshot" / "__init__.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_usage_snapshot"
+		/ "tenant_usage_snapshot.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_usage_snapshot"
+		/ "tenant_usage_snapshot.json"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_cost_snapshot" / "__init__.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_cost_snapshot"
+		/ "tenant_cost_snapshot.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_cost_snapshot"
+		/ "tenant_cost_snapshot.json"
+	).is_file()
 
 
 def test_environment_model_includes_founder_runtime_mvp_fields() -> None:
 	environment_source = (
-		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "tenant_environment.json"
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_environment"
+		/ "tenant_environment.json"
 	).read_text()
 	for field_name in (
 		"demo_seed_mode",
@@ -259,7 +348,7 @@ def test_founder_runtime_image_build_locks_libmagic_contract() -> None:
 	dockerfile = (ROOT / "ops" / "founder_runtime" / "image" / "Dockerfile").read_text()
 	for token in (
 		"libmagic1",
-		'env/bin/python -c "import magic; print(magic.from_buffer(b\'%PDF-1.7\', mime=True))"',
+		"env/bin/python -c \"import magic; print(magic.from_buffer(b'%PDF-1.7', mime=True))\"",
 	):
 		assert token in dockerfile
 
@@ -415,19 +504,14 @@ def test_operator_surface_js_files_exist() -> None:
 def test_workspace_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "workspace" / "__init__.py").is_file()
 	assert (
-		ROOT
-		/ "ifitwala_press"
-		/ "ifitwala_press"
-		/ "workspace"
-		/ "ifitwala_press"
-		/ "ifitwala_press.json"
+		ROOT / "ifitwala_press" / "ifitwala_press" / "workspace" / "ifitwala_press" / "ifitwala_press.json"
 	).is_file()
 
 
 def test_hooks_register_operator_surface_js() -> None:
 	hooks = (ROOT / "ifitwala_press" / "hooks.py").read_text()
 	assert 'app_include_css = "/assets/ifitwala_press/css/ifitwala_press.css"' in hooks
-	assert 'add_to_apps_screen = [' in hooks
+	assert "add_to_apps_screen = [" in hooks
 	assert '"route": "/app/control-plane-home"' in hooks
 	assert '"has_permission": "ifitwala_press.api.permission.has_app_permission"' in hooks
 	assert '"Press Tenant": "public/js/press_tenant.js"' in hooks
@@ -438,12 +522,7 @@ def test_hooks_register_operator_surface_js() -> None:
 
 def test_workspace_includes_all_core_doctypes() -> None:
 	workspace_source = (
-		ROOT
-		/ "ifitwala_press"
-		/ "ifitwala_press"
-		/ "workspace"
-		/ "ifitwala_press"
-		/ "ifitwala_press.json"
+		ROOT / "ifitwala_press" / "ifitwala_press" / "workspace" / "ifitwala_press" / "ifitwala_press.json"
 	).read_text()
 	for doctype_name in (
 		"Press Tenant",

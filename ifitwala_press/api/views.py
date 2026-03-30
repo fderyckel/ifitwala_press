@@ -48,7 +48,7 @@ def _days_until(value: Any, *, as_of: date) -> int | None:
 def _money(value: Any) -> float:
 	try:
 		return float(value or 0)
-	except (TypeError, ValueError):
+	except TypeError, ValueError:
 		return 0.0
 
 
@@ -132,7 +132,7 @@ def _build_control_plane_home(
 
 		try:
 			health_value = float(health_score) if health_score is not None else None
-		except (TypeError, ValueError):
+		except TypeError, ValueError:
 			health_value = None
 		if health_value is not None and health_value < 50:
 			attention_items.append(
@@ -146,7 +146,11 @@ def _build_control_plane_home(
 			)
 
 		expires_in_days = _days_until(row.get("expires_on"), as_of=as_of)
-		if row.get("environment_type") == SANDBOX and site_status not in {ARCHIVED, "Sandbox Expired"} and expires_in_days is not None:
+		if (
+			row.get("environment_type") == SANDBOX
+			and site_status not in {ARCHIVED, "Sandbox Expired"}
+			and expires_in_days is not None
+		):
 			if expires_in_days < 0:
 				attention_items.append(
 					{
@@ -211,16 +215,14 @@ def _build_control_plane_home(
 			},
 			{
 				"label": "Sandbox Environments",
-				"value": sum(
-					1
-					for row in active_environments
-					if row.get("environment_type") == SANDBOX
-				),
+				"value": sum(1 for row in active_environments if row.get("environment_type") == SANDBOX),
 				"indicator": "blue",
 			},
 			{
 				"label": "Capacity Alerts",
-				"value": sum(1 for row in active_environments if row.get("capacity_state") in CAPACITY_ALERT_STATES),
+				"value": sum(
+					1 for row in active_environments if row.get("capacity_state") in CAPACITY_ALERT_STATES
+				),
 				"indicator": "orange",
 			},
 			{
@@ -235,7 +237,9 @@ def _build_control_plane_home(
 			},
 			{
 				"label": "Total Estimated Monthly Cost",
-				"value": round(sum(_money(row.get("estimated_monthly_cost")) for row in active_environments), 2),
+				"value": round(
+					sum(_money(row.get("estimated_monthly_cost")) for row in active_environments), 2
+				),
 				"indicator": "purple",
 				"is_currency": True,
 			},

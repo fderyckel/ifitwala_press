@@ -68,8 +68,15 @@ class RuntimePlan:
 
 def main(argv: list[str] | None = None) -> int:
 	args = list(argv or sys.argv[1:])
-	if len(args) != 1 or args[0] not in {"provision-demo-runtime", "teardown-demo-runtime", "restore-demo-runtime"}:
-		print("Usage: adapter.py [provision-demo-runtime|teardown-demo-runtime|restore-demo-runtime]", file=sys.stderr)
+	if len(args) != 1 or args[0] not in {
+		"provision-demo-runtime",
+		"teardown-demo-runtime",
+		"restore-demo-runtime",
+	}:
+		print(
+			"Usage: adapter.py [provision-demo-runtime|teardown-demo-runtime|restore-demo-runtime]",
+			file=sys.stderr,
+		)
 		return 2
 
 	payload = _load_payload()
@@ -114,7 +121,9 @@ def provision_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -
 			last_step = "Shared edge proxy route ensured"
 		dns_ready = _ensure_dns_record(plan, settings)
 		last_step = "Cloud DNS ensured" if dns_ready else last_step
-		message = "Founder runtime provisioned with Docker Compose, shared edge proxy, and bootstrap completed."
+		message = (
+			"Founder runtime provisioned with Docker Compose, shared edge proxy, and bootstrap completed."
+		)
 
 	return {
 		"site_name": plan.site_name,
@@ -132,7 +141,8 @@ def provision_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -
 		"file_storage_provider": payload.get("environment", {}).get("file_storage_provider") or "GCS",
 		"file_storage_class": payload.get("environment", {}).get("file_storage_class") or "Frequent Access",
 		"backup_storage_provider": payload.get("environment", {}).get("backup_storage_provider") or "GCS",
-		"backup_storage_class": payload.get("environment", {}).get("backup_storage_class") or "Infrequent Access",
+		"backup_storage_class": payload.get("environment", {}).get("backup_storage_class")
+		or "Infrequent Access",
 		"backup_export_path": plan.backup_export_prefix,
 		"status_reason": "Founder runtime scaffolded for Docker Compose and gcloud-backed DNS handling.",
 	}
@@ -179,7 +189,10 @@ def restore_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -> 
 	if not plan.runtime_dir.exists():
 		raise SystemExit(f"Runtime directory not found for restore: {plan.runtime_dir}")
 
-	backup_export_path = str(payload.get("environment", {}).get("backup_export_path") or "").strip() or plan.backup_export_prefix
+	backup_export_path = (
+		str(payload.get("environment", {}).get("backup_export_path") or "").strip()
+		or plan.backup_export_prefix
+	)
 	last_step = "Restore planned"
 	message = "Restore planned. Execution not requested."
 	restored_manifest_uri = f"{backup_export_path.rstrip('/')}/manifest-latest.json"
@@ -238,7 +251,9 @@ def _load_settings() -> RuntimeSettings:
 				default=str(runtime_root / EDGE_PROXY_ROOT_NAME),
 			)
 		).expanduser(),
-		http_port_base=int(_env("IFITWALA_FOUNDER_RUNTIME_HTTP_PORT_BASE", default=str(DEFAULT_HTTP_PORT_BASE))),
+		http_port_base=int(
+			_env("IFITWALA_FOUNDER_RUNTIME_HTTP_PORT_BASE", default=str(DEFAULT_HTTP_PORT_BASE))
+		),
 		execute=_env("IFITWALA_FOUNDER_RUNTIME_EXECUTE", default="0") == "1",
 	)
 
@@ -249,11 +264,19 @@ def _build_plan(payload: dict[str, Any], settings: RuntimeSettings) -> RuntimePl
 	project_slug = _slugify(site_name)
 	runtime_dir = settings.runtime_root / ENVIRONMENT_ROOT_NAME / project_slug
 	existing_env = _read_existing_env(runtime_dir / ".env")
-	http_port = int(existing_env.get("HTTP_PORT") or _allocate_http_port(settings.runtime_root, settings.http_port_base))
-	db_name = environment.get("db_name") or existing_env.get("DB_NAME") or f"site_{project_slug.replace('-', '_')}"
-	db_user = environment.get("db_user") or existing_env.get("DB_USER") or f"user_{project_slug.replace('-', '_')}"
+	http_port = int(
+		existing_env.get("HTTP_PORT") or _allocate_http_port(settings.runtime_root, settings.http_port_base)
+	)
+	db_name = (
+		environment.get("db_name") or existing_env.get("DB_NAME") or f"site_{project_slug.replace('-', '_')}"
+	)
+	db_user = (
+		environment.get("db_user") or existing_env.get("DB_USER") or f"user_{project_slug.replace('-', '_')}"
+	)
 	db_password = existing_env.get("DB_PASSWORD") or _secret_token()
-	primary_domain = environment.get("primary_domain") or _default_domain(project_slug, settings.domain_suffix)
+	primary_domain = environment.get("primary_domain") or _default_domain(
+		project_slug, settings.domain_suffix
+	)
 	files_prefix = f"sites/{site_name}/files/"
 	backups_prefix = f"sites/{site_name}/daily/"
 
@@ -284,10 +307,16 @@ def _render_runtime_assets(plan: RuntimePlan, payload: dict[str, Any], settings:
 	(runtime_root / "compose.yaml").write_text((TEMPLATES_DIR / "compose.yaml").read_text())
 	(runtime_root / "nginx" / "default.conf").write_text(_render_nginx(plan))
 	(runtime_root / ".env").write_text(_render_env(plan, payload, settings))
-	(runtime_root / "sites" / "common_site_config.json").write_text(_render_common_site_config(plan, payload, settings))
-	(runtime_root / "runtime-config" / "payload.json").write_text(json.dumps(payload, indent=2, sort_keys=True))
+	(runtime_root / "sites" / "common_site_config.json").write_text(
+		_render_common_site_config(plan, payload, settings)
+	)
+	(runtime_root / "runtime-config" / "payload.json").write_text(
+		json.dumps(payload, indent=2, sort_keys=True)
+	)
 	(runtime_root / "runtime-config" / "provision.sql").write_text(_render_provision_sql(plan))
-	(runtime_root / "runtime-config" / "runtime-plan.json").write_text(_render_runtime_plan(plan, payload, settings))
+	(runtime_root / "runtime-config" / "runtime-plan.json").write_text(
+		_render_runtime_plan(plan, payload, settings)
+	)
 
 
 def _prepare_edge_proxy(plan: RuntimePlan, settings: RuntimeSettings) -> None:
@@ -295,7 +324,9 @@ def _prepare_edge_proxy(plan: RuntimePlan, settings: RuntimeSettings) -> None:
 	(settings.edge_proxy_root / "conf.d").mkdir(exist_ok=True)
 	(settings.edge_proxy_root / "compose.yaml").write_text((ROOT / "edge_proxy" / "compose.yaml").read_text())
 	(settings.edge_proxy_root / "nginx.conf").write_text((ROOT / "edge_proxy" / "nginx.conf").read_text())
-	(settings.edge_proxy_root / "conf.d" / f"{plan.project_slug}.conf").write_text(_render_edge_proxy_route(plan))
+	(settings.edge_proxy_root / "conf.d" / f"{plan.project_slug}.conf").write_text(
+		_render_edge_proxy_route(plan)
+	)
 
 
 def _render_edge_proxy_route(plan: RuntimePlan) -> str:
@@ -500,7 +531,15 @@ def _ensure_dns_record(plan: RuntimePlan, settings: RuntimeSettings) -> int:
 	if current == settings.dns_target_ip:
 		return 1
 
-	start = [*_gcloud_base_command(settings), "dns", "record-sets", "transaction", "start", "--zone", settings.dns_zone]
+	start = [
+		*_gcloud_base_command(settings),
+		"dns",
+		"record-sets",
+		"transaction",
+		"start",
+		"--zone",
+		settings.dns_zone,
+	]
 	_run(start)
 
 	if current:
@@ -539,7 +578,15 @@ def _ensure_dns_record(plan: RuntimePlan, settings: RuntimeSettings) -> int:
 		settings.dns_target_ip,
 	]
 	_run(add)
-	execute = [*_gcloud_base_command(settings), "dns", "record-sets", "transaction", "execute", "--zone", settings.dns_zone]
+	execute = [
+		*_gcloud_base_command(settings),
+		"dns",
+		"record-sets",
+		"transaction",
+		"execute",
+		"--zone",
+		settings.dns_zone,
+	]
 	_run(execute)
 	return 1
 
@@ -568,7 +615,17 @@ def _remove_dns_record(primary_domain: str, settings: RuntimeSettings) -> None:
 	if not current:
 		return
 
-	_run([*_gcloud_base_command(settings), "dns", "record-sets", "transaction", "start", "--zone", settings.dns_zone])
+	_run(
+		[
+			*_gcloud_base_command(settings),
+			"dns",
+			"record-sets",
+			"transaction",
+			"start",
+			"--zone",
+			settings.dns_zone,
+		]
+	)
 	_run(
 		[
 			*_gcloud_base_command(settings),
@@ -587,7 +644,17 @@ def _remove_dns_record(primary_domain: str, settings: RuntimeSettings) -> None:
 			current,
 		]
 	)
-	_run([*_gcloud_base_command(settings), "dns", "record-sets", "transaction", "execute", "--zone", settings.dns_zone])
+	_run(
+		[
+			*_gcloud_base_command(settings),
+			"dns",
+			"record-sets",
+			"transaction",
+			"execute",
+			"--zone",
+			settings.dns_zone,
+		]
+	)
 
 
 def _routing_mode(
@@ -599,7 +666,12 @@ def _routing_mode(
 ) -> str:
 	if not plan.primary_domain:
 		return "Internal Only"
-	if settings.edge_proxy_mode == "shared_nginx_proxy" and dns_ready and edge_proxy_ready and settings.execute:
+	if (
+		settings.edge_proxy_mode == "shared_nginx_proxy"
+		and dns_ready
+		and edge_proxy_ready
+		and settings.execute
+	):
 		return "Public"
 	if settings.edge_proxy_mode in {"manual_host_proxy", "shared_nginx_proxy"}:
 		return "Pending"
@@ -690,7 +762,9 @@ def _run(command: list[str], *, cwd: Path | None = None, env: dict[str, str] | N
 		capture_output=True,
 	)
 	if result.returncode != 0:
-		message = result.stderr.strip() or result.stdout.strip() or f"Command failed with code {result.returncode}"
+		message = (
+			result.stderr.strip() or result.stdout.strip() or f"Command failed with code {result.returncode}"
+		)
 		raise SystemExit(message)
 	return result.stdout
 

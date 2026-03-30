@@ -160,13 +160,17 @@ class TenantEnvironment(Document):
 			frappe.throw("DNS Provider is required before an environment can be marked Live.")
 
 		if self.primary_cloud_provider != GOOGLE_CLOUD:
-			frappe.throw("Primary Cloud Provider must be Google Cloud before an environment can be marked Live.")
+			frappe.throw(
+				"Primary Cloud Provider must be Google Cloud before an environment can be marked Live."
+			)
 
 		if self.runtime_provider != GOOGLE_CLOUD:
 			frappe.throw("Runtime Provider must be Google Cloud before an environment can be marked Live.")
 
 		if self.object_storage_provider != GOOGLE_CLOUD:
-			frappe.throw("Object Storage Provider must be Google Cloud before an environment can be marked Live.")
+			frappe.throw(
+				"Object Storage Provider must be Google Cloud before an environment can be marked Live."
+			)
 
 		if self.dns_provider != GOOGLE_CLOUD_DNS:
 			frappe.throw("DNS Provider must be Google Cloud DNS before an environment can be marked Live.")
@@ -175,13 +179,17 @@ class TenantEnvironment(Document):
 			frappe.throw("File Storage Provider must be GCS before an environment can be marked Live.")
 
 		if self.file_storage_class != FREQUENT_ACCESS:
-			frappe.throw("File Storage Class must be Frequent Access before an environment can be marked Live.")
+			frappe.throw(
+				"File Storage Class must be Frequent Access before an environment can be marked Live."
+			)
 
 		if self.backup_storage_provider != GCS:
 			frappe.throw("Backup Storage Provider must be GCS before an environment can be marked Live.")
 
 		if self.backup_storage_class != INFREQUENT_ACCESS:
-			frappe.throw("Backup Storage Class must be Infrequent Access before an environment can be marked Live.")
+			frappe.throw(
+				"Backup Storage Class must be Infrequent Access before an environment can be marked Live."
+			)
 
 		policy_doc = frappe.get_doc("Tenant Policy", self.policy)
 		if policy_doc.backup_frequency == "None":

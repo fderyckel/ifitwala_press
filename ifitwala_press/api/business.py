@@ -24,7 +24,9 @@ def _format_row_timestamps(row: dict[str, Any], *fieldnames: str) -> dict[str, A
 	return row
 
 
-def _get_latest_record(doctype: str, filters: dict[str, Any], fields: list[str], order_by: str) -> dict[str, Any] | None:
+def _get_latest_record(
+	doctype: str, filters: dict[str, Any], fields: list[str], order_by: str
+) -> dict[str, Any] | None:
 	rows = frappe.get_all(
 		doctype,
 		filters=filters,
@@ -41,19 +43,47 @@ def get_tenant_business_summary(tenant: str) -> dict[str, Any]:
 	subscription = _get_latest_record(
 		"Tenant Subscription",
 		{"tenant": tenant},
-		["name", "plan_name", "subscription_tier", "status", "start_date", "end_date", "billing_cycle", "price", "currency"],
+		[
+			"name",
+			"plan_name",
+			"subscription_tier",
+			"status",
+			"start_date",
+			"end_date",
+			"billing_cycle",
+			"price",
+			"currency",
+		],
 		"modified desc",
 	)
 	usage_snapshot = _get_latest_record(
 		"Tenant Usage Snapshot",
 		{"tenant": tenant},
-		["name", "environment", "snapshot_on", "active_users_30d", "storage_used_gb", "request_count", "peak_concurrency_estimate"],
+		[
+			"name",
+			"environment",
+			"snapshot_on",
+			"active_users_30d",
+			"storage_used_gb",
+			"request_count",
+			"peak_concurrency_estimate",
+		],
 		"snapshot_on desc",
 	)
 	cost_snapshot = _get_latest_record(
 		"Tenant Cost Snapshot",
 		{"tenant": tenant},
-		["name", "environment", "snapshot_on", "db_cost_estimate", "storage_cost_estimate", "compute_cost_estimate", "backup_cost_estimate", "total_cost_estimate", "currency"],
+		[
+			"name",
+			"environment",
+			"snapshot_on",
+			"db_cost_estimate",
+			"storage_cost_estimate",
+			"compute_cost_estimate",
+			"backup_cost_estimate",
+			"total_cost_estimate",
+			"currency",
+		],
 		"snapshot_on desc",
 	)
 
@@ -75,13 +105,33 @@ def get_environment_business_summary(environment: str) -> dict[str, Any]:
 	usage_snapshot = _get_latest_record(
 		"Tenant Usage Snapshot",
 		{"environment": environment},
-		["name", "tenant", "snapshot_on", "active_users_30d", "storage_used_gb", "request_count", "avg_concurrency_estimate", "peak_concurrency_estimate", "queue_jobs_processed"],
+		[
+			"name",
+			"tenant",
+			"snapshot_on",
+			"active_users_30d",
+			"storage_used_gb",
+			"request_count",
+			"avg_concurrency_estimate",
+			"peak_concurrency_estimate",
+			"queue_jobs_processed",
+		],
 		"snapshot_on desc",
 	)
 	cost_snapshot = _get_latest_record(
 		"Tenant Cost Snapshot",
 		{"environment": environment},
-		["name", "tenant", "snapshot_on", "db_cost_estimate", "storage_cost_estimate", "compute_cost_estimate", "backup_cost_estimate", "total_cost_estimate", "currency"],
+		[
+			"name",
+			"tenant",
+			"snapshot_on",
+			"db_cost_estimate",
+			"storage_cost_estimate",
+			"compute_cost_estimate",
+			"backup_cost_estimate",
+			"total_cost_estimate",
+			"currency",
+		],
 		"snapshot_on desc",
 	)
 

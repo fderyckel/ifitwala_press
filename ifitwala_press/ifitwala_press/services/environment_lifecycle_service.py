@@ -232,7 +232,9 @@ def provision_production(
 	if primary_domain:
 		environment_doc.primary_domain = primary_domain
 	environment_doc.provisioning_job_id = provisioning_job_id
-	_transition_environment(environment_doc, PRODUCTION_PROVISIONING, status_reason or "Production provisioning started.")
+	_transition_environment(
+		environment_doc, PRODUCTION_PROVISIONING, status_reason or "Production provisioning started."
+	)
 	return environment_doc
 
 
@@ -402,9 +404,7 @@ def _apply_provider_defaults(environment: Document, policy: Document | None) -> 
 		or DEFAULT_OBJECT_STORAGE_PROVIDER
 	)
 	environment.dns_provider = (
-		environment.dns_provider
-		or getattr(policy, "default_dns_provider", None)
-		or DEFAULT_DNS_PROVIDER
+		environment.dns_provider or getattr(policy, "default_dns_provider", None) or DEFAULT_DNS_PROVIDER
 	)
 
 	if not environment.storage_quota_gb and policy and policy.storage_quota_gb not in (None, ""):
