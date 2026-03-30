@@ -34,6 +34,14 @@ Critical lifecycle and operational actions must run on the server.
 The UI may trigger them.
 The UI must not implement them.
 
+The same discipline applies to read-side control-plane surfaces:
+- dashboard APIs
+- summary panels
+- attention queues
+- transition history feeds
+
+Those are not write actions, but they are still control-plane behavior and must enforce server-side permissions.
+
 ### 1.2 Actions must be explicit
 If an operator:
 - creates a sandbox
@@ -99,6 +107,7 @@ Not responsible for:
 - deciding lifecycle legality
 - writing multi-record orchestration
 - enforcing critical invariants
+- bypassing server-side permission checks for read-only dashboards or summary panels
 
 ## 2.2 Document layer
 Responsible for:
@@ -128,6 +137,19 @@ Responsible for:
 - initiating background jobs when needed
 
 This is where most control-plane behavior belongs.
+
+## 2.3A Read-model boundary
+Operator-home and summary surfaces may use read helpers or view APIs, but those helpers should stay deliberately narrow.
+
+They should:
+- aggregate already-modeled records
+- highlight actionable state
+- link operators toward governed actions
+
+They should not:
+- mutate lifecycle state
+- hide remote execution side effects
+- become pseudo-agents inside Desk
 
 ### 2.4 Service contracts should stay provider-agnostic
 Service inputs should describe:

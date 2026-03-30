@@ -1,7 +1,7 @@
 {
  "app": "ifitwala_press",
  "charts": [],
- "content": "[{\"id\":\"press-header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Ifitwala Press</span>\",\"col\":12}},{\"id\":\"press-shortcut-tenants\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Press Tenants\",\"col\":3}},{\"id\":\"press-shortcut-environments\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Environments\",\"col\":3}},{\"id\":\"press-shortcut-policies\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Policies\",\"col\":3}},{\"id\":\"press-shortcut-subscriptions\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Subscriptions\",\"col\":3}},{\"id\":\"press-spacer-1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"press-header-ops\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Operations</span>\",\"col\":12}},{\"id\":\"press-card-control-plane\",\"type\":\"card\",\"data\":{\"card_name\":\"Control Plane\",\"col\":4}},{\"id\":\"press-card-commercial\",\"type\":\"card\",\"data\":{\"card_name\":\"Commercial\",\"col\":4}},{\"id\":\"press-card-observability\",\"type\":\"card\",\"data\":{\"card_name\":\"Observability\",\"col\":4}},{\"id\":\"press-card-audit\",\"type\":\"card\",\"data\":{\"card_name\":\"Audit Trail\",\"col\":4}}]",
+ "content": "[{\"id\":\"press-header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Ifitwala Press</span>\",\"col\":12}},{\"id\":\"press-header-command-center\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Command Center</span>\",\"col\":12}},{\"id\":\"press-shortcut-home\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Control Plane Home\",\"col\":4}},{\"id\":\"press-spacer-0\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"press-header-core-records\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Core Records</span>\",\"col\":12}},{\"id\":\"press-shortcut-tenants\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Press Tenants\",\"col\":3}},{\"id\":\"press-shortcut-environments\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Environments\",\"col\":3}},{\"id\":\"press-shortcut-policies\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Policies\",\"col\":3}},{\"id\":\"press-shortcut-subscriptions\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Subscriptions\",\"col\":3}},{\"id\":\"press-spacer-1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"press-header-ops\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Operations</span>\",\"col\":12}},{\"id\":\"press-card-control-plane\",\"type\":\"card\",\"data\":{\"card_name\":\"Control Plane\",\"col\":4}},{\"id\":\"press-card-commercial\",\"type\":\"card\",\"data\":{\"card_name\":\"Commercial\",\"col\":4}},{\"id\":\"press-card-observability\",\"type\":\"card\",\"data\":{\"card_name\":\"Observability\",\"col\":4}},{\"id\":\"press-card-audit\",\"type\":\"card\",\"data\":{\"card_name\":\"Audit Trail\",\"col\":4}}]",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -17,10 +17,20 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Control Plane",
-   "link_count": 3,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Control Plane Home",
+   "link_count": 0,
+   "link_to": "control-plane-home",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -144,6 +154,12 @@
   }
  ],
  "shortcuts": [
+  {
+   "color": "Blue",
+   "label": "Control Plane Home",
+   "link_to": "control-plane-home",
+   "type": "Page"
+  },
   {
    "color": "Blue",
    "doc_view": "List",

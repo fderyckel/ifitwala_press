@@ -246,6 +246,38 @@ Because Ifitwala_Press is for us, the platform must optimize for:
 Do not design this like a public SaaS admin interface.
 Design it like a serious internal control room.
 
+### 10. Control-plane home discipline
+The first landing surface for operators should be a real control-plane home, not only a static workspace.
+
+That home should:
+- summarize current tenant and environment posture
+- show a short attention queue
+- link directly to the underlying tenant or environment records
+- reuse explicit summary fields already modeled in DocTypes
+
+It must not:
+- become a fake orchestration layer
+- invent hidden state outside the core DocTypes
+- expose data through client-only permission checks
+
+Any read API that powers dashboard, panel, or summary surfaces must enforce server-side role checks just like write actions do.
+
+### 11. Press and Agent borrowing discipline
+When this repository borrows ideas from Frappe Press and Frappe Agent, the borrowing boundary must stay explicit.
+
+Borrow from Press now:
+- explicit action names
+- operator-visible progress
+- attention-oriented control-plane landing surfaces
+- server-authoritative lifecycle and operational actions
+
+Do not borrow from Agent yet:
+- remote host execution inside Desk pages
+- hidden host orchestration in client scripts
+- implicit SSH-style side effects disguised as UI refreshes
+
+Until remote execution becomes a real product need, Agent remains a later boundary, not a behavior to simulate inside the control plane app.
+
 ---
 
 ## Repository Operating Rule

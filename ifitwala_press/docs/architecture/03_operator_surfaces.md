@@ -85,6 +85,9 @@ The first major surface should be a **Control Plane Home** or **Press Home** pag
 
 This is the command center.
 
+For the current MVP, this should be the main app landing route.
+The workspace remains useful as a navigation surface, but the first operator stop should be the attention-oriented home page.
+
 ## Purpose
 To answer, in under 30 seconds:
 
@@ -117,12 +120,13 @@ A single section showing urgent items such as:
 - provisioning failed
 - backup stale
 - critical health score
-- expiring sandboxs with active interest
+- expiring sandboxes with active interest
 - suspended VIP tenants
 - subscriptions near expiry
 - cost spikes
 
 This should be short, prioritized, and action-oriented.
+Each row should link directly to the tenant or environment record that owns the issue.
 
 ### 2.3 Lifecycle overview
 A compact breakdown of environments by state:
@@ -141,7 +145,7 @@ This helps operators understand platform posture.
 
 ### 2.4 Cost overview
 Simple at first:
-- top 5 highest estimated monthly cost tenants
+- top 5 highest estimated monthly cost environments
 - highest month-over-month increase
 - tenants whose estimated cost exceeds their current tier expectation
 
@@ -158,6 +162,17 @@ Simple at first:
 - saturated environments
 - stale health checks
 - stale backup markers
+
+## 2.7 Data discipline for the home surface
+The home surface is a summary view, not a second source of truth.
+
+That means:
+- cards and queue items should be computed from authoritative tenant, environment, subscription, usage, and cost records
+- using explicit cached summary fields is acceptable in MVP when the source field is already modeled clearly
+- every card or queue item must map back to an underlying record or governed action path
+- read APIs behind the home surface must enforce server-side role checks, not only Desk/page visibility rules
+
+Do not add home-page metrics that cannot be traced back to a defined field contract.
 
 ---
 

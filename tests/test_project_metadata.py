@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 import ifitwala_press
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -400,7 +402,7 @@ def test_hooks_register_operator_surface_js() -> None:
 	hooks = (ROOT / "ifitwala_press" / "hooks.py").read_text()
 	assert 'app_include_css = "/assets/ifitwala_press/css/ifitwala_press.css"' in hooks
 	assert 'add_to_apps_screen = [' in hooks
-	assert '"route": "/app/ifitwala-press"' in hooks
+	assert '"route": "/app/control-plane-home"' in hooks
 	assert '"has_permission": "ifitwala_press.api.permission.has_app_permission"' in hooks
 	assert '"Press Tenant": "public/js/press_tenant.js"' in hooks
 	assert '"Tenant Environment": "public/js/tenant_environment.js"' in hooks
@@ -428,19 +430,33 @@ def test_workspace_includes_all_core_doctypes() -> None:
 	):
 		assert doctype_name in workspace_source
 
+	assert "Control Plane Home" in workspace_source
+	assert '"link_to": "control-plane-home"' in workspace_source
+	assert '"type": "Page"' in workspace_source
+
 
 def test_view_api_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "api" / "views.py").is_file()
 
 
+def test_control_plane_home_page_assets_exist() -> None:
+	page_root = ROOT / "ifitwala_press" / "ifitwala_press" / "page" / "control_plane_home"
+	assert (page_root / "__init__.py").is_file()
+	assert (page_root / "control_plane_home.json").is_file()
+	assert (page_root / "control_plane_home.js").is_file()
+
+
 def test_detail_panel_api_methods_are_declared() -> None:
 	view_api_source = (ROOT / "ifitwala_press" / "api" / "views.py").read_text()
+	assert "def get_control_plane_home(" in view_api_source
 	assert "def get_tenant_environment_panel(" in view_api_source
 	assert "def get_environment_transition_history(" in view_api_source
+	assert "ensure_app_permission(" in view_api_source
 
 
 def test_business_api_methods_are_declared() -> None:
 	business_api_source = (ROOT / "ifitwala_press" / "api" / "business.py").read_text()
+	assert "ensure_app_permission(" in business_api_source
 	for method_name in (
 		"get_tenant_business_summary",
 		"get_environment_business_summary",
@@ -452,13 +468,19 @@ def test_business_api_methods_are_declared() -> None:
 
 
 def test_app_permission_uses_server_role_lookup(monkeypatch) -> None:
-	fake_frappe = SimpleNamespace(get_roles=lambda: ["Ifitwala Press Ops"])
+	def _throw(message: str) -> None:
+		raise RuntimeError(message)
+
+	fake_frappe = SimpleNamespace(get_roles=lambda: ["Ifitwala Press Ops"], throw=_throw)
 	monkeypatch.setitem(sys.modules, "frappe", fake_frappe)
 	sys.modules.pop("ifitwala_press.api.permission", None)
 
 	permission = importlib.import_module("ifitwala_press.api.permission")
 
 	assert permission.has_app_permission() is True
+	permission.ensure_app_permission("view dashboards")
 
 	fake_frappe.get_roles = lambda: ["System Manager"]
 	assert permission.has_app_permission() is False
+	with pytest.raises(RuntimeError, match="view dashboards"):
+		permission.ensure_app_permission("view dashboards")

@@ -5,6 +5,8 @@ from typing import Any
 import frappe
 from frappe.utils import format_datetime, now_datetime
 
+from ifitwala_press.api.permission import ensure_app_permission
+
 SNAPSHOT_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Ops", "Ifitwala Press Support"}
 SUBSCRIPTION_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Sales", "Ifitwala Press Finance"}
 
@@ -35,6 +37,7 @@ def _get_latest_record(doctype: str, filters: dict[str, Any], fields: list[str],
 
 @frappe.whitelist()
 def get_tenant_business_summary(tenant: str) -> dict[str, Any]:
+	ensure_app_permission("view Ifitwala Press tenant business summaries")
 	subscription = _get_latest_record(
 		"Tenant Subscription",
 		{"tenant": tenant},
@@ -68,6 +71,7 @@ def get_tenant_business_summary(tenant: str) -> dict[str, Any]:
 
 @frappe.whitelist()
 def get_environment_business_summary(environment: str) -> dict[str, Any]:
+	ensure_app_permission("view Ifitwala Press environment business summaries")
 	usage_snapshot = _get_latest_record(
 		"Tenant Usage Snapshot",
 		{"environment": environment},

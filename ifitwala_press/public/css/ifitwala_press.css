@@ -37,6 +37,21 @@
 	color: #b42318;
 }
 
+.indicator-pill.orange {
+	background: #fff0e0;
+	color: #b54708;
+}
+
+.indicator-pill.blue {
+	background: #e8f1ff;
+	color: #175cd3;
+}
+
+.indicator-pill.purple {
+	background: #f4ebff;
+	color: #6938ef;
+}
+
 .ifitwala-summary-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -56,4 +71,100 @@
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	margin-bottom: 6px;
+}
+
+.ifitwala-home-page {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.ifitwala-home-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+	gap: 16px;
+}
+
+.ifitwala-home-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.ifitwala-home-heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ifitwala-home-heading h3 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.ifitwala-home-heading p {
+	margin: 4px 0 0;
+	color: var(--text-muted, #667085);
+}
+
+.ifitwala-home-summary-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+}
+
+.ifitwala-home-metric {
+	border: 1px solid var(--border-color, #d1d8dd);
+	border-radius: 10px;
+	padding: 14px;
+	background: var(--fg-color, #ffffff);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-height: 132px;
+}
+
+.ifitwala-home-metric-label {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--text-muted, #667085);
+}
+
+.ifitwala-home-metric-value {
+	font-size: 28px;
+	line-height: 1.1;
+	font-weight: 700;
+}
+
+.ifitwala-home-row-button {
+	display: block;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	text-align: left;
+}
+
+.ifitwala-home-row-button:hover .ifitwala-panel-row {
+	background: rgba(23, 92, 211, 0.04);
+}
+
+.ifitwala-home-row-title {
+	font-weight: 600;
+	margin-bottom: 2px;
+}
+
+.ifitwala-home-cost-value {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+@media (max-width: 991px) {
+	.ifitwala-home-grid {
+		grid-template-columns: 1fr;
+	}
 }

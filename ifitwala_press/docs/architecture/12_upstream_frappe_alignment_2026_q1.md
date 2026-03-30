@@ -103,6 +103,12 @@ Adopt `agent` later when:
 - we introduce a separate runtime host
 - we want governed remote execution instead of shelling directly on the control-plane host
 
+Until then:
+
+- do not simulate agent behavior inside Desk pages
+- do not hide host operations behind summary views
+- keep browser or operator-run host commands explicit when founder-mode execution is still manual
+
 ---
 
 ## 3. `press` guidance
@@ -162,12 +168,14 @@ Borrow from Press now:
 - step-oriented operational state
 - cloning / restore / failover mental model
 - “operator visible progress” as a first-class requirement
+- a command-center home surface with an attention queue that routes operators into the right records and actions
 
 Defer from Press for now:
 
 - full orchestration breadth
 - multi-product monetization concerns
 - platform features for external users
+- broad server-fleet execution patterns that depend on Agent
 
 ---
 
@@ -186,6 +194,7 @@ That means the immediate architecture choice is:
 - `frappe_docker` guides the founder runtime implementation
 - `agent` is deferred until we have remote execution needs
 - `press` guides workflow and orchestration patterns, not MVP feature scope
+- the control-plane home may borrow Press-style operational visibility, but it should remain a read-side summary surface over our own DocTypes
 
 ---
 

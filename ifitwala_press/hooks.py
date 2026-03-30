@@ -16,7 +16,7 @@ add_to_apps_screen = [
 		"name": "ifitwala_press",
 		"logo": "/assets/ifitwala_press/images/ifitwala_press_logo.svg",
 		"title": "Ifitwala Press",
-		"route": "/app/ifitwala-press",
+		"route": "/app/control-plane-home",
 		"has_permission": "ifitwala_press.api.permission.has_app_permission",
 	}
 ]
