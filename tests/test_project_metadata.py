@@ -99,6 +99,19 @@ def test_contributing_defines_pre_merge_gate() -> None:
 		assert token in contributing
 
 
+def test_pre_commit_config_includes_js_and_pre_push_pytest() -> None:
+	pre_commit = (ROOT / ".pre-commit-config.yaml").read_text()
+	for token in (
+		"default_install_hook_types: [pre-commit, pre-push]",
+		"id: js-check",
+		"entry: bash -lc 'make js-check-hook'",
+		"stages: [pre-commit]",
+		"entry: make test",
+		"stages: [pre-push]",
+	):
+		assert token in pre_commit
+
+
 def test_core_phase_one_doctype_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "__init__.py").is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "__init__.py").is_file()

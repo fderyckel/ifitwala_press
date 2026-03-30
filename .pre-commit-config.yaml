@@ -1,5 +1,6 @@
 exclude: 'node_modules|.git'
 default_stages: [pre-commit]
+default_install_hook_types: [pre-commit, pre-push]
 fail_fast: false
 
 
@@ -29,11 +30,19 @@ repos:
 
   - repo: local
     hooks:
-      - id: pytest
-        name: Run pytest
-        entry: python3 -m pytest
+      - id: js-check
+        name: Run Desk/page JavaScript syntax checks
+        entry: bash -lc 'make js-check-hook'
         language: system
         pass_filenames: false
+        stages: [pre-commit]
+
+      - id: pytest
+        name: Run pytest before push
+        entry: make test
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
 
 ci:
     autoupdate_schedule: weekly

@@ -50,6 +50,11 @@ Install git hooks:
 make pre-commit-install
 ```
 
+This installs both:
+- a `pre-commit` hook for Ruff, formatter, hygiene checks, and Desk/page JavaScript syntax checks
+- a `pre-push` hook for `pytest`
+- if Node is not available locally, the pre-commit JS syntax hook skips with a warning; the strict JS gate still runs in `make ci` and GitHub CI
+
 ## Required Checks
 
 Run the local CI command set before opening or updating a PR:
@@ -67,6 +72,11 @@ make format-check
 make test
 make pre-commit-run
 ```
+
+Hook behavior:
+- `git commit` runs the repo pre-commit gate
+- `git push` runs the repo `pytest` pre-push gate
+- `make ci` remains the full explicit merge gate and still includes `js-check`
 
 ## Pre-Merge Procedure
 
