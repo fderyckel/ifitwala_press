@@ -1,6 +1,7 @@
-.PHONY: help install-dev lint format format-check test ci pre-commit-install pre-commit-run
+.PHONY: help install-dev lint format format-check test js-check ci pre-commit-install pre-commit-run
 
 PYTHON ?= python3
+NODE ?= node
 
 help:
 	@printf '%s\n' \
@@ -9,6 +10,7 @@ help:
 		'format              Apply Ruff formatting and safe fixes' \
 		'format-check        Check formatting without changing files' \
 		'test                Run pytest' \
+		'js-check            Run Node syntax checks on Desk/page JavaScript' \
 		'ci                  Run the local CI command set' \
 		'pre-commit-install  Install git hooks' \
 		'pre-commit-run      Run all pre-commit hooks'
@@ -30,7 +32,13 @@ format-check:
 test:
 	$(PYTHON) -m pytest
 
-ci: lint format-check test
+js-check:
+	@command -v $(NODE) >/dev/null 2>&1 || { printf '%s\n' 'node is required for js-check'; exit 1; }
+	@find ifitwala_press -type f \( -path '*/public/js/*.js' -o -path '*/page/*/*.js' \) -print | sort | while read -r file; do \
+		$(NODE) --check "$$file"; \
+	done
+
+ci: lint format-check test js-check
 
 pre-commit-install:
 	$(PYTHON) -m pre_commit install

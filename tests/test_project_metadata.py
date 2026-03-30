@@ -73,6 +73,32 @@ def test_local_version_files_exist() -> None:
 	assert (ROOT / ".nvmrc").read_text().strip() == "24"
 
 
+def test_ci_workflow_runs_repository_ci_contract() -> None:
+	workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text()
+	for token in (
+		"pull_request:",
+		"workflow_dispatch:",
+		'node-version-file: ".nvmrc"',
+		"actions/setup-node@v4",
+		"run: make ci",
+		"cancel-in-progress: true",
+	):
+		assert token in workflow
+
+
+def test_contributing_defines_pre_merge_gate() -> None:
+	contributing = (ROOT / "CONTRIBUTING.md").read_text()
+	for token in (
+		"## Pre-Merge Procedure",
+		"make ci",
+		"GitHub CI is green",
+		"bench --site press.ifitwala.com migrate",
+		"bench build --app ifitwala_press",
+		"Control Plane Home",
+	):
+		assert token in contributing
+
+
 def test_core_phase_one_doctype_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "__init__.py").is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "__init__.py").is_file()

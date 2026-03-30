@@ -68,6 +68,37 @@ make test
 make pre-commit-run
 ```
 
+## Pre-Merge Procedure
+
+Treat merge readiness as stricter than "tests passed on my machine."
+
+Before merging:
+
+1. Rebase or merge the latest target branch into your branch and resolve conflicts intentionally.
+2. Run the full local gate:
+
+```bash
+make ci
+```
+
+3. If you changed Desk routes, workspace metadata, page assets, form JS, or CSS for `ifitwala_press`, run the target-site update flow on `press.ifitwala.com` before merge:
+
+```bash
+bench --site press.ifitwala.com migrate
+bench build --app ifitwala_press
+bench restart
+```
+
+4. Smoke-check the affected operator surface on `press.ifitwala.com`.
+   For the current control-plane work, this includes:
+   - the `Control Plane Home` page
+   - the `Ifitwala Press` workspace
+   - any changed form/list action surface
+5. Confirm GitHub CI is green on the branch or pull request.
+6. Confirm tests and docs were updated for any behavior, workflow, permission, or operator-surface change.
+
+Do not merge while GitHub CI is red, while required docs are stale, or while a Desk/workspace change has not been migrated and smoke-checked on `press.ifitwala.com`.
+
 ## Contribution Rules
 
 - Do not bypass the control-plane model.
