@@ -48,7 +48,9 @@ def _days_until(value: Any, *, as_of: date) -> int | None:
 def _money(value: Any) -> float:
 	try:
 		return float(value or 0)
-	except TypeError, ValueError:
+	except TypeError:
+		return 0.0
+	except ValueError:
 		return 0.0
 
 
@@ -132,7 +134,9 @@ def _build_control_plane_home(
 
 		try:
 			health_value = float(health_score) if health_score is not None else None
-		except TypeError, ValueError:
+		except TypeError:
+			health_value = None
+		except ValueError:
 			health_value = None
 		if health_value is not None and health_value < 50:
 			attention_items.append(
