@@ -1,0 +1,182 @@
+{
+ "app": "ifitwala_press",
+ "charts": [],
+ "content": "[{\"id\":\"press-header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Ifitwala Press</span>\",\"col\":12}},{\"id\":\"press-shortcut-tenants\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Press Tenants\",\"col\":3}},{\"id\":\"press-shortcut-environments\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Environments\",\"col\":3}},{\"id\":\"press-shortcut-policies\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Policies\",\"col\":3}},{\"id\":\"press-shortcut-subscriptions\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant Subscriptions\",\"col\":3}},{\"id\":\"press-spacer-1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"press-header-ops\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Operations</span>\",\"col\":12}},{\"id\":\"press-card-control-plane\",\"type\":\"card\",\"data\":{\"card_name\":\"Control Plane\",\"col\":4}},{\"id\":\"press-card-commercial\",\"type\":\"card\",\"data\":{\"card_name\":\"Commercial\",\"col\":4}},{\"id\":\"press-card-observability\",\"type\":\"card\",\"data\":{\"card_name\":\"Observability\",\"col\":4}},{\"id\":\"press-card-audit\",\"type\":\"card\",\"data\":{\"card_name\":\"Audit Trail\",\"col\":4}}]",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "change-log",
+ "idx": 0,
+ "indicator_color": "blue",
+ "is_hidden": 0,
+ "label": "Ifitwala Press",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Control Plane",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Press Tenant",
+   "link_count": 0,
+   "link_to": "Press Tenant",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant Environment",
+   "link_count": 0,
+   "link_to": "Tenant Environment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant Policy",
+   "link_count": 0,
+   "link_to": "Tenant Policy",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Commercial",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant Subscription",
+   "link_count": 0,
+   "link_to": "Tenant Subscription",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Observability",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant Usage Snapshot",
+   "link_count": 0,
+   "link_to": "Tenant Usage Snapshot",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant Cost Snapshot",
+   "link_count": 0,
+   "link_to": "Tenant Cost Snapshot",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Audit Trail",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant Transition Log",
+   "link_count": 0,
+   "link_to": "Tenant Transition Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "module": "Ifitwala Press",
+ "name": "Ifitwala Press",
+ "number_cards": [],
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Ifitwala Press Admin"
+  },
+  {
+   "role": "Ifitwala Press Ops"
+  },
+  {
+   "role": "Ifitwala Press Support"
+  },
+  {
+   "role": "Ifitwala Press Sales"
+  },
+  {
+   "role": "Ifitwala Press Finance"
+  }
+ ],
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Press Tenants",
+   "link_to": "Press Tenant",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Tenant Environments",
+   "link_to": "Tenant Environment",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Tenant Policies",
+   "link_to": "Tenant Policy",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Purple",
+   "doc_view": "List",
+   "label": "Tenant Subscriptions",
+   "link_to": "Tenant Subscription",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Ifitwala Press",
+ "type": "Workspace"
+}

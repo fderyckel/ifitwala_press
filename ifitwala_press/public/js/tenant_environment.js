@@ -66,21 +66,216 @@ function addLifecycleButtons(frm) {
 						options: "Tenant Policy",
 						default: frm.doc.policy || "",
 					},
-					{
-						fieldname: "region",
-						fieldtype: "Data",
-						label: __("Region"),
-						default: frm.doc.region || "",
-					},
-					{
-						fieldname: "status_reason",
-						fieldtype: "Small Text",
-						label: __("Reason"),
+						{
+							fieldname: "region",
+							fieldtype: "Data",
+							label: __("Region"),
+							default: frm.doc.region || "",
+						},
+						{
+							fieldname: "primary_cloud_provider",
+							fieldtype: "Select",
+							label: __("Primary Cloud Provider"),
+							options: "\nGoogle Cloud\nOVH\nOther",
+							default: frm.doc.primary_cloud_provider || "Google Cloud",
+						},
+						{
+							fieldname: "runtime_provider",
+							fieldtype: "Select",
+							label: __("Runtime Provider"),
+							options: "\nGoogle Cloud\nOVH\nOther",
+							default: frm.doc.runtime_provider || "Google Cloud",
+						},
+						{
+							fieldname: "object_storage_provider",
+							fieldtype: "Select",
+							label: __("Object Storage Provider"),
+							options: "\nGoogle Cloud\nOVH\nOther",
+							default: frm.doc.object_storage_provider || "Google Cloud",
+						},
+						{
+							fieldname: "dns_provider",
+							fieldtype: "Select",
+							label: __("DNS Provider"),
+							options: "\nGoogle Cloud DNS\nOVH DNS\nOther",
+							default: frm.doc.dns_provider || "Google Cloud DNS",
+						},
+						{
+							fieldname: "status_reason",
+							fieldtype: "Small Text",
+							label: __("Reason"),
 					},
 				],
 				(values) => callLifecycleMethod(frm, "qualify_for_production", values, __("Qualifying for production")),
 				__("Qualify for Production"),
 				__("Qualify")
+			);
+		}, __("Actions"));
+	}
+
+	if (status === "Sandbox Provisioning") {
+		frm.add_custom_button(__("Provision Founder Demo Runtime"), () => {
+			callLifecycleMethod(
+				frm,
+				"provision_founder_demo_runtime",
+				{},
+				__("Provisioning founder demo runtime")
+			);
+		}, __("Actions"));
+
+		frm.add_custom_button(__("Complete Sandbox Provisioning"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "site_name",
+						fieldtype: "Data",
+						label: __("Site Name"),
+						default: frm.doc.site_name,
+					},
+					{
+						fieldname: "primary_domain",
+						fieldtype: "Data",
+						label: __("Primary Domain"),
+						default: frm.doc.primary_domain || "",
+					},
+					{
+						fieldname: "routing_mode",
+						fieldtype: "Select",
+						label: __("Routing Mode"),
+						options: "\nInternal Only\nPublic\nPending",
+						default: frm.doc.routing_mode || "Internal Only",
+					},
+					{
+						fieldname: "dns_ready",
+						fieldtype: "Check",
+						label: __("DNS Ready"),
+						default: frm.doc.dns_ready || 0,
+					},
+					{
+						fieldname: "tls_ready",
+						fieldtype: "Check",
+						label: __("TLS Ready"),
+						default: frm.doc.tls_ready || 0,
+					},
+					{
+						fieldname: "host_header_value",
+						fieldtype: "Data",
+						label: __("Host Header Value"),
+						default: frm.doc.host_header_value || "",
+					},
+					{
+						fieldname: "db_name",
+						fieldtype: "Data",
+						label: __("DB Name"),
+						default: frm.doc.db_name || "",
+					},
+					{
+						fieldname: "db_user",
+						fieldtype: "Data",
+						label: __("DB User"),
+						default: frm.doc.db_user || "",
+					},
+					{
+						fieldname: "provisioning_job_id",
+						fieldtype: "Data",
+						label: __("Provisioning Job ID"),
+						default: frm.doc.provisioning_job_id || "",
+					},
+					{
+						fieldname: "last_provisioning_step",
+						fieldtype: "Data",
+						label: __("Last Provisioning Step"),
+						default: frm.doc.last_provisioning_step || "",
+					},
+					{
+						fieldname: "provisioning_message",
+						fieldtype: "Small Text",
+						label: __("Provisioning Message"),
+						default: frm.doc.provisioning_message || "",
+					},
+						{
+							fieldname: "runtime_reference",
+							fieldtype: "Data",
+							label: __("Runtime Reference"),
+							default: frm.doc.runtime_reference || "",
+						},
+						{
+							fieldname: "primary_cloud_provider",
+							fieldtype: "Select",
+							label: __("Primary Cloud Provider"),
+							options: "\nGoogle Cloud\nOVH\nOther",
+							default: frm.doc.primary_cloud_provider || "Google Cloud",
+						},
+						{
+							fieldname: "runtime_provider",
+							fieldtype: "Select",
+							label: __("Runtime Provider"),
+							options: "\nGoogle Cloud\nOVH\nOther",
+							default: frm.doc.runtime_provider || "Google Cloud",
+						},
+						{
+							fieldname: "object_storage_provider",
+							fieldtype: "Select",
+							label: __("Object Storage Provider"),
+							options: "\nGoogle Cloud\nOVH\nOther",
+							default: frm.doc.object_storage_provider || "Google Cloud",
+						},
+						{
+							fieldname: "dns_provider",
+							fieldtype: "Select",
+							label: __("DNS Provider"),
+							options: "\nGoogle Cloud DNS\nOVH DNS\nOther",
+							default: frm.doc.dns_provider || "Google Cloud DNS",
+						},
+						{
+							fieldname: "file_storage_provider",
+							fieldtype: "Select",
+							label: __("File Storage Provider"),
+						options: "\nGCS\nLocal Temporary",
+						default: frm.doc.file_storage_provider || "GCS",
+					},
+					{
+						fieldname: "file_storage_class",
+						fieldtype: "Select",
+						label: __("File Storage Class"),
+						options: "\nFrequent Access\nInfrequent Access",
+						default: frm.doc.file_storage_class || "Frequent Access",
+					},
+					{
+						fieldname: "backup_storage_provider",
+						fieldtype: "Select",
+						label: __("Backup Storage Provider"),
+						options: "\nGCS\nLocal Temporary",
+						default: frm.doc.backup_storage_provider || "GCS",
+					},
+					{
+						fieldname: "backup_storage_class",
+						fieldtype: "Select",
+						label: __("Backup Storage Class"),
+						options: "\nFrequent Access\nInfrequent Access",
+						default: frm.doc.backup_storage_class || "Infrequent Access",
+					},
+					{
+						fieldname: "backup_export_path",
+						fieldtype: "Data",
+						label: __("Backup Export Path"),
+						default: frm.doc.backup_export_path || "",
+					},
+					{
+						fieldname: "status_reason",
+						fieldtype: "Small Text",
+						label: __("Activation Note"),
+					},
+				],
+				(values) =>
+					callLifecycleMethod(
+						frm,
+						"complete_sandbox_provisioning",
+						values,
+						__("Completing sandbox provisioning")
+					),
+				__("Complete Sandbox Provisioning"),
+				__("Complete")
 			);
 		}, __("Actions"));
 	}
@@ -120,6 +315,48 @@ function addLifecycleButtons(frm) {
 		}, __("Actions"));
 	}
 
+	if (status === "Sandbox Provisioning" || status === "Production Provisioning") {
+		frm.add_custom_button(__("Mark Provisioning Failed"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "last_provisioning_step",
+						fieldtype: "Data",
+						label: __("Last Provisioning Step"),
+						default: frm.doc.last_provisioning_step || "",
+					},
+					{
+						fieldname: "provisioning_job_id",
+						fieldtype: "Data",
+						label: __("Provisioning Job ID"),
+						default: frm.doc.provisioning_job_id || "",
+					},
+					{
+						fieldname: "provisioning_message",
+						fieldtype: "Small Text",
+						label: __("Provisioning Message"),
+						default: frm.doc.provisioning_message || "",
+					},
+					{
+						fieldname: "reason",
+						fieldtype: "Small Text",
+						label: __("Failure Reason"),
+						reqd: 1,
+					},
+				],
+				(values) =>
+					callLifecycleMethod(
+						frm,
+						"mark_provisioning_failed",
+						values,
+						__("Marking provisioning as failed")
+					),
+				__("Mark Provisioning Failed"),
+				__("Mark Failed")
+			);
+		}, __("Actions"));
+	}
+
 	if (status === "Production Provisioning") {
 		frm.add_custom_button(__("Mark Live"), () => {
 			frappe.prompt(
@@ -151,6 +388,70 @@ function addLifecycleButtons(frm) {
 				(values) => callLifecycleMethod(frm, "suspend_environment", values, __("Suspending environment")),
 				__("Suspend Environment"),
 				__("Suspend")
+			);
+		}, __("Actions"));
+	}
+
+	if (status === "Sandbox Active") {
+		frm.add_custom_button(__("Teardown Founder Demo Runtime"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "reason",
+						fieldtype: "Small Text",
+						label: __("Teardown Reason"),
+						reqd: 1,
+					},
+				],
+				(values) =>
+					callLifecycleMethod(
+						frm,
+						"teardown_founder_demo_runtime",
+						values,
+						__("Tearing down founder demo runtime")
+					),
+				__("Teardown Founder Demo Runtime"),
+				__("Teardown")
+			);
+		}, __("Actions"));
+
+		frm.add_custom_button(__("Expire Sandbox"), () => {
+			frappe.prompt(
+				[
+					{
+						fieldname: "runtime_reference",
+						fieldtype: "Data",
+						label: __("Runtime Reference"),
+						default: frm.doc.runtime_reference || "",
+					},
+					{
+						fieldname: "backup_export_path",
+						fieldtype: "Data",
+						label: __("Backup Export Path"),
+						default: frm.doc.backup_export_path || "",
+					},
+					{
+						fieldname: "last_provisioning_step",
+						fieldtype: "Data",
+						label: __("Last Runtime Step"),
+						default: frm.doc.last_provisioning_step || "Runtime teardown",
+					},
+					{
+						fieldname: "provisioning_message",
+						fieldtype: "Small Text",
+						label: __("Teardown Note"),
+						default: frm.doc.provisioning_message || "",
+					},
+					{
+						fieldname: "reason",
+						fieldtype: "Small Text",
+						label: __("Expiry Reason"),
+						reqd: 1,
+					},
+				],
+				(values) => callLifecycleMethod(frm, "expire_sandbox", values, __("Expiring sandbox")),
+				__("Expire Sandbox"),
+				__("Expire")
 			);
 		}, __("Actions"));
 	}

@@ -44,7 +44,7 @@ Founder mode does not permit collapsing all surfaces into one site.
 
 The minimum required separation is:
 - one public-facing site for `ifitwala.com`
-- one internal control-plane site for `press.ifitwala.com` or `ops.ifitwala.com`
+- one internal control-plane site for `press.ifitwala.com`
 
 These may temporarily share founder-stage infrastructure if necessary.
 They must not be the same Frappe site.
@@ -76,17 +76,29 @@ Adding or changing apps should happen by approving a bundle or release and rolli
 ### Managed DB posture in founder mode
 Managed DB adoption is not a founder-mode requirement.
 
-Phase 1 should assume:
-- self-managed MariaDB 11.8
+The current rollout should assume:
+- self-managed MariaDB 11.4
 - manual or semi-manual DB provisioning
 - explicit backup and restore runbooks
 
-Do not make Cloud SQL or similar provider automation a phase-1 dependency.
+Do not make Cloud SQL or similar provider automation a current launch dependency.
 
 ### Backup expectation
 - backups must exist for production
 - sandbox backups may be lighter-weight
 - restore discipline may be manual but must be real
+
+### Founder-mode backup note
+For founder-stage dockerized runtimes on one VM:
+
+- do not rely on backups remaining only inside the container filesystem
+- each environment must have its latest successful site backup copied or written to storage outside the container
+- the current storage baseline is Google Cloud Storage rather than container-local or host-only retention
+- live site files should use the frequent-access class, while retained daily backups should use the less-frequent class
+- for demos and sandbox environments, keeping the latest successful backup may be enough initially
+- for production environments, retention must follow the assigned policy and must not depend on container survival
+- manual restore from that exported backup must be possible even if the original container is gone
+- no environment should be treated as ready until one restore rehearsal has been proven
 
 ### Health monitoring expectation
 - simple health checks are acceptable
@@ -97,6 +109,7 @@ Do not make Cloud SQL or similar provider automation a phase-1 dependency.
 - manual and semi-automated actions are acceptable
 - provisioning checklists or operator-run procedures are acceptable
 - provider API automation is explicitly optional
+- the current per-environment founder runtime remains acceptable only for small pilot cohorts, not as the default architecture for a larger manually approved demo cohort
 
 ---
 
@@ -119,6 +132,9 @@ Support normal live customer operations with stronger operational consistency an
 ### Backup expectation
 - production backup policy must be explicit
 - restore readiness should be reviewed on a schedule
+- the standard expectation is off-container backup storage in GCS
+- retention should be policy-driven rather than operator memory
+- backup freshness should become visible in the control plane
 
 ### Health monitoring expectation
 - scheduled summaries should replace purely manual checks
@@ -147,6 +163,8 @@ Support tenants that justify stronger isolation, clearer blast-radius control, a
 ### Backup expectation
 - stronger retention and restore discipline is expected
 - backup freshness and restore confidence should be visible
+- off-host backup storage is the expected baseline
+- restore testing should be tracked and reviewed explicitly
 
 ### Health monitoring expectation
 - monitoring should be more frequent and more reliable

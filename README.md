@@ -21,7 +21,7 @@ Ifitwala_Press is the internal operating system we use to:
 The platform is expected to operate with three distinct surfaces:
 
 - `ifitwala.com` as the public brand/docs front end
-- `press.ifitwala.com` or `ops.ifitwala.com` as the internal control plane
+- `press.ifitwala.com` as the internal control plane
 - `*.ifitwala.com` as tenant environment hostnames
 
 The public site and the control plane must not be the same Frappe site.
@@ -68,6 +68,15 @@ That bundle may include:
 Those apps must be governed, versioned, and baked into images.
 They must not be installed ad hoc into running production containers.
 
+### 3.1 Current storage baseline
+For the current rollout, tenant file storage is standardized on **Google Cloud Storage (GCS)**.
+
+- live site files and attachments use the logical **Frequent Access** class
+- retained site/database backups use the logical **Infrequent Access** class
+- the storage contract is site-scoped and shared across approved apps in the site, including `ifitwala_ed` and `ifitwala_drive`
+- daily backup exports must leave the runtime boundary and land in GCS
+- no environment is ready until one off-runtime backup export and one restore rehearsal have been proven
+
 ### 4. Hybrid hosting strategy
 Not all customers should get the same infrastructure.
 
@@ -75,6 +84,7 @@ The intended model is:
 
 - **Sandbox / Trial**
   Cheap, disposable, shared infrastructure, normally with demo data
+  Broad trials should favor shared demo density, not a full heavy per-environment stack by default
 
 - **Standard Production**
   Shared runtime, shared HA database fleet, one database per site
@@ -111,6 +121,21 @@ That means it must optimize for:
 - usage visibility
 - subscription oversight
 - lifecycle governance
+
+## Current launch gate
+
+The current founder runtime is acceptable for a small pilot cohort only.
+
+This is a founder-managed demo phase for manually approved prospect environments.
+
+Before a larger number of manually approved demo environments, the platform must hold these lines:
+
+- Ubuntu 24.04 LTS for the founder host baseline
+- MariaDB 11.4 as the documented database baseline
+- GCS as the only current object storage provider
+- Google Cloud DNS as the default DNS authority
+- off-runtime backup export plus at least one successful restore rehearsal
+- no default demo architecture that gives every manually approved sandbox a full heavy dedicated stack
 
 ## Current product intent
 

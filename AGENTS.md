@@ -68,6 +68,54 @@ If a proposed feature does not strengthen that mission, challenge it.
 
 ---
 
+## Locked Infrastructure Baseline
+
+Until explicitly revised in this repository, the operating baseline is:
+
+- **MariaDB 11.4** only
+- **Google Cloud Storage (GCS)** as the only current object-storage provider
+- **Google Cloud DNS** as the default DNS authority
+- **Google Cloud** as the default production provider
+- **OVH** as an optional later sandbox/runtime placement provider, not the production default
+- **Ubuntu 24.04 LTS** as the founder-host baseline
+
+Additional launch-gate rules are also locked:
+
+- the current per-environment founder Docker stack is acceptable only for small pilot cohorts
+- manually approved demo environments must not default to a full heavy per-environment runtime
+- no environment is operationally ready until off-runtime backup export and at least one restore rehearsal have been proven
+
+## Founder-stage operating model
+
+Ifitwala_Press is **not** a public self-serve platform.
+
+Current operating model:
+- interested schools are reviewed manually by the founder
+- the founder decides which prospects receive a demo environment
+- demo/sandbox environments are provisioned under founder control from Ifitwala_Press
+- there is no public self-serve signup or automatic external provisioning flow
+
+Architecture implications:
+- do not design for a mass free-trial fleet
+- do not introduce Kubernetes or GKE
+- do not assume public onboarding pipelines
+- use VM + Docker / Docker Compose + Press-governed lifecycle
+- keep the system modeled on Frappe Press, Frappe Agent, and frappe_docker
+- treat the current demo phase as a controlled founder-managed demo workflow
+
+When writing notes, proposals, or code guidance, describe the system as:
+- an internal control plane
+- for a small number of manually approved demo tenants
+- with later conversion to paying production tenants
+
+Agents must not:
+
+- reintroduce AWS, S3, Cloud SQL, RDS, or Amazon terminology unless the task is explicitly about comparison or migration
+- drift the database baseline away from MariaDB 11.4
+- describe GCS as "S3 storage" at the architecture or contract layer
+
+---
+
 ## Non-Negotiable Architectural Principles
 
 ### 1. Frappe app first
@@ -167,7 +215,7 @@ The control plane must store:
 But it must not prematurely hardcode all architecture to one proxy implementation.
 
 Ifitwala_Press owns **routing intent**.
-The infra layer later applies that intent via Traefik / Ingress / deployment adapters.
+The infra layer later applies that intent via Traefik / shared founder edge proxy / deployment adapters.
 
 ### 8. Safety over convenience
 This platform manages real school customers and potentially sensitive/VIP institutions.
@@ -498,8 +546,8 @@ that change must be attributable.
 ### 1. Model intent first
 We target Google Cloud, and likely later:
 - Traefik
-- GKE
-- Cloud SQL
+- founder runtime adapters
+- Docker Compose-managed runtimes
 - GCS
 
 But the Frappe data model must describe **control-plane intent first**, not bury infrastructure assumptions everywhere.

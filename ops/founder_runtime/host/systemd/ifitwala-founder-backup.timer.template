@@ -1,0 +1,10 @@
+[Unit]
+Description=Run daily Ifitwala founder runtime backup export
+
+[Timer]
+OnCalendar=__ON_CALENDAR__
+Persistent=true
+Unit=ifitwala-founder-backup.service
+
+[Install]
+WantedBy=timers.target

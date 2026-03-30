@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import frappe
 
-
 PRESS_ROLES = (
 	"Ifitwala Press Admin",
 	"Ifitwala Press Ops",

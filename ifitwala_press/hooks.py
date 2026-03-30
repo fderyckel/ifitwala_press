@@ -11,15 +11,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "ifitwala_press",
-# 		"logo": "/assets/ifitwala_press/logo.png",
-# 		"title": "Ifitwala Press",
-# 		"route": "/ifitwala_press",
-# 		"has_permission": "ifitwala_press.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "ifitwala_press",
+		"logo": "/assets/ifitwala_press/images/ifitwala_press_logo.svg",
+		"title": "Ifitwala Press",
+		"route": "/app/ifitwala-press",
+		"has_permission": "ifitwala_press.api.permission.has_app_permission",
+	}
+]
 
 # Includes in <head>
 # ------------------

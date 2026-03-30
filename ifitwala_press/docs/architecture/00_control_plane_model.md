@@ -149,7 +149,7 @@ The public site and the control plane must not be the same Frappe site.
 The expected hostname shape is:
 
 - `ifitwala.com` for the public site
-- `press.ifitwala.com` or `ops.ifitwala.com` for the control plane
+- `press.ifitwala.com` for the control plane
 - `*.ifitwala.com` for tenant environments
 
 Host-level separation is recommended early.
@@ -206,7 +206,7 @@ Tenant-specific state should live outside the app image:
 
 - databases
 - redis/cache/queue/socket services
-- object/file storage
+- object/file storage, with GCS split into frequent-access live files and less-frequent retained backups
 - environment config
 - routing config
 
@@ -217,6 +217,9 @@ Until revenue, contractual obligations, and uptime commitments justify stronger 
 
 Cheap early implementation is acceptable.
 Architecture drift is not.
+
+Founder-managed demo economics still matter.
+Do not assume the current heavy per-environment founder stack is the default long-term posture for manually approved demo environments.
 
 ---
 
@@ -448,7 +451,7 @@ Ifitwala_Press should own:
 ### 10.2 What infra later owns
 The infra layer can later translate that intent into:
 - Traefik config
-- Kubernetes Ingress
+- shared founder edge proxy routes
 - Docker labels
 - certificates
 - routing resources

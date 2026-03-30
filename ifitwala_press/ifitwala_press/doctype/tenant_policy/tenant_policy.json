@@ -20,6 +20,12 @@
     "policy_type",
     "column_break_identity",
     "default_region",
+    "section_break_provider_defaults",
+    "default_primary_cloud_provider",
+    "default_runtime_provider",
+    "column_break_provider_defaults",
+    "default_object_storage_provider",
+    "default_dns_provider",
     "section_break_hosting_defaults",
     "default_database_mode",
     "default_deployment_mode",
@@ -30,7 +36,9 @@
     "worker_quota",
     "web_quota",
     "storage_quota_gb",
+    "default_file_storage_provider",
     "column_break_resource_controls",
+    "default_file_storage_class",
     "max_background_jobs",
     "max_file_size_mb",
     "section_break_lifecycle_rules",
@@ -43,7 +51,9 @@
     "section_break_backup_retention",
     "backup_frequency",
     "backup_retention_days",
+    "default_backup_storage_provider",
     "column_break_backup_retention",
+    "default_backup_storage_class",
     "requires_restore_test",
     "restore_test_frequency_days",
     "section_break_monitoring_support",
@@ -90,6 +100,43 @@
       "label": "Default Region"
     },
     {
+      "fieldname": "section_break_provider_defaults",
+      "fieldtype": "Section Break",
+      "label": "Provider Defaults"
+    },
+    {
+      "default": "Google Cloud",
+      "fieldname": "default_primary_cloud_provider",
+      "fieldtype": "Select",
+      "label": "Default Primary Cloud Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "default": "Google Cloud",
+      "fieldname": "default_runtime_provider",
+      "fieldtype": "Select",
+      "label": "Default Runtime Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "fieldname": "column_break_provider_defaults",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "Google Cloud",
+      "fieldname": "default_object_storage_provider",
+      "fieldtype": "Select",
+      "label": "Default Object Storage Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther"
+    },
+    {
+      "default": "Google Cloud DNS",
+      "fieldname": "default_dns_provider",
+      "fieldtype": "Select",
+      "label": "Default DNS Provider",
+      "options": "\nGoogle Cloud DNS\nOVH DNS\nOther"
+    },
+    {
       "fieldname": "section_break_hosting_defaults",
       "fieldtype": "Section Break",
       "label": "Hosting Defaults"
@@ -98,7 +145,7 @@
       "fieldname": "default_database_mode",
       "fieldtype": "Select",
       "label": "Default Database Mode",
-      "options": "\nShared Cluster DB\nDedicated Instance",
+      "options": "\nShared DB Fleet\nDedicated DB Instance",
       "reqd": 1
     },
     {
@@ -145,8 +192,24 @@
       "label": "Storage Quota (GB)"
     },
     {
+      "default": "GCS",
+      "description": "Default object storage backend for site files and attachments created under this policy.",
+      "fieldname": "default_file_storage_provider",
+      "fieldtype": "Select",
+      "label": "Default File Storage Provider",
+      "options": "\nGCS\nLocal Temporary"
+    },
+    {
       "fieldname": "column_break_resource_controls",
       "fieldtype": "Column Break"
+    },
+    {
+      "default": "Frequent Access",
+      "description": "Access class for active site files. The current GCS baseline keeps live files on the frequent-access tier.",
+      "fieldname": "default_file_storage_class",
+      "fieldtype": "Select",
+      "label": "Default File Storage Class",
+      "options": "\nFrequent Access\nInfrequent Access"
     },
     {
       "fieldname": "max_background_jobs",
@@ -212,8 +275,24 @@
       "label": "Backup Retention Days"
     },
     {
+      "default": "GCS",
+      "description": "Default backend used for retained exported backups when this policy enables backups.",
+      "fieldname": "default_backup_storage_provider",
+      "fieldtype": "Select",
+      "label": "Default Backup Storage Provider",
+      "options": "\nGCS\nLocal Temporary"
+    },
+    {
       "fieldname": "column_break_backup_retention",
       "fieldtype": "Column Break"
+    },
+    {
+      "default": "Infrequent Access",
+      "description": "Access class for retained backups. The current GCS baseline keeps daily backups on the less-frequent tier.",
+      "fieldname": "default_backup_storage_class",
+      "fieldtype": "Select",
+      "label": "Default Backup Storage Class",
+      "options": "\nFrequent Access\nInfrequent Access"
     },
     {
       "default": "0",
