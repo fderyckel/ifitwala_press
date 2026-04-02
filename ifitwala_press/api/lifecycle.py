@@ -41,6 +41,9 @@ from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
 	restore_demo_runtime as restore_demo_runtime_service,
 )
 from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
+	sync_edge_route as sync_edge_route_service,
+)
+from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
 	teardown_demo_runtime as teardown_demo_runtime_service,
 )
 
@@ -274,6 +277,32 @@ def teardown_founder_demo_runtime(
 		backup_export_path=result.get("backup_export_path"),
 	)
 	return _serialize_document(document)
+
+
+@frappe.whitelist()
+def sync_founder_edge_route(environment: str) -> dict[str, Any]:
+	_require_lifecycle_role()
+	environment_doc = frappe.get_doc("Tenant Environment", environment)
+	runtime_reference = str(getattr(environment_doc, "runtime_reference", "") or "").strip()
+	if not runtime_reference.startswith("compose:"):
+		frappe.throw("Founder edge route sync is currently implemented only for founder runtimes.")
+
+	if not getattr(environment_doc, "primary_domain", None):
+		frappe.throw("Primary Domain is required before the founder edge route can be synced.")
+
+	result = sync_edge_route_service(environment_doc)
+	if result.get("routing_mode"):
+		environment_doc.routing_mode = result.get("routing_mode")
+	if result.get("host_header_value"):
+		environment_doc.host_header_value = result.get("host_header_value")
+	if result.get("last_provisioning_step"):
+		environment_doc.last_provisioning_step = result.get("last_provisioning_step")
+	if result.get("provisioning_message"):
+		environment_doc.provisioning_message = result.get("provisioning_message")
+	if result.get("status_reason"):
+		environment_doc.status_reason = result.get("status_reason")
+	environment_doc.save()
+	return _serialize_document(environment_doc)
 
 
 @frappe.whitelist()

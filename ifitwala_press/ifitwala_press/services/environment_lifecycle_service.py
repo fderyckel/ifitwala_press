@@ -28,6 +28,7 @@ DEFAULT_PRIMARY_CLOUD_PROVIDER = "Google Cloud"
 DEFAULT_RUNTIME_PROVIDER = "Google Cloud"
 DEFAULT_OBJECT_STORAGE_PROVIDER = "Google Cloud"
 DEFAULT_DNS_PROVIDER = "Google Cloud DNS"
+DEFAULT_INGRESS_ACCESS_MODE = "Public"
 
 ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 	LEAD: {SANDBOX_PROVISIONING, PRODUCTION_QUALIFICATION, ARCHIVED},
@@ -79,6 +80,7 @@ def create_sandbox(
 	)
 	_apply_provider_defaults(environment, policy_doc)
 	_apply_storage_defaults(environment, policy_doc)
+	_apply_ingress_defaults(environment, policy_doc)
 	_update_transition_metadata(environment, status_reason)
 	environment.insert()
 
@@ -129,6 +131,7 @@ def qualify_for_production(
 	environment_doc.status_reason = status_reason or conversion_strategy
 	_apply_provider_defaults(environment_doc, policy_doc)
 	_apply_storage_defaults(environment_doc, policy_doc)
+	_apply_ingress_defaults(environment_doc, policy_doc)
 	_transition_environment(environment_doc, PRODUCTION_QUALIFICATION, status_reason or conversion_strategy)
 	return environment_doc
 
@@ -409,6 +412,14 @@ def _apply_provider_defaults(environment: Document, policy: Document | None) -> 
 
 	if not environment.storage_quota_gb and policy and policy.storage_quota_gb not in (None, ""):
 		environment.storage_quota_gb = policy.storage_quota_gb
+
+
+def _apply_ingress_defaults(environment: Document, policy: Document | None) -> None:
+	environment.ingress_access_mode = (
+		environment.ingress_access_mode
+		or getattr(policy, "default_ingress_access_mode", None)
+		or DEFAULT_INGRESS_ACCESS_MODE
+	)
 
 
 def _get_policy_doc(policy_name: str | None) -> Document | None:

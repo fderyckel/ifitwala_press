@@ -12,6 +12,8 @@ The intended operating model is:
 - GCS storage is injected through runtime configuration, not DocTypes
 - Cloud DNS record changes are handled through `gcloud dns ...`
 - a shared founder edge proxy can route hostnames to each environment's loopback nginx port
+- the shared founder edge proxy can enforce per-environment ingress posture as `Public`, `Allowlisted`, or `Disabled`
+- the founder host can converge a repo-managed `ufw` + `ufw-docker` firewall baseline
 - the founder host installs a daily backup timer that exports every active environment to the backup tier
 
 ## Files
@@ -23,7 +25,7 @@ The intended operating model is:
 - `image/`
   Immutable runtime image build context for `frappe` + `ifitwala_ed` + `ifitwala_drive`
 - `host/`
-  Founder GCE VM bootstrap and daily backup timer installation assets
+  Founder GCE VM bootstrap, host firewall sync, and daily backup timer installation assets
 - `diagnostics/`
   Google-Cloud-focused incident and health checks for the founder runtime
 - `templates/compose.yaml`

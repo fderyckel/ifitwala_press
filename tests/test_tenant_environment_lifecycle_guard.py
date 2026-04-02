@@ -58,3 +58,30 @@ def test_service_guard_flag_allows_controlled_transition(monkeypatch: pytest.Mon
 	)
 
 	module.TenantEnvironment._validate_lifecycle_edit_discipline(current)
+
+
+def test_allowlisted_ingress_requires_cidr_rows(monkeypatch: pytest.MonkeyPatch) -> None:
+	module = _load_tenant_environment_module(monkeypatch)
+	current = SimpleNamespace(
+		ingress_access_mode="Allowlisted",
+		get=lambda fieldname: [] if fieldname == "ingress_allowlist" else None,
+	)
+
+	with pytest.raises(
+		RuntimeError,
+		match="Ingress Allowlist must contain at least one CIDR when Ingress Access Mode is Allowlisted",
+	):
+		module.TenantEnvironment._validate_ingress_access_constraints(current)
+
+
+def test_ingress_allowlist_cidrs_are_normalized(monkeypatch: pytest.MonkeyPatch) -> None:
+	module = _load_tenant_environment_module(monkeypatch)
+	row = SimpleNamespace(cidr="203.0.113.10", notes=" Office ")
+	current = SimpleNamespace(
+		ingress_access_mode="Allowlisted",
+		get=lambda fieldname: [row] if fieldname == "ingress_allowlist" else None,
+	)
+
+	module.TenantEnvironment._validate_ingress_access_constraints(current)
+
+	assert row.cidr == "203.0.113.10/32"

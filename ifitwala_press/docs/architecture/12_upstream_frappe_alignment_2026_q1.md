@@ -9,7 +9,7 @@ It exists to prevent two common failures:
 - rebuilding solved infrastructure patterns from scratch
 - cargo-culting full Frappe Cloud / Press complexity into an MVP that only needs an internal founder-mode control plane
 
-This note reflects an explicit review of the following upstream repositories on **2026-03-23**:
+This note reflects an explicit review of the following upstream repositories on **2026-04-02**:
 
 - `frappe/frappe_docker`
 - `frappe/agent`
@@ -148,15 +148,24 @@ We do not need in MVP:
 
 ### Relevant recent upstream signal
 
-Recent `press` activity between late December 2025 and 2026-03-23 shows active work in areas that matter to us later:
+Recent `press` activity between late December 2025 and 2026-04-02 shows active work in areas that matter to us later:
 
 - failover management steps and related fixes
 - release actions
 - cloning from the Desk
 - refresh of database usage from the site layer
 - site-action cleanup / cancellation behavior
-- infrastructure validation hardening such as firewall validation
+- server firewall rollout and validation hardening
 - remote/server health checks that incorporate agent or egress behavior
+
+The most relevant recent example is the March 2026 firewall rollout:
+
+- [`press#5500`](https://github.com/frappe/press/pull/5500), merged on **2026-03-07**, replaced custom `iptables` setup / teardown playbooks with one sync-driven `ufw` + pinned `ufw-docker` flow
+- [`press#5507`](https://github.com/frappe/press/pull/5507) auto-created the firewall document after server creation instead of relying on a manual setup step
+- later March follow-ups such as [`press#5521`](https://github.com/frappe/press/pull/5521), [`press#5533`](https://github.com/frappe/press/pull/5533), and [`press#5586`](https://github.com/frappe/press/pull/5586) show where the first rollout was corrected:
+  - rule sync needed to be idempotent and validation-heavy
+  - the useful rule shape was inbound `source + port + protocol + action`, not source/destination pairs
+  - protected IP allowlists had to include monitoring and proxy traffic, not only user-entered rules
 
 This is the signal we should care about, not the billing-only or marketplace-only work.
 
@@ -169,6 +178,8 @@ Borrow from Press now:
 - cloning / restore / failover mental model
 - “operator visible progress” as a first-class requirement
 - a command-center home surface with an attention queue that routes operators into the right records and actions
+- sync-style firewall convergence instead of brittle setup / teardown actions
+- validation-first handling for network rules and protected allowlists
 
 Defer from Press for now:
 
@@ -176,6 +187,7 @@ Defer from Press for now:
 - multi-product monetization concerns
 - platform features for external users
 - broad server-fleet execution patterns that depend on Agent
+- the generic `Server` / `Server Firewall` product surface as-is, because our founder phase is still one internal runtime host plus environment records
 
 ---
 
@@ -195,6 +207,13 @@ That means the immediate architecture choice is:
 - `agent` is deferred until we have remote execution needs
 - `press` guides workflow and orchestration patterns, not MVP feature scope
 - the control-plane home may borrow Press-style operational visibility, but it should remain a read-side summary surface over our own DocTypes
+- for firewalling, we should copy Press's host-hardening mechanism (`ufw` + `ufw-docker` + sync) but not copy its server-centric data model blindly
+
+The core translation is:
+
+- host-level port exposure belongs to the founder runtime host contract
+- tenant-specific ingress restriction belongs to the shared edge proxy and environment policy
+- those are related, but they are not the same control-plane object
 
 ---
 
@@ -208,10 +227,12 @@ The next implementation steps should follow this order:
    - `ifitwala_drive`
 2. keep seeded demo data and exported backup paths explicit on `Tenant Environment`
 3. wire the first founder provisioning adapter from `ifitwala_press` actions to the founder runtime
-4. support early sandbox teardown through governed action
-5. only after this flow is real, evaluate `agent` for remote execution
-6. only after remote execution exists, move broad trial density to a shared demo runtime instead of keeping one heavy stack per environment by default
-7. only after that, borrow more Press-grade orchestration patterns
+4. add a founder-host firewall sync path using `ufw` + `ufw-docker`, but keep it host-scoped and adapter-owned
+5. keep tenant-specific ingress allowlisting at the founder edge proxy layer instead of pretending `ufw` can distinguish one tenant domain from another on shared ports `80/443`
+6. support early sandbox teardown through governed action
+7. only after this flow is real, evaluate `agent` for remote execution
+8. only after remote execution exists, move broad trial density to a shared demo runtime instead of keeping one heavy stack per environment by default
+9. only after that, borrow more Press-grade orchestration patterns
 
 This keeps the MVP honest:
 

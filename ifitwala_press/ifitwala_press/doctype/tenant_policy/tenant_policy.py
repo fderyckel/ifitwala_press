@@ -11,6 +11,7 @@ class TenantPolicy(Document):
 		self._validate_backup_rules()
 		self._validate_provider_defaults()
 		self._validate_storage_defaults()
+		self._validate_ingress_defaults()
 		self._validate_policy_constraints()
 
 	def _validate_quota_values(self) -> None:
@@ -89,6 +90,12 @@ class TenantPolicy(Document):
 			and self.default_backup_storage_class != "Infrequent Access"
 		):
 			frappe.throw("GCS backup storage must use Infrequent Access for daily retained backups.")
+
+	def _validate_ingress_defaults(self) -> None:
+		if not self.supports_public_routing and self.default_ingress_access_mode in {"Public", "Allowlisted"}:
+			frappe.throw(
+				"Policies without public routing support cannot default Ingress Access Mode to Public or Allowlisted."
+			)
 
 	def _validate_policy_constraints(self) -> None:
 		if self.policy_type == "VIP" and self.default_database_mode == "Shared DB Fleet":

@@ -40,6 +40,7 @@ def test_architecture_docs_exist() -> None:
 		"architecture/19_hybrid_provider_placement_contract.md",
 		"architecture/20_error_event_ingestion_and_triage.md",
 		"architecture/22_runtime_libmagic_contract.md",
+		"architecture/23_founder_firewall_proposal.md",
 	}
 	removed = {
 		"architecture/08_initial_build_order.md",
@@ -54,7 +55,7 @@ def test_architecture_docs_exist() -> None:
 	}
 	assert expected.issubset(actual)
 	assert removed.isdisjoint(actual)
-	assert len(actual) <= 17
+	assert len(actual) <= 18
 
 
 def test_runtime_baseline_metadata_is_consistent() -> None:
@@ -139,6 +140,30 @@ def test_core_phase_one_doctype_files_exist() -> None:
 		/ "doctype"
 		/ "tenant_environment"
 		/ "tenant_environment.json"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_environment_ingress_cidr"
+		/ "__init__.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_environment_ingress_cidr"
+		/ "tenant_environment_ingress_cidr.py"
+	).is_file()
+	assert (
+		ROOT
+		/ "ifitwala_press"
+		/ "ifitwala_press"
+		/ "doctype"
+		/ "tenant_environment_ingress_cidr"
+		/ "tenant_environment_ingress_cidr.json"
 	).is_file()
 	assert (
 		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_transition_log" / "__init__.py"
@@ -242,6 +267,8 @@ def test_environment_model_includes_founder_runtime_mvp_fields() -> None:
 		"runtime_provider",
 		"object_storage_provider",
 		"dns_provider",
+		"ingress_access_mode",
+		"ingress_allowlist",
 	):
 		assert field_name in environment_source
 
@@ -259,6 +286,7 @@ def test_policy_model_includes_storage_defaults() -> None:
 		"default_runtime_provider",
 		"default_object_storage_provider",
 		"default_dns_provider",
+		"default_ingress_access_mode",
 	):
 		assert field_name in policy_source
 
@@ -284,6 +312,7 @@ def test_founder_runtime_ops_assets_exist() -> None:
 		"ops/founder_runtime/host/README.md",
 		"ops/founder_runtime/host/bootstrap-founder-vm.sh",
 		"ops/founder_runtime/host/install-backup-timer.sh",
+		"ops/founder_runtime/host/sync-host-firewall.sh",
 		"ops/founder_runtime/host/systemd/ifitwala-founder-backup.service.template",
 		"ops/founder_runtime/host/systemd/ifitwala-founder-backup.timer.template",
 		"ops/founder_runtime/diagnostics/README.md",
@@ -324,6 +353,9 @@ def test_founder_runtime_payload_includes_storage_contract() -> None:
 		'"runtime_provider"',
 		'"object_storage_provider"',
 		'"dns_provider"',
+		'"default_ingress_access_mode"',
+		'"ingress_access_mode"',
+		'"ingress_allowlist"',
 	):
 		assert token in service_source
 

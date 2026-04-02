@@ -4,6 +4,7 @@ frappe.ui.form.on("Tenant Environment", {
 			return;
 		}
 
+		setIngressFieldState(frm);
 		renderTransitionHistory(frm);
 		renderBusinessSummary(frm);
 
@@ -25,11 +26,20 @@ frappe.ui.form.on("Tenant Environment", {
 
 		addLifecycleButtons(frm);
 	},
+	ingress_access_mode(frm) {
+		setIngressFieldState(frm);
+	},
 });
 
 
 function addLifecycleButtons(frm) {
 	const status = frm.doc.site_status;
+
+	if (supportsFounderEdgeRouteSync(frm)) {
+		frm.add_custom_button(__("Sync Founder Edge Route"), () => {
+			syncFounderEdgeRoute(frm);
+		}, __("Actions"));
+	}
 
 	if (status === "Lead" || status === "Sandbox Active" || status === "Sandbox Expired") {
 		frm.add_custom_button(__("Qualify for Production"), () => {
@@ -491,6 +501,57 @@ function addLifecycleButtons(frm) {
 			);
 		}, __("Actions"));
 	}
+}
+
+
+function supportsFounderEdgeRouteSync(frm) {
+	if (frm.doc.site_status === "Archived") {
+		return false;
+	}
+
+	return (
+		typeof frm.doc.runtime_reference === "string" &&
+		frm.doc.runtime_reference.startsWith("compose:") &&
+		Boolean(frm.doc.primary_domain)
+	);
+}
+
+
+function setIngressFieldState(frm) {
+	const showAllowlist = frm.doc.ingress_access_mode === "Allowlisted";
+	frm.toggle_display("ingress_allowlist", showAllowlist);
+	frm.set_df_property(
+		"ingress_allowlist",
+		"description",
+		showAllowlist
+			? __("CIDRs allowed through the shared founder edge proxy for this environment.")
+			: __("Ingress allowlist is only used when Ingress Access Mode is Allowlisted.")
+	);
+}
+
+
+function syncFounderEdgeRoute(frm) {
+	const runSync = () =>
+		frappe.call({
+			method: "ifitwala_press.api.lifecycle.sync_founder_edge_route",
+			args: {
+				environment: frm.doc.name,
+			},
+			freeze: true,
+			freeze_message: __("Syncing founder edge route"),
+			callback: () => {
+				frm.reload_doc();
+			},
+		});
+
+	if (!frm.is_dirty()) {
+		runSync();
+		return;
+	}
+
+	frm.save().then(() => {
+		runSync();
+	});
 }
 
 

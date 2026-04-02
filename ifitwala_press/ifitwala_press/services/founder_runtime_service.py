@@ -27,6 +27,22 @@ def provision_demo_runtime(environment: str | Document) -> dict[str, Any]:
 	)
 
 
+def sync_host_firewall() -> dict[str, Any]:
+	return _run_adapter(
+		"sync-host-firewall",
+		{},
+	)
+
+
+def sync_edge_route(environment: str | Document) -> dict[str, Any]:
+	environment_doc = _as_doc("Tenant Environment", environment)
+	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
+	return _run_adapter(
+		"sync-edge-route",
+		_build_payload(environment_doc, tenant_doc),
+	)
+
+
 def teardown_demo_runtime(environment: str | Document, *, reason: str) -> dict[str, Any]:
 	environment_doc = _as_doc("Tenant Environment", environment)
 	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
@@ -82,6 +98,7 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			if policy_doc
 			else None,
 			"default_dns_provider": policy_doc.default_dns_provider if policy_doc else None,
+			"default_ingress_access_mode": policy_doc.default_ingress_access_mode if policy_doc else None,
 		},
 		"environment": {
 			"name": environment.name,
@@ -98,6 +115,15 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"dns_provider": environment.dns_provider,
 			"primary_domain": environment.primary_domain,
 			"routing_mode": environment.routing_mode,
+			"ingress_access_mode": environment.ingress_access_mode,
+			"ingress_allowlist": [
+				{
+					"cidr": row.cidr,
+					"notes": row.notes,
+				}
+				for row in (environment.get("ingress_allowlist") or [])
+				if getattr(row, "cidr", None)
+			],
 			"region": environment.region,
 			"frappe_branch": environment.frappe_branch,
 			"ifitwala_ed_branch": environment.ifitwala_ed_branch,
@@ -208,7 +234,7 @@ def _get_timeout_seconds() -> int:
 
 	try:
 		timeout = int(configured)
-	except TypeError, ValueError:
+	except (TypeError, ValueError):
 		frappe.throw("Founder runtime adapter timeout must be an integer number of seconds.")
 
 	if timeout <= 0:

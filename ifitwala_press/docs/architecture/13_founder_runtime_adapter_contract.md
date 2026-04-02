@@ -59,7 +59,9 @@ Examples:
 The control plane appends one action argument:
 
 - `provision-demo-runtime`
+- `sync-host-firewall`
 - `teardown-demo-runtime`
+- `restore-demo-runtime`
 
 The JSON payload is sent on stdin.
 
@@ -163,7 +165,42 @@ After success, the control plane expires the sandbox through a governed lifecycl
 
 ---
 
-## 5. Lifecycle ownership
+## 5. Host firewall sync action
+
+### Action name
+
+`sync-host-firewall`
+
+### Trigger source
+
+- founder host bootstrap
+- explicit operator rerun when founder host access policy changes
+
+### Input payload
+
+No environment-specific payload is required.
+The adapter should rely on its configured founder-host environment variables for firewall intent.
+
+### Expected outcome
+
+On success, the adapter should converge the founder host firewall and return a JSON object.
+
+Suggested fields:
+
+- `firewall_enabled`
+- `allowed_ssh_cidrs`
+- `public_tcp_ports`
+- `firewall_sync_script`
+- `last_provisioning_step`
+- `provisioning_message`
+- `status_reason`
+
+The adapter should use one idempotent sync path.
+It should not expose separate setup / teardown firewall actions.
+
+---
+
+## 6. Lifecycle ownership
 
 The adapter does not own lifecycle state.
 
@@ -182,7 +219,7 @@ This keeps the control plane authoritative even in founder mode.
 
 ---
 
-## 6. Backup expectation
+## 7. Backup expectation
 
 The adapter must not treat container-local backups as sufficient.
 
@@ -199,12 +236,13 @@ This aligns with the phased backup policy already locked in the rollout notes.
 
 ---
 
-## 7. Near-term implementation guidance
+## 8. Near-term implementation guidance
 
 The first implementation should stay simple:
 
 - same GCE VM
 - `frappe_docker` production-style compose patterns
+- host-level `ufw` + pinned `ufw-docker` sync for the founder VM
 - approved custom app image or app bundle
 - synchronous founder-mode execution is acceptable initially
 - SSH-free local execution on the host is acceptable initially

@@ -42,6 +42,7 @@ install_base_packages() {
         gnupg \
         jq \
         mariadb-client \
+        ufw \
         unzip
 
     if ! docker compose version >/dev/null 2>&1; then
@@ -119,10 +120,19 @@ install_diagnostics() {
     install -m 0644 "${ops_root}/diagnostics/lib.sh" "${install_root}/diagnostics/lib.sh"
 }
 
+install_firewall_assets() {
+    install -d -m 0755 "${install_root}/host"
+    install -m 0755 "${ops_root}/host/sync-host-firewall.sh" "${install_root}/host/sync-host-firewall.sh"
+}
+
 install_backup_timer() {
     INSTALL_ROOT="${install_root}" \
     ADAPTER_ENV_PATH="${adapter_env_path}" \
         "${script_dir}/install-backup-timer.sh"
+}
+
+sync_host_firewall() {
+    "${install_root}/host/sync-host-firewall.sh" "${adapter_env_path}"
 }
 
 print_next_steps() {
@@ -133,10 +143,11 @@ print_next_steps() {
     printf '%s\n' "Adapter env: ${adapter_env_path}"
     printf '%s\n' "Next steps:"
     printf '%s\n' "1. Edit ${adapter_env_path} and pin IFITWALA_FOUNDER_RUNTIME_IMAGE to the published runtime image tag."
-    printf '%s\n' "2. Authenticate gcloud on this host and confirm access to the configured Cloud DNS zone."
-    printf '%s\n' "3. Restart the control-plane process with the adapter env loaded."
-    printf '%s\n' "4. Run /usr/local/lib/ifitwala-founder-runtime/diagnostics/gcp-platform-doctor.sh ${adapter_env_path}."
-    printf '%s\n' "5. Run one sandbox provision from Ifitwala_Press and verify DNS, shared edge proxy routing, and Cloud-Storage-backed file writes."
+    printf '%s\n' "2. Set IFITWALA_FOUNDER_RUNTIME_FIREWALL_ENABLED=1 and restrict IFITWALA_FOUNDER_RUNTIME_ALLOWED_SSH_CIDRS before enabling the host firewall."
+    printf '%s\n' "3. Authenticate gcloud on this host and confirm access to the configured Cloud DNS zone."
+    printf '%s\n' "4. Restart the control-plane process with the adapter env loaded."
+    printf '%s\n' "5. Run /usr/local/lib/ifitwala-founder-runtime/diagnostics/gcp-platform-doctor.sh ${adapter_env_path}."
+    printf '%s\n' "6. Run one sandbox provision from Ifitwala_Press and verify DNS, shared edge proxy routing, and Cloud-Storage-backed file writes."
 
     if [[ -n "${operator_user}" ]] && id "${operator_user}" >/dev/null 2>&1; then
         printf '%s\n' "User ${operator_user} was added to the docker group. A new login session is required before docker commands work without sudo."
@@ -151,5 +162,7 @@ runtime_root="$(load_runtime_root)"
 ensure_runtime_dirs "${runtime_root}"
 enable_docker
 install_diagnostics
+install_firewall_assets
 install_backup_timer
+sync_host_firewall
 print_next_steps "${runtime_root}"

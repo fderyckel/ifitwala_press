@@ -46,6 +46,10 @@ class RuntimeSettings:
 	edge_proxy_mode: str
 	edge_proxy_root: Path
 	http_port_base: int
+	firewall_enabled: bool
+	allowed_ssh_cidrs: tuple[str, ...]
+	public_tcp_ports: tuple[int, ...]
+	firewall_script: Path
 	execute: bool
 
 
@@ -64,17 +68,21 @@ class RuntimePlan:
 	files_prefix: str
 	backups_prefix: str
 	backup_export_prefix: str
+	ingress_access_mode: str
+	ingress_allowlist: tuple[str, ...]
 
 
 def main(argv: list[str] | None = None) -> int:
 	args = list(argv or sys.argv[1:])
 	if len(args) != 1 or args[0] not in {
 		"provision-demo-runtime",
+		"sync-host-firewall",
+		"sync-edge-route",
 		"teardown-demo-runtime",
 		"restore-demo-runtime",
 	}:
 		print(
-			"Usage: adapter.py [provision-demo-runtime|teardown-demo-runtime|restore-demo-runtime]",
+			"Usage: adapter.py [provision-demo-runtime|sync-host-firewall|sync-edge-route|teardown-demo-runtime|restore-demo-runtime]",
 			file=sys.stderr,
 		)
 		return 2
@@ -84,6 +92,10 @@ def main(argv: list[str] | None = None) -> int:
 
 	if args[0] == "provision-demo-runtime":
 		result = provision_demo_runtime(payload, settings)
+	elif args[0] == "sync-host-firewall":
+		result = sync_host_firewall(payload, settings)
+	elif args[0] == "sync-edge-route":
+		result = sync_edge_route(payload, settings)
 	elif args[0] == "restore-demo-runtime":
 		result = restore_demo_runtime(payload, settings)
 	else:
@@ -184,6 +196,66 @@ def teardown_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) ->
 	}
 
 
+def sync_host_firewall(payload: dict[str, Any], settings: RuntimeSettings) -> dict[str, Any]:
+	_validate_firewall_settings(settings)
+	message = "Founder host firewall sync planned. Execution not requested."
+	last_step = "Host firewall sync planned"
+
+	if settings.execute:
+		_run_firewall_sync(settings)
+		state = "enabled" if settings.firewall_enabled else "disabled"
+		last_step = "Founder host firewall synced"
+		message = f"Founder host firewall {state} with repo-managed ufw policy."
+
+	return {
+		"firewall_enabled": int(settings.firewall_enabled),
+		"allowed_ssh_cidrs": list(settings.allowed_ssh_cidrs),
+		"public_tcp_ports": list(settings.public_tcp_ports),
+		"firewall_sync_script": str(settings.firewall_script),
+		"last_provisioning_step": last_step,
+		"provisioning_message": message,
+		"status_reason": "Founder host firewall intent validated.",
+	}
+
+
+def sync_edge_route(payload: dict[str, Any], settings: RuntimeSettings) -> dict[str, Any]:
+	plan = _build_plan(payload, settings)
+	if settings.edge_proxy_mode != "shared_nginx_proxy":
+		return {
+			"routing_mode": _routing_mode(plan, settings, dns_ready=0, edge_proxy_ready=0),
+			"host_header_value": plan.host_header_value,
+			"last_provisioning_step": "Founder edge route sync skipped",
+			"provisioning_message": "Founder edge route sync requires IFITWALA_FOUNDER_RUNTIME_EDGE_PROXY_MODE=shared_nginx_proxy.",
+			"status_reason": "Shared founder edge proxy is not enabled.",
+		}
+
+	if not plan.primary_domain:
+		return {
+			"routing_mode": _routing_mode(plan, settings, dns_ready=0, edge_proxy_ready=0),
+			"host_header_value": plan.host_header_value,
+			"last_provisioning_step": "Founder edge route sync skipped",
+			"provisioning_message": "Primary domain is required before founder edge routes can be synced.",
+			"status_reason": "Primary domain missing for founder edge route sync.",
+		}
+
+	_prepare_edge_proxy(plan, settings)
+	if settings.execute:
+		_start_edge_proxy(settings)
+		_reload_edge_proxy(settings)
+
+	return {
+		"routing_mode": _routing_mode(plan, settings, dns_ready=0, edge_proxy_ready=1),
+		"host_header_value": plan.host_header_value,
+		"last_provisioning_step": "Founder edge route synced",
+		"provisioning_message": (
+			"Founder edge route rendered and nginx reloaded."
+			if settings.execute
+			else "Founder edge route rendered. Execution not requested."
+		),
+		"status_reason": "Founder edge route synced from environment ingress intent.",
+	}
+
+
 def restore_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -> dict[str, Any]:
 	plan = _build_plan(payload, settings)
 	if not plan.runtime_dir.exists():
@@ -216,8 +288,12 @@ def restore_demo_runtime(payload: dict[str, Any], settings: RuntimeSettings) -> 
 
 
 def _load_payload() -> dict[str, Any]:
+	raw_payload = sys.stdin.read()
+	if not raw_payload.strip():
+		return {}
+
 	try:
-		payload = json.load(sys.stdin)
+		payload = json.loads(raw_payload)
 	except json.JSONDecodeError as exc:
 		raise SystemExit(f"Invalid JSON payload: {exc}") from exc
 
@@ -254,6 +330,22 @@ def _load_settings() -> RuntimeSettings:
 		http_port_base=int(
 			_env("IFITWALA_FOUNDER_RUNTIME_HTTP_PORT_BASE", default=str(DEFAULT_HTTP_PORT_BASE))
 		),
+		firewall_enabled=_env("IFITWALA_FOUNDER_RUNTIME_FIREWALL_ENABLED", default="0") == "1",
+		allowed_ssh_cidrs=tuple(
+			_parse_csv_values(_env("IFITWALA_FOUNDER_RUNTIME_ALLOWED_SSH_CIDRS", default=""))
+		),
+		public_tcp_ports=tuple(
+			int(value)
+			for value in _parse_csv_values(
+				_env("IFITWALA_FOUNDER_RUNTIME_PUBLIC_TCP_PORTS", default="80,443")
+			)
+		),
+		firewall_script=Path(
+			_env(
+				"IFITWALA_FOUNDER_RUNTIME_FIREWALL_SCRIPT",
+				default=str(ROOT / "host" / "sync-host-firewall.sh"),
+			)
+		).expanduser(),
 		execute=_env("IFITWALA_FOUNDER_RUNTIME_EXECUTE", default="0") == "1",
 	)
 
@@ -277,6 +369,8 @@ def _build_plan(payload: dict[str, Any], settings: RuntimeSettings) -> RuntimePl
 	primary_domain = environment.get("primary_domain") or _default_domain(
 		project_slug, settings.domain_suffix
 	)
+	ingress_access_mode = _resolve_ingress_access_mode(payload)
+	ingress_allowlist = tuple(_resolve_ingress_allowlist(payload, ingress_access_mode))
 	files_prefix = f"sites/{site_name}/files/"
 	backups_prefix = f"sites/{site_name}/daily/"
 
@@ -294,6 +388,8 @@ def _build_plan(payload: dict[str, Any], settings: RuntimeSettings) -> RuntimePl
 		files_prefix=files_prefix,
 		backups_prefix=backups_prefix,
 		backup_export_prefix=f"gs://{settings.gcs_backups_bucket}/{backups_prefix}",
+		ingress_access_mode=ingress_access_mode,
+		ingress_allowlist=ingress_allowlist,
 	)
 
 
@@ -331,7 +427,29 @@ def _prepare_edge_proxy(plan: RuntimePlan, settings: RuntimeSettings) -> None:
 
 def _render_edge_proxy_route(plan: RuntimePlan) -> str:
 	template = Template((ROOT / "edge_proxy" / "route.conf.template").read_text())
-	return template.substitute(SITE_DOMAIN=plan.primary_domain or "_", UPSTREAM_PORT=str(plan.http_port))
+	return template.substitute(
+		SITE_DOMAIN=plan.primary_domain or "_",
+		UPSTREAM_PORT=str(plan.http_port),
+		SERVER_ACCESS_DIRECTIVES="",
+		LOCATION_ACCESS_DIRECTIVES=_render_location_access_directives(plan),
+		LOCATION_BEHAVIOR_DIRECTIVES=_render_location_behavior_directives(plan),
+	)
+
+
+def _render_location_access_directives(plan: RuntimePlan) -> str:
+	if plan.ingress_access_mode != "Allowlisted":
+		return ""
+
+	indent = " " * 8
+	lines = [f"{indent}allow {cidr};" for cidr in plan.ingress_allowlist]
+	lines.append(f"{indent}deny all;")
+	return "\n".join(lines) + "\n"
+
+
+def _render_location_behavior_directives(plan: RuntimePlan) -> str:
+	if plan.ingress_access_mode != "Disabled":
+		return ""
+	return "        return 403;\n"
 
 
 def _render_nginx(plan: RuntimePlan) -> str:
@@ -422,6 +540,8 @@ def _render_runtime_plan(plan: RuntimePlan, payload: dict[str, Any], settings: R
 		"backups_bucket": settings.gcs_backups_bucket,
 		"backups_prefix": plan.backups_prefix,
 		"edge_proxy_mode": settings.edge_proxy_mode,
+		"ingress_access_mode": plan.ingress_access_mode,
+		"ingress_allowlist": list(plan.ingress_allowlist),
 		"payload_environment": payload.get("environment", {}),
 	}
 	return json.dumps(runtime_plan, indent=2, sort_keys=True)
@@ -692,6 +812,25 @@ def _allocate_http_port(runtime_root: Path, base_port: int) -> int:
 	return port
 
 
+def _resolve_ingress_access_mode(payload: dict[str, Any]) -> str:
+	mode = (
+		str(payload.get("environment", {}).get("ingress_access_mode") or "").strip()
+		or str(payload.get("policy", {}).get("default_ingress_access_mode") or "").strip()
+		or "Public"
+	)
+	if mode not in {"Public", "Allowlisted", "Disabled"}:
+		raise SystemExit(f"Unsupported ingress access mode: {mode}")
+	return mode
+
+
+def _resolve_ingress_allowlist(payload: dict[str, Any], mode: str) -> list[str]:
+	rows = payload.get("environment", {}).get("ingress_allowlist") or []
+	cidrs = [str(row.get("cidr") or "").strip() for row in rows if str(row.get("cidr") or "").strip()]
+	if mode == "Allowlisted" and not cidrs:
+		raise SystemExit("Ingress allowlist is required when ingress_access_mode is Allowlisted.")
+	return cidrs
+
+
 def _read_existing_env(path: Path) -> dict[str, str]:
 	if not path.exists():
 		return {}
@@ -703,6 +842,28 @@ def _read_existing_env(path: Path) -> dict[str, str]:
 		key, value = line.split("=", 1)
 		values[key.strip()] = value.strip()
 	return values
+
+
+def _validate_firewall_settings(settings: RuntimeSettings) -> None:
+	if settings.firewall_enabled and not settings.allowed_ssh_cidrs:
+		raise SystemExit(
+			"IFITWALA_FOUNDER_RUNTIME_ALLOWED_SSH_CIDRS is required when the founder firewall is enabled."
+		)
+	if not settings.public_tcp_ports:
+		raise SystemExit("IFITWALA_FOUNDER_RUNTIME_PUBLIC_TCP_PORTS must contain at least one TCP port.")
+	for port in settings.public_tcp_ports:
+		if port < 1 or port > 65535:
+			raise SystemExit(f"Invalid founder firewall TCP port: {port}")
+	if not settings.firewall_script.is_file():
+		raise SystemExit(f"Founder firewall sync script not found: {settings.firewall_script}")
+
+
+def _run_firewall_sync(settings: RuntimeSettings) -> None:
+	command = ["bash", str(settings.firewall_script)]
+	if os.geteuid() != 0:
+		_require_command("sudo")
+		command = ["sudo", "-n", *command]
+	_run(command)
 
 
 def _require_site_name(payload: dict[str, Any]) -> str:
@@ -726,6 +887,13 @@ def _slugify(value: str) -> str:
 
 def _secret_token() -> str:
 	return secrets.token_urlsafe(24)
+
+
+def _parse_csv_values(raw_value: str | None) -> list[str]:
+	if not raw_value:
+		return []
+	text = raw_value.replace("\n", ",").replace(";", ",").replace(" ", ",")
+	return [part.strip() for part in text.split(",") if part.strip()]
 
 
 def _env(name: str, *, default: str | None = None, required: bool = False) -> str | None:

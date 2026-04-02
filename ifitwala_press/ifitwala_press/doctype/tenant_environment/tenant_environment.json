@@ -46,6 +46,8 @@
     "section_break_routing",
     "primary_domain",
     "routing_mode",
+    "ingress_access_mode",
+    "ingress_allowlist",
     "dns_ready",
     "tls_ready",
     "host_header_value",
@@ -299,6 +301,21 @@
       "fieldtype": "Select",
       "label": "Routing Mode",
       "options": "\nInternal Only\nPublic\nPending"
+    },
+    {
+      "default": "Public",
+      "description": "Declares whether requests that reach the shared edge proxy should be fully public, restricted to an allowlist, or blocked.",
+      "fieldname": "ingress_access_mode",
+      "fieldtype": "Select",
+      "label": "Ingress Access Mode",
+      "options": "\nPublic\nAllowlisted\nDisabled"
+    },
+    {
+      "description": "Explicit CIDR allowlist enforced by the shared edge proxy when Ingress Access Mode is Allowlisted.",
+      "fieldname": "ingress_allowlist",
+      "fieldtype": "Table",
+      "label": "Ingress Allowlist",
+      "options": "Tenant Environment Ingress CIDR"
     },
     {
       "default": "0",

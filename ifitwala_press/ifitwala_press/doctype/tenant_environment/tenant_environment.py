@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ipaddress
 import re
 
 import frappe
@@ -27,6 +28,7 @@ class TenantEnvironment(Document):
 		self._validate_provider_constraints()
 		self._validate_storage_constraints()
 		self._validate_routing_constraints()
+		self._validate_ingress_access_constraints()
 		self._validate_live_requirements()
 
 	def _normalize_site_name(self) -> None:
@@ -71,10 +73,21 @@ class TenantEnvironment(Document):
 			"runtime_provider",
 			"object_storage_provider",
 			"dns_provider",
+			"primary_domain",
+			"host_header_value",
+			"ingress_access_mode",
 		):
 			value = self.get(fieldname)
 			if isinstance(value, str):
 				self.set(fieldname, value.strip())
+
+		for row in self.get("ingress_allowlist") or []:
+			cidr = getattr(row, "cidr", None)
+			if isinstance(cidr, str):
+				row.cidr = cidr.strip()
+			notes = getattr(row, "notes", None)
+			if isinstance(notes, str):
+				row.notes = notes.strip()
 
 	def _validate_demo_seed_configuration(self) -> None:
 		if self.demo_seed_mode == "Restore Demo Backup" and not self.demo_seed_reference:
@@ -127,6 +140,33 @@ class TenantEnvironment(Document):
 
 		if self.routing_mode == "Public" and not self.dns_provider:
 			frappe.throw("DNS Provider is required when Routing Mode is Public.")
+
+	def _validate_ingress_access_constraints(self) -> None:
+		mode = self.ingress_access_mode or "Public"
+		allowlist = self.get("ingress_allowlist") or []
+
+		if mode == "Allowlisted" and not allowlist:
+			frappe.throw(
+				"Ingress Allowlist must contain at least one CIDR when Ingress Access Mode is Allowlisted."
+			)
+
+		if mode != "Allowlisted" and allowlist:
+			frappe.throw("Ingress Allowlist rows are only allowed when Ingress Access Mode is Allowlisted.")
+
+		seen: set[str] = set()
+		for row in allowlist:
+			cidr = str(getattr(row, "cidr", "") or "").strip()
+			if not cidr:
+				frappe.throw("Ingress Allowlist CIDR is required.")
+			try:
+				network = ipaddress.ip_network(cidr, strict=False)
+			except ValueError:
+				frappe.throw(f"{cidr} is not a valid ingress CIDR.")
+			normalized = str(network)
+			if normalized in seen:
+				frappe.throw(f"Duplicate ingress allowlist CIDR: {normalized}.")
+			seen.add(normalized)
+			row.cidr = normalized
 
 	def _validate_live_requirements(self) -> None:
 		if self.site_status != LIVE_STATE:

@@ -31,6 +31,7 @@
     "default_deployment_mode",
     "column_break_hosting_defaults",
     "supports_public_routing",
+    "default_ingress_access_mode",
     "supports_custom_domains",
     "section_break_resource_controls",
     "worker_quota",
@@ -164,6 +165,14 @@
       "fieldname": "supports_public_routing",
       "fieldtype": "Check",
       "label": "Supports Public Routing"
+    },
+    {
+      "default": "Public",
+      "description": "Default ingress posture for environments governed by this policy when they are routed through the shared edge proxy.",
+      "fieldname": "default_ingress_access_mode",
+      "fieldtype": "Select",
+      "label": "Default Ingress Access Mode",
+      "options": "\nPublic\nAllowlisted\nDisabled"
     },
     {
       "default": "0",

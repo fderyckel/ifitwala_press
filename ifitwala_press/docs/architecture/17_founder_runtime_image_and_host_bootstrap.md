@@ -38,6 +38,8 @@ For phase 1, the host must provide:
 
 - one Ubuntu 24.04 LTS VM baseline
 - Docker Engine with `docker compose`
+- `ufw`
+- pinned `ufw-docker` integration for Docker-aware firewalling
 - `mariadb-client`
 - `gcloud`
 - `gcloud storage` for backup export
@@ -47,6 +49,12 @@ For phase 1, the host must provide:
   - backup logs
 
 This host bootstrap is now captured in `ops/founder_runtime/host/`.
+
+The bootstrap must also install a repo-managed firewall sync asset so the founder VM can converge:
+
+- public web ingress on `80/tcp` and `443/tcp`
+- SSH access only from explicit operator CIDRs
+- Docker-aware filtering through `ufw-docker`
 
 ---
 

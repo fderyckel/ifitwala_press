@@ -302,6 +302,16 @@ Agents must always:
 - preserve auditability
 - keep commercial, operational, and technical state clearly modeled
 
+### Worktree and index discipline
+
+When fixing a staged-file failure such as a commit hook or parse error, agents must verify the exact file content seen by both the worktree and the git index before declaring the issue fixed.
+
+Minimum rule:
+- after `apply_patch`, re-read the exact changed lines from the worktree
+- if the file is tracked and the fix must affect a commit, verify the staged blob too, for example with `git show :path`
+- if the index still has stale content, stage the file and verify again before rerunning hooks or telling the user the fix is ready
+- do not rely on memory or a prior patch success message when the hook output still shows old code
+
 ---
 
 ## Intended Platform Model
