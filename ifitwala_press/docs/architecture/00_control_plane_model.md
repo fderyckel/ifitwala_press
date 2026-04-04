@@ -220,6 +220,7 @@ Architecture drift is not.
 
 Founder-managed demo economics still matter.
 Do not assume the current heavy per-environment founder stack is the default long-term posture for manually approved demo environments.
+The default long-term posture for demos and many smaller schools is shared runtime plus one database per site.
 
 ---
 
@@ -249,6 +250,7 @@ Likely infra pattern:
 - one database per site
 - one approved shared app bundle or compatibility pool
 - limited storage and worker budget
+- default placement target for demo cohorts unless a clear isolation reason exists
 
 ### 6.2 Standard Production
 Purpose:
@@ -266,6 +268,7 @@ Likely infra pattern:
 - shared DB fleet
 - one database per site
 - shared runtime only for tenants on compatible approved app bundles
+- smaller schools should stay on shared runtime until observed capacity or compatibility issues justify stronger isolation
 
 ### 6.3 Premium / VIP Production
 Purpose:
@@ -278,9 +281,10 @@ Characteristics:
 - better premium commercial positioning
 
 Likely infra pattern:
-- shared or reserved runtime
+- shared, reserved, or dedicated runtime
 - dedicated database instance per tenant
 - reserved or dedicated runtime when tenant-specific app combinations no longer fit a safe shared compatibility pool
+- dedicated runtime when concurrency, sensitivity, or operational blast radius justify it
 - stronger backup and monitoring policies
 
 ### Why tiering matters

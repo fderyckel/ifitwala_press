@@ -35,8 +35,8 @@ frappe.ui.form.on("Tenant Environment", {
 function addLifecycleButtons(frm) {
 	const status = frm.doc.site_status;
 
-	if (supportsFounderEdgeRouteSync(frm)) {
-		frm.add_custom_button(__("Sync Founder Edge Route"), () => {
+	if (supportsEdgeRouteSync(frm)) {
+		frm.add_custom_button(__("Sync Environment Edge Route"), () => {
 			syncFounderEdgeRoute(frm);
 		}, __("Actions"));
 	}
@@ -68,6 +68,27 @@ function addLifecycleButtons(frm) {
 						reqd: 1,
 						options:
 							"\nFresh Production Site\nCopy Config Only\nCopy Selected Data\nIn-place Upgrade",
+					},
+					{
+						fieldname: "deployment_mode",
+						fieldtype: "Select",
+						label: __("Deployment Mode"),
+						reqd: 1,
+						options: "\nShared Runtime\nReserved Runtime\nDedicated Runtime",
+						default: frm.doc.deployment_mode || "Shared Runtime",
+					},
+					{
+						fieldname: "runtime_pool",
+						fieldtype: "Link",
+						label: __("Runtime Pool"),
+						options: "Runtime Pool",
+						default: frm.doc.runtime_pool || "",
+					},
+					{
+						fieldname: "dedicated_runtime_target",
+						fieldtype: "Data",
+						label: __("Dedicated Runtime Target"),
+						default: frm.doc.dedicated_runtime_target || "",
 					},
 					{
 						fieldname: "policy",
@@ -124,12 +145,12 @@ function addLifecycleButtons(frm) {
 	}
 
 	if (status === "Sandbox Provisioning") {
-		frm.add_custom_button(__("Provision Founder Demo Runtime"), () => {
+		frm.add_custom_button(__("Provision Environment Runtime"), () => {
 			callLifecycleMethod(
 				frm,
-				"provision_founder_demo_runtime",
+				"provision_environment_runtime",
 				{},
-				__("Provisioning founder demo runtime")
+				__("Provisioning environment runtime")
 			);
 		}, __("Actions"));
 
@@ -403,7 +424,7 @@ function addLifecycleButtons(frm) {
 	}
 
 	if (status === "Sandbox Active") {
-		frm.add_custom_button(__("Teardown Founder Demo Runtime"), () => {
+		frm.add_custom_button(__("Teardown Environment Runtime"), () => {
 			frappe.prompt(
 				[
 					{
@@ -416,11 +437,11 @@ function addLifecycleButtons(frm) {
 				(values) =>
 					callLifecycleMethod(
 						frm,
-						"teardown_founder_demo_runtime",
+						"teardown_environment_runtime",
 						values,
-						__("Tearing down founder demo runtime")
+						__("Tearing down environment runtime")
 					),
-				__("Teardown Founder Demo Runtime"),
+				__("Teardown Environment Runtime"),
 				__("Teardown")
 			);
 		}, __("Actions"));
@@ -504,14 +525,17 @@ function addLifecycleButtons(frm) {
 }
 
 
-function supportsFounderEdgeRouteSync(frm) {
+function supportsEdgeRouteSync(frm) {
 	if (frm.doc.site_status === "Archived") {
 		return false;
 	}
 
 	return (
 		typeof frm.doc.runtime_reference === "string" &&
-		frm.doc.runtime_reference.startsWith("compose:") &&
+		(
+			frm.doc.runtime_reference.startsWith("compose:") ||
+			frm.doc.runtime_reference.startsWith("bench:")
+		) &&
 		Boolean(frm.doc.primary_domain)
 	);
 }
@@ -533,12 +557,12 @@ function setIngressFieldState(frm) {
 function syncFounderEdgeRoute(frm) {
 	const runSync = () =>
 		frappe.call({
-			method: "ifitwala_press.api.lifecycle.sync_founder_edge_route",
+			method: "ifitwala_press.api.lifecycle.sync_environment_edge_route",
 			args: {
 				environment: frm.doc.name,
 			},
 			freeze: true,
-			freeze_message: __("Syncing founder edge route"),
+			freeze_message: __("Syncing environment edge route"),
 			callback: () => {
 				frm.reload_doc();
 			},

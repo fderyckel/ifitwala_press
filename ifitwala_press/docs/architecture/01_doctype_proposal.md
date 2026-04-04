@@ -47,12 +47,13 @@ Model only what the control plane must truly own.
 
 # Phase 1 Core DocTypes
 
-The first implementation should build these 4 DocTypes:
+The first implementation should build these 5 DocTypes:
 
 1. `Press Tenant`
 2. `Tenant Policy`
 3. `Tenant Environment`
 4. `Tenant Transition Log`
+5. `Runtime Pool`
 
 That is the minimum viable control-plane backbone.
 

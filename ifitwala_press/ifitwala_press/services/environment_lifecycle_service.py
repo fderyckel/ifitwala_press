@@ -7,6 +7,9 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import now_datetime
 
+from ifitwala_press.ifitwala_press.services.runtime_placement_service import (
+	assign_runtime_placement,
+)
 from ifitwala_press.ifitwala_press.services.transition_log_service import create_transition_log
 
 LEAD = "Lead"
@@ -29,6 +32,7 @@ DEFAULT_RUNTIME_PROVIDER = "Google Cloud"
 DEFAULT_OBJECT_STORAGE_PROVIDER = "Google Cloud"
 DEFAULT_DNS_PROVIDER = "Google Cloud DNS"
 DEFAULT_INGRESS_ACCESS_MODE = "Public"
+DEFAULT_DEPLOYMENT_MODE = "Shared Runtime"
 
 ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 	LEAD: {SANDBOX_PROVISIONING, PRODUCTION_QUALIFICATION, ARCHIVED},
@@ -52,6 +56,9 @@ def create_sandbox(
 	expiry_date: str | None = None,
 	demo_seed_mode: str | None = None,
 	demo_seed_reference: str | None = None,
+	deployment_mode: str | None = None,
+	runtime_pool: str | None = None,
+	dedicated_runtime_target: str | None = None,
 	status_reason: str | None = None,
 ) -> Document:
 	tenant_doc = _as_doc("Press Tenant", tenant)
@@ -74,11 +81,15 @@ def create_sandbox(
 			"hosting_tier": "Sandbox",
 			"demo_seed_mode": demo_seed_mode or "Blank Site",
 			"demo_seed_reference": demo_seed_reference,
-			"placement_strategy": "Founder Shared Runtime",
+			"deployment_mode": deployment_mode,
+			"runtime_pool": runtime_pool,
+			"dedicated_runtime_target": dedicated_runtime_target,
 			"expires_on": expiry_date,
 		}
 	)
 	_apply_provider_defaults(environment, policy_doc)
+	_apply_runtime_placement_defaults(environment, policy_doc)
+	assign_runtime_placement(environment, tenant=tenant_doc, policy=policy_doc)
 	_apply_storage_defaults(environment, policy_doc)
 	_apply_ingress_defaults(environment, policy_doc)
 	_update_transition_metadata(environment, status_reason)
@@ -101,6 +112,9 @@ def qualify_for_production(
 	hosting_tier: str,
 	database_mode: str,
 	conversion_strategy: str,
+	deployment_mode: str | None = None,
+	runtime_pool: str | None = None,
+	dedicated_runtime_target: str | None = None,
 	policy: str | None = None,
 	region: str | None = None,
 	primary_cloud_provider: str | None = None,
@@ -118,6 +132,12 @@ def qualify_for_production(
 		environment_doc.environment_type = "Production"
 	environment_doc.hosting_tier = hosting_tier
 	environment_doc.database_mode = database_mode
+	if deployment_mode:
+		environment_doc.deployment_mode = deployment_mode
+	if runtime_pool is not None:
+		environment_doc.runtime_pool = runtime_pool
+	if dedicated_runtime_target is not None:
+		environment_doc.dedicated_runtime_target = dedicated_runtime_target
 	environment_doc.policy = policy_name
 	environment_doc.region = region or environment_doc.region
 	if primary_cloud_provider:
@@ -130,6 +150,10 @@ def qualify_for_production(
 		environment_doc.dns_provider = dns_provider
 	environment_doc.status_reason = status_reason or conversion_strategy
 	_apply_provider_defaults(environment_doc, policy_doc)
+	_apply_runtime_placement_defaults(environment_doc, policy_doc)
+	assign_runtime_placement(
+		environment_doc, tenant=frappe.get_doc("Press Tenant", environment_doc.tenant), policy=policy_doc
+	)
 	_apply_storage_defaults(environment_doc, policy_doc)
 	_apply_ingress_defaults(environment_doc, policy_doc)
 	_transition_environment(environment_doc, PRODUCTION_QUALIFICATION, status_reason or conversion_strategy)
@@ -419,6 +443,15 @@ def _apply_ingress_defaults(environment: Document, policy: Document | None) -> N
 		environment.ingress_access_mode
 		or getattr(policy, "default_ingress_access_mode", None)
 		or DEFAULT_INGRESS_ACCESS_MODE
+	)
+
+
+def _apply_runtime_placement_defaults(environment: Document, policy: Document | None) -> None:
+	environment.region = environment.region or getattr(policy, "default_region", None)
+	environment.deployment_mode = (
+		environment.deployment_mode
+		or getattr(policy, "default_deployment_mode", None)
+		or DEFAULT_DEPLOYMENT_MODE
 	)
 
 

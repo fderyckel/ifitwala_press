@@ -7,13 +7,25 @@ from types import ModuleType, SimpleNamespace
 import pytest
 
 
-def _load_tenant_environment_module(monkeypatch: pytest.MonkeyPatch):
+def _load_tenant_environment_module(
+	monkeypatch: pytest.MonkeyPatch, *, runtime_pools: dict[str, object] | None = None
+):
 	fake_frappe = ModuleType("frappe")
 
 	def _throw(message: str) -> None:
 		raise RuntimeError(message)
 
 	fake_frappe.throw = _throw  # type: ignore[attr-defined]
+	runtime_pools = runtime_pools or {}
+
+	def _get_doc(doctype: str, name: str):
+		if doctype == "Runtime Pool":
+			if name not in runtime_pools:
+				raise RuntimeError(f"Missing runtime pool fixture: {name}")
+			return runtime_pools[name]
+		raise RuntimeError(f"Unexpected get_doc lookup: {doctype} {name}")
+
+	fake_frappe.get_doc = _get_doc  # type: ignore[attr-defined]
 	fake_model = ModuleType("frappe.model")
 	fake_document = ModuleType("frappe.model.document")
 	fake_document.Document = object  # type: ignore[attr-defined]
@@ -85,3 +97,64 @@ def test_ingress_allowlist_cidrs_are_normalized(monkeypatch: pytest.MonkeyPatch)
 	module.TenantEnvironment._validate_ingress_access_constraints(current)
 
 	assert row.cidr == "203.0.113.10/32"
+
+
+def test_live_shared_runtime_requires_runtime_pool(monkeypatch: pytest.MonkeyPatch) -> None:
+	module = _load_tenant_environment_module(monkeypatch)
+	current = SimpleNamespace(
+		deployment_mode="Shared Runtime",
+		runtime_pool="",
+		dedicated_runtime_target="",
+		site_status="Live",
+	)
+
+	with pytest.raises(
+		RuntimeError,
+		match="Runtime Pool is required before a shared or reserved runtime environment can be marked Live",
+	):
+		module.TenantEnvironment._validate_runtime_placement_constraints(current)
+
+
+def test_runtime_pool_mode_must_match_environment_deployment_mode(
+	monkeypatch: pytest.MonkeyPatch,
+) -> None:
+	module = _load_tenant_environment_module(
+		monkeypatch,
+		runtime_pools={
+			"DEMO-POOL": SimpleNamespace(
+				pool_mode="Reserved Runtime",
+				is_active=1,
+				pool_status="Active",
+				runtime_provider="Google Cloud",
+				region="us-central1",
+			)
+		},
+	)
+	current = SimpleNamespace(
+		deployment_mode="Shared Runtime",
+		runtime_pool="DEMO-POOL",
+		dedicated_runtime_target="",
+		site_status="Sandbox Provisioning",
+		runtime_provider="Google Cloud",
+		region="us-central1",
+	)
+
+	with pytest.raises(RuntimeError, match="cannot back Shared Runtime placement"):
+		module.TenantEnvironment._validate_runtime_placement_constraints(current)
+
+
+def test_dedicated_runtime_cannot_reference_runtime_pool(monkeypatch: pytest.MonkeyPatch) -> None:
+	module = _load_tenant_environment_module(monkeypatch)
+	current = SimpleNamespace(
+		deployment_mode="Dedicated Runtime",
+		runtime_pool="DEMO-POOL",
+		dedicated_runtime_target="dedicated-demo-host-01",
+		site_status="Production Qualification",
+		runtime_reference="",
+	)
+
+	with pytest.raises(
+		RuntimeError,
+		match="Runtime Pool can only be set when Deployment Mode is Shared Runtime or Reserved Runtime",
+	):
+		module.TenantEnvironment._validate_runtime_placement_constraints(current)

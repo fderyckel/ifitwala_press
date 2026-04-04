@@ -15,6 +15,9 @@ GCS = "GCS"
 GOOGLE_CLOUD = "Google Cloud"
 OVH = "OVH"
 GOOGLE_CLOUD_DNS = "Google Cloud DNS"
+SHARED_RUNTIME = "Shared Runtime"
+RESERVED_RUNTIME = "Reserved Runtime"
+DEDICATED_RUNTIME = "Dedicated Runtime"
 LIFECYCLE_GUARD_FLAG = "ifitwala_allow_lifecycle_transition"
 
 
@@ -23,8 +26,10 @@ class TenantEnvironment(Document):
 		self._normalize_site_name()
 		self._validate_lifecycle_edit_discipline()
 		self._normalize_runtime_fields()
+		self._apply_runtime_pool_defaults()
 		self._validate_demo_seed_configuration()
 		self._validate_hosting_and_database_constraints()
+		self._validate_runtime_placement_constraints()
 		self._validate_provider_constraints()
 		self._validate_storage_constraints()
 		self._validate_routing_constraints()
@@ -68,7 +73,11 @@ class TenantEnvironment(Document):
 			"worker_profile",
 			"demo_seed_reference",
 			"runtime_reference",
+			"runtime_pool",
+			"dedicated_runtime_target",
 			"backup_export_path",
+			"deployment_mode",
+			"deployment_mode_notes",
 			"primary_cloud_provider",
 			"runtime_provider",
 			"object_storage_provider",
@@ -76,6 +85,10 @@ class TenantEnvironment(Document):
 			"primary_domain",
 			"host_header_value",
 			"ingress_access_mode",
+			"region",
+			"db_instance_name",
+			"db_name",
+			"db_user",
 		):
 			value = self.get(fieldname)
 			if isinstance(value, str):
@@ -89,6 +102,21 @@ class TenantEnvironment(Document):
 			if isinstance(notes, str):
 				row.notes = notes.strip()
 
+	def _apply_runtime_pool_defaults(self) -> None:
+		if not self.runtime_pool:
+			return
+
+		pool_doc = frappe.get_doc("Runtime Pool", self.runtime_pool)
+
+		if not self.region and getattr(pool_doc, "region", None):
+			self.region = pool_doc.region
+
+		if not self.primary_cloud_provider and getattr(pool_doc, "primary_cloud_provider", None):
+			self.primary_cloud_provider = pool_doc.primary_cloud_provider
+
+		if not self.runtime_provider and getattr(pool_doc, "runtime_provider", None):
+			self.runtime_provider = pool_doc.runtime_provider
+
 	def _validate_demo_seed_configuration(self) -> None:
 		if self.demo_seed_mode == "Restore Demo Backup" and not self.demo_seed_reference:
 			frappe.throw("Demo Seed Reference is required when Demo Seed Mode is Restore Demo Backup.")
@@ -99,6 +127,67 @@ class TenantEnvironment(Document):
 
 		if self.database_mode == "Dedicated DB Instance" and not self.db_instance_name:
 			frappe.throw("DB Instance Name is required for Dedicated DB Instance mode.")
+
+	def _validate_runtime_placement_constraints(self) -> None:
+		if not self.deployment_mode:
+			if self.runtime_pool or self.dedicated_runtime_target:
+				frappe.throw("Deployment Mode is required before runtime placement can be assigned.")
+			return
+
+		if self.deployment_mode in {SHARED_RUNTIME, RESERVED_RUNTIME}:
+			if self.dedicated_runtime_target:
+				frappe.throw(
+					"Dedicated Runtime Target can only be set when Deployment Mode is Dedicated Runtime."
+				)
+
+			if not self.runtime_pool:
+				if self.site_status == LIVE_STATE:
+					frappe.throw(
+						"Runtime Pool is required before a shared or reserved runtime environment can be marked Live."
+					)
+				return
+
+			pool_doc = frappe.get_doc("Runtime Pool", self.runtime_pool)
+			if getattr(pool_doc, "pool_mode", None) != self.deployment_mode:
+				frappe.throw(
+					f"Runtime Pool {self.runtime_pool} uses {getattr(pool_doc, 'pool_mode', 'no mode')} "
+					f"and cannot back {self.deployment_mode} placement."
+				)
+
+			if not int(getattr(pool_doc, "is_active", 0)):
+				frappe.throw(f"Runtime Pool {self.runtime_pool} is inactive and cannot receive placement.")
+
+			if getattr(pool_doc, "pool_status", None) == "Disabled":
+				frappe.throw(f"Runtime Pool {self.runtime_pool} is disabled and cannot receive placement.")
+
+			pool_runtime_provider = getattr(pool_doc, "runtime_provider", None)
+			if (
+				pool_runtime_provider
+				and self.runtime_provider
+				and pool_runtime_provider != self.runtime_provider
+			):
+				frappe.throw(
+					f"Runtime Pool {self.runtime_pool} runs on {pool_runtime_provider}, not {self.runtime_provider}."
+				)
+
+			pool_region = getattr(pool_doc, "region", None)
+			if pool_region and self.region and pool_region != self.region:
+				frappe.throw(f"Runtime Pool {self.runtime_pool} is in {pool_region}, not {self.region}.")
+
+			return
+
+		if self.deployment_mode == DEDICATED_RUNTIME:
+			if self.runtime_pool:
+				frappe.throw(
+					"Runtime Pool can only be set when Deployment Mode is Shared Runtime or Reserved Runtime."
+				)
+
+			if self.site_status == LIVE_STATE and not (
+				self.dedicated_runtime_target or self.runtime_reference
+			):
+				frappe.throw(
+					"Dedicated Runtime Target is required before a dedicated runtime environment can be marked Live."
+				)
 
 	def _validate_provider_constraints(self) -> None:
 		if self.environment_type != "Sandbox" and self.primary_cloud_provider == OVH:

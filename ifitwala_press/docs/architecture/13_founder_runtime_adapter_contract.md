@@ -246,7 +246,15 @@ The first implementation should stay simple:
 - approved custom app image or app bundle
 - synchronous founder-mode execution is acceptable initially
 - SSH-free local execution on the host is acceptable initially
-- this per-environment founder stack is acceptable only for small pilot cohorts
+- this per-environment founder stack is acceptable only for small pilot cohorts and dedicated-runtime cases
+
+It must not be described as the default placement model for:
+
+- demo cohorts
+- many smaller schools
+- normal shared-runtime growth
+
+Those environments should target a shared runtime pool once that adapter path is implemented.
 
 Do not jump straight to:
 

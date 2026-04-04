@@ -58,6 +58,8 @@
     "ifitwala_drive_branch",
     "deployment_mode",
     "deployment_mode_notes",
+    "runtime_pool",
+    "dedicated_runtime_target",
     "section_break_database",
     "database_mode",
     "db_provider",
@@ -221,7 +223,7 @@
       "fieldname": "placement_strategy",
       "fieldtype": "Select",
       "label": "Placement Strategy",
-      "options": "\nFounder Shared Runtime\nShared Production Fleet\nDedicated DB\nDedicated Runtime + DB"
+      "options": "\nShared Runtime Pool\nReserved Runtime Pool\nDedicated Runtime Target\nDedicated Runtime + DB"
     },
     {
       "fieldname": "column_break_policy_tier",
@@ -378,6 +380,19 @@
       "fieldname": "deployment_mode_notes",
       "fieldtype": "Small Text",
       "label": "Deployment Mode Notes"
+    },
+    {
+      "description": "Shared or reserved runtime pool chosen for this environment when it is placed onto a reusable bench/runtime surface.",
+      "fieldname": "runtime_pool",
+      "fieldtype": "Link",
+      "label": "Runtime Pool",
+      "options": "Runtime Pool"
+    },
+    {
+      "description": "Dedicated host, bench, or runtime target planned for this environment when it is not assigned to a shared pool.",
+      "fieldname": "dedicated_runtime_target",
+      "fieldtype": "Data",
+      "label": "Dedicated Runtime Target"
     },
     {
       "fieldname": "section_break_database",

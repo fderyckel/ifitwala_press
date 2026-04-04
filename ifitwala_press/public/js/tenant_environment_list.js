@@ -3,6 +3,8 @@ frappe.listview_settings["Tenant Environment"] = {
 		"site_status",
 		"environment_type",
 		"hosting_tier",
+		"deployment_mode",
+		"runtime_pool",
 		"database_mode",
 		"primary_domain",
 		"region",

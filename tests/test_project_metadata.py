@@ -122,6 +122,13 @@ def test_core_phase_one_doctype_files_exist() -> None:
 	assert (
 		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "press_tenant" / "press_tenant.json"
 	).is_file()
+	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "runtime_pool" / "__init__.py").is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "runtime_pool" / "runtime_pool.py"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "runtime_pool" / "runtime_pool.json"
+	).is_file()
 	assert (
 		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "tenant_environment" / "__init__.py"
 	).is_file()
@@ -262,6 +269,8 @@ def test_environment_model_includes_founder_runtime_mvp_fields() -> None:
 		"backup_storage_provider",
 		"backup_storage_class",
 		"runtime_reference",
+		"runtime_pool",
+		"dedicated_runtime_target",
 		"backup_export_path",
 		"primary_cloud_provider",
 		"runtime_provider",
@@ -291,12 +300,39 @@ def test_policy_model_includes_storage_defaults() -> None:
 		assert field_name in policy_source
 
 
+def test_runtime_pool_model_includes_core_fields() -> None:
+	runtime_pool_source = (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "doctype" / "runtime_pool" / "runtime_pool.json"
+	).read_text()
+	for field_name in (
+		"pool_name",
+		"pool_mode",
+		"pool_status",
+		"orchestrator_type",
+		"compatibility_key",
+		"pool_reference",
+		"host_reference",
+		"site_capacity",
+		"assigned_site_count",
+	):
+		assert field_name in runtime_pool_source
+
+
 def test_service_layer_files_exist() -> None:
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "__init__.py").is_file()
 	assert (
 		ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "environment_lifecycle_service.py"
 	).is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "founder_runtime_service.py").is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "runtime_placement_service.py"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "runtime_orchestration_service.py"
+	).is_file()
+	assert (
+		ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "shared_demo_bench_service.py"
+	).is_file()
 	assert (ROOT / "ifitwala_press" / "ifitwala_press" / "services" / "transition_log_service.py").is_file()
 
 
@@ -333,6 +369,14 @@ def test_founder_runtime_ops_assets_exist() -> None:
 		"ops/founder_runtime/scripts/backup-site.sh",
 		"ops/founder_runtime/scripts/backup-all-sites.sh",
 		"ops/founder_runtime/scripts/restore-site.sh",
+		"ops/shared_demo_bench/README.md",
+		"ops/shared_demo_bench/adapter.py",
+		"ops/shared_demo_bench/adapter.env.example",
+		"ops/shared_demo_bench/templates/compose.yaml",
+		"ops/shared_demo_bench/templates/nginx-default.conf",
+		"ops/shared_demo_bench/scripts/provision-site.sh",
+		"ops/shared_demo_bench/scripts/backup-site.sh",
+		"ops/shared_demo_bench/scripts/restore-site.sh",
 	):
 		assert (ROOT / relative_path).is_file()
 
@@ -349,6 +393,8 @@ def test_founder_runtime_payload_includes_storage_contract() -> None:
 		'"backup_storage_provider"',
 		'"backup_storage_class"',
 		'"site_storage_apps"',
+		'"runtime_pool"',
+		'"dedicated_runtime_target"',
 		'"primary_cloud_provider"',
 		'"runtime_provider"',
 		'"object_storage_provider"',

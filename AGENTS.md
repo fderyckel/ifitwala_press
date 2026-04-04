@@ -83,6 +83,8 @@ Additional launch-gate rules are also locked:
 
 - the current per-environment founder Docker stack is acceptable only for small pilot cohorts
 - manually approved demo environments must not default to a full heavy per-environment runtime
+- shared runtime placement is the default target for demo and many smaller-school environments
+- dedicated runtime placement is reserved for VIP, high-concurrency, or incompatible app-bundle tenants
 - no environment is operationally ready until off-runtime backup export and at least one restore rehearsal have been proven
 
 ## Founder-stage operating model
@@ -160,10 +162,11 @@ The intended model is:
   Cheap, disposable, shared infrastructure, usually demo data
 
 - **Standard Production**
-  Shared runtime, shared HA database fleet, **one database per site**
+  Shared runtime is the default for many smaller schools, with **one database per site**
 
 - **Premium / VIP Production**
   Shared or reserved runtime, but typically **dedicated database instance per tenant**
+  Dedicated runtime is appropriate for VIP, high-concurrency, or incompatible app-bundle tenants
 
 Do not push every tenant into dedicated infrastructure from day one.
 Do not trap all tenants forever in one undifferentiated shared setup either.

@@ -34,17 +34,17 @@ from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import
 from ifitwala_press.ifitwala_press.services.environment_lifecycle_service import (
 	suspend_environment as suspend_environment_service,
 )
-from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
-	provision_demo_runtime as provision_demo_runtime_service,
+from ifitwala_press.ifitwala_press.services.runtime_orchestration_service import (
+	provision_environment_runtime as provision_environment_runtime_service,
 )
-from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
-	restore_demo_runtime as restore_demo_runtime_service,
+from ifitwala_press.ifitwala_press.services.runtime_orchestration_service import (
+	restore_environment_runtime as restore_environment_runtime_service,
 )
-from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
-	sync_edge_route as sync_edge_route_service,
+from ifitwala_press.ifitwala_press.services.runtime_orchestration_service import (
+	sync_environment_edge_route as sync_environment_edge_route_service,
 )
-from ifitwala_press.ifitwala_press.services.founder_runtime_service import (
-	teardown_demo_runtime as teardown_demo_runtime_service,
+from ifitwala_press.ifitwala_press.services.runtime_orchestration_service import (
+	teardown_environment_runtime as teardown_environment_runtime_service,
 )
 
 ACTION_ROLES = {"Ifitwala Press Admin", "Ifitwala Press Ops"}
@@ -74,6 +74,9 @@ def create_sandbox(
 	expiry_date: str | None = None,
 	demo_seed_mode: str | None = None,
 	demo_seed_reference: str | None = None,
+	deployment_mode: str | None = None,
+	runtime_pool: str | None = None,
+	dedicated_runtime_target: str | None = None,
 	status_reason: str | None = None,
 ) -> dict[str, Any]:
 	_require_lifecycle_role()
@@ -85,6 +88,9 @@ def create_sandbox(
 		expiry_date=expiry_date,
 		demo_seed_mode=demo_seed_mode,
 		demo_seed_reference=demo_seed_reference,
+		deployment_mode=deployment_mode,
+		runtime_pool=runtime_pool,
+		dedicated_runtime_target=dedicated_runtime_target,
 		status_reason=status_reason,
 	)
 	return _serialize_document(document)
@@ -150,9 +156,17 @@ def provision_founder_demo_runtime(
 	environment: str,
 	status_reason: str | None = None,
 ) -> dict[str, Any]:
+	return provision_environment_runtime(environment=environment, status_reason=status_reason)
+
+
+@frappe.whitelist()
+def provision_environment_runtime(
+	environment: str,
+	status_reason: str | None = None,
+) -> dict[str, Any]:
 	_require_lifecycle_role()
 	try:
-		result = provision_demo_runtime_service(environment)
+		result = provision_environment_runtime_service(environment)
 	except Exception as exc:
 		mark_provisioning_failed_service(
 			environment,
@@ -196,6 +210,9 @@ def qualify_for_production(
 	hosting_tier: str,
 	database_mode: str,
 	conversion_strategy: str,
+	deployment_mode: str | None = None,
+	runtime_pool: str | None = None,
+	dedicated_runtime_target: str | None = None,
 	policy: str | None = None,
 	region: str | None = None,
 	primary_cloud_provider: str | None = None,
@@ -210,6 +227,9 @@ def qualify_for_production(
 		hosting_tier=hosting_tier,
 		database_mode=database_mode,
 		conversion_strategy=conversion_strategy,
+		deployment_mode=deployment_mode,
+		runtime_pool=runtime_pool,
+		dedicated_runtime_target=dedicated_runtime_target,
 		policy=policy,
 		region=region,
 		primary_cloud_provider=primary_cloud_provider,
@@ -266,8 +286,16 @@ def teardown_founder_demo_runtime(
 	environment: str,
 	reason: str,
 ) -> dict[str, Any]:
+	return teardown_environment_runtime(environment=environment, reason=reason)
+
+
+@frappe.whitelist()
+def teardown_environment_runtime(
+	environment: str,
+	reason: str,
+) -> dict[str, Any]:
 	_require_lifecycle_role()
-	result = teardown_demo_runtime_service(environment, reason=reason)
+	result = teardown_environment_runtime_service(environment, reason=reason)
 	document = expire_sandbox_service(
 		environment,
 		reason=reason,
@@ -281,16 +309,17 @@ def teardown_founder_demo_runtime(
 
 @frappe.whitelist()
 def sync_founder_edge_route(environment: str) -> dict[str, Any]:
+	return sync_environment_edge_route(environment)
+
+
+@frappe.whitelist()
+def sync_environment_edge_route(environment: str) -> dict[str, Any]:
 	_require_lifecycle_role()
 	environment_doc = frappe.get_doc("Tenant Environment", environment)
-	runtime_reference = str(getattr(environment_doc, "runtime_reference", "") or "").strip()
-	if not runtime_reference.startswith("compose:"):
-		frappe.throw("Founder edge route sync is currently implemented only for founder runtimes.")
-
 	if not getattr(environment_doc, "primary_domain", None):
-		frappe.throw("Primary Domain is required before the founder edge route can be synced.")
+		frappe.throw("Primary Domain is required before the environment edge route can be synced.")
 
-	result = sync_edge_route_service(environment_doc)
+	result = sync_environment_edge_route_service(environment_doc)
 	if result.get("routing_mode"):
 		environment_doc.routing_mode = result.get("routing_mode")
 	if result.get("host_header_value"):
@@ -342,14 +371,10 @@ def suspend_environment(environment: str, reason: str) -> dict[str, Any]:
 def restore_environment(environment: str, reason: str) -> dict[str, Any]:
 	_require_lifecycle_role()
 	environment_doc = frappe.get_doc("Tenant Environment", environment)
-	runtime_reference = str(getattr(environment_doc, "runtime_reference", "") or "").strip()
-	if not runtime_reference.startswith("compose:"):
-		frappe.throw("Restore workflow is currently implemented only for founder runtimes.")
-
 	if not getattr(environment_doc, "backup_export_path", None):
-		frappe.throw("Backup Export Path is required before a founder runtime can be restored.")
+		frappe.throw("Backup Export Path is required before an environment runtime can be restored.")
 
-	result = restore_demo_runtime_service(environment_doc, reason=reason)
+	result = restore_environment_runtime_service(environment_doc, reason=reason)
 	document = restore_environment_service(environment, reason=reason)
 	if result.get("last_provisioning_step"):
 		document.last_provisioning_step = result.get("last_provisioning_step")

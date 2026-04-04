@@ -4,7 +4,7 @@
 
 This document locks the first real Docker stack shape for the founder runtime used by **Ifitwala_Press**.
 
-It exists to move phase 1 beyond abstract runtime intent and into an explicit same-VM container architecture.
+It exists to move phase 1 beyond abstract runtime intent and into an explicit same-VM container architecture for the dedicated founder-runtime path.
 
 ---
 
@@ -24,7 +24,12 @@ The founder runtime for phase 1 should use:
 - Google Cloud DNS changes through `gcloud dns ...`
 
 This is intentionally founder-stage.
-It is not the final multi-host or Traefik architecture, and it is not the default runtime posture for manually approved demo environments.
+It is not the final multi-host or Traefik architecture, and it is not the default runtime posture for manually approved demo environments or many smaller schools.
+Its role is to cover:
+
+- small pilot cohorts before shared-runtime pooling is implemented
+- dedicated-runtime placement for VIP or high-concurrency tenants
+- cases where app-bundle incompatibility blocks safe pool sharing
 
 ---
 
@@ -39,6 +44,11 @@ It gives us:
 - explicit GCS runtime configuration outside DocTypes
 - DNS automation via the Google Cloud CLI without forcing full GCP API orchestration
 - a clear future migration path toward Traefik, with a shared founder nginx edge proxy now bridging hostname routing
+
+It does not change the target economic posture:
+
+- shared runtime pools should be the default for demo and small-school placement
+- dedicated per-environment stacks are the exception path
 
 ---
 
@@ -73,7 +83,7 @@ The founder Compose stack contains:
 - `redis-socketio`
 
 This is a founder-mode operational split, not the final production split.
-It is acceptable for a small pilot cohort, not as the default architecture for a wide manually approved demo cohort.
+It is acceptable for a small pilot cohort and later dedicated-runtime tenants, not as the default architecture for a wide manually approved demo cohort or a normal small-school fleet.
 
 It is sufficient for:
 

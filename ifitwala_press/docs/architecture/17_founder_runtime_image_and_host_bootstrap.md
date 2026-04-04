@@ -44,11 +44,14 @@ For phase 1, the host must provide:
 - `gcloud`
 - `gcloud storage` for backup export
 - one runtime root containing:
-  - per-environment Docker stacks
+  - per-environment Docker stacks for the dedicated founder-runtime path
   - the shared edge proxy files
   - backup logs
 
 This host bootstrap is now captured in `ops/founder_runtime/host/`.
+
+This host contract is not the default target for all demos and smaller schools.
+It is the current dedicated founder-runtime path and pilot bridge until shared-runtime pool orchestration is implemented.
 
 The bootstrap must also install a repo-managed firewall sync asset so the founder VM can converge:
 

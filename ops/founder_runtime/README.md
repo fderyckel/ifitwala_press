@@ -5,7 +5,7 @@ This directory holds the founder-mode runtime scaffolding for phase 1 / MVP.
 The intended operating model is:
 
 - `ifitwala_press` remains the control plane
-- one same-VM Docker Compose stack is rendered per tenant environment
+- one same-VM Docker Compose stack is rendered per tenant environment for the dedicated founder-runtime path
 - the runtime image already contains `frappe`, `ifitwala_ed`, and `ifitwala_drive`
 - MariaDB remains an explicit external dependency
 - Redis stays local to the compose stack for founder mode
@@ -56,7 +56,8 @@ This scaffolding assumes:
 - the shared founder edge proxy in `edge_proxy/` or a later Traefik layer will route hostnames to the per-environment loopback nginx ports
 
 This current per-environment founder stack is acceptable for small pilot cohorts only.
-It is not the default architecture for a larger founder-managed demo cohort.
+It is also acceptable for later dedicated-runtime tenants that need stronger isolation.
+It is not the default architecture for a larger founder-managed demo cohort or many smaller schools, which should target shared runtime pools.
 
 The adapter can now render and manage both DNS records and shared founder proxy routes.
 The host bootstrap assets can now prepare the VM for Docker, Cloud DNS, and daily backup execution.

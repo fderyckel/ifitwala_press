@@ -1,0 +1,225 @@
+{
+  "actions": [],
+  "allow_copy": 0,
+  "allow_events_in_timeline": 0,
+  "allow_guest_to_view": 0,
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "field:pool_name",
+  "beta": 0,
+  "creation": "2026-04-04 00:00:00.000000",
+  "custom": 0,
+  "default_view": "List",
+  "doctype": "DocType",
+  "document_type": "Setup",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "pool_name",
+    "pool_mode",
+    "pool_status",
+    "column_break_identity",
+    "is_active",
+    "orchestrator_type",
+    "compatibility_key",
+    "section_break_provider_placement",
+    "primary_cloud_provider",
+    "runtime_provider",
+    "column_break_provider_placement",
+    "region",
+    "pool_reference",
+    "host_reference",
+    "section_break_capacity",
+    "site_capacity",
+    "assigned_site_count",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "pool_name",
+      "fieldtype": "Data",
+      "in_global_search": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Pool Name",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "description": "Whether this pool serves normal shared placement or a more tightly controlled reserved runtime slice.",
+      "fieldname": "pool_mode",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Pool Mode",
+      "options": "\nShared Runtime\nReserved Runtime",
+      "reqd": 1
+    },
+    {
+      "default": "Active",
+      "description": "Operational placement posture for this pool. Use Draining or Full to stop new assignments without deleting the record.",
+      "fieldname": "pool_status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Pool Status",
+      "options": "\nActive\nDraining\nFull\nDisabled",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_identity",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "1",
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Is Active"
+    },
+    {
+      "default": "Bench",
+      "description": "Control-plane runtime shape for this pool. Bench aligns with the intended shared multi-site demo host model.",
+      "fieldname": "orchestrator_type",
+      "fieldtype": "Select",
+      "label": "Orchestrator Type",
+      "options": "\nBench\nDocker Compose\nOther",
+      "reqd": 1
+    },
+    {
+      "description": "Compatibility key for the approved app bundle or release line this pool can safely host together.",
+      "fieldname": "compatibility_key",
+      "fieldtype": "Data",
+      "label": "Compatibility Key"
+    },
+    {
+      "fieldname": "section_break_provider_placement",
+      "fieldtype": "Section Break",
+      "label": "Provider Placement"
+    },
+    {
+      "default": "Google Cloud",
+      "description": "Primary infrastructure provider associated with this pool for placement and cost tracking.",
+      "fieldname": "primary_cloud_provider",
+      "fieldtype": "Select",
+      "label": "Primary Cloud Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther",
+      "reqd": 1
+    },
+    {
+      "default": "Google Cloud",
+      "description": "Runtime host provider for the application layer serving this pool.",
+      "fieldname": "runtime_provider",
+      "fieldtype": "Select",
+      "label": "Runtime Provider",
+      "options": "\nGoogle Cloud\nOVH\nOther",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_provider_placement",
+      "fieldtype": "Column Break"
+    },
+    {
+      "description": "Region or geography where the pool is expected to run.",
+      "fieldname": "region",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Region"
+    },
+    {
+      "description": "Bench name, compose namespace, or other stable control-plane reference for this runtime pool.",
+      "fieldname": "pool_reference",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Pool Reference"
+    },
+    {
+      "description": "Host, VM, or cluster label where this pool currently runs.",
+      "fieldname": "host_reference",
+      "fieldtype": "Data",
+      "label": "Host Reference"
+    },
+    {
+      "fieldname": "section_break_capacity",
+      "fieldtype": "Section Break",
+      "label": "Capacity"
+    },
+    {
+      "description": "Soft site-count ceiling used for operator placement decisions.",
+      "fieldname": "site_capacity",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "label": "Site Capacity"
+    },
+    {
+      "description": "Current assigned site count tracked by operators until automated capacity snapshots exist.",
+      "fieldname": "assigned_site_count",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "label": "Assigned Site Count"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "grid_page_length": 50,
+  "hide_toolbar": 0,
+  "index_web_pages_for_search": 0,
+  "is_submittable": 0,
+  "issingle": 0,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-04-04 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Ifitwala Press",
+  "name": "Runtime Pool",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Admin",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Ops",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Ifitwala Press Support",
+      "share": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "System Manager"
+    }
+  ],
+  "quick_entry": 0,
+  "read_only": 0,
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "pool_name",
+  "track_changes": 1,
+  "track_seen": 0
+}

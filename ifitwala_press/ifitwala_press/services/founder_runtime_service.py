@@ -23,7 +23,7 @@ def provision_demo_runtime(environment: str | Document) -> dict[str, Any]:
 	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
 	return _run_adapter(
 		"provision-demo-runtime",
-		_build_payload(environment_doc, tenant_doc),
+		build_runtime_payload(environment_doc, tenant_doc),
 	)
 
 
@@ -39,14 +39,14 @@ def sync_edge_route(environment: str | Document) -> dict[str, Any]:
 	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
 	return _run_adapter(
 		"sync-edge-route",
-		_build_payload(environment_doc, tenant_doc),
+		build_runtime_payload(environment_doc, tenant_doc),
 	)
 
 
 def teardown_demo_runtime(environment: str | Document, *, reason: str) -> dict[str, Any]:
 	environment_doc = _as_doc("Tenant Environment", environment)
 	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
-	payload = _build_payload(environment_doc, tenant_doc)
+	payload = build_runtime_payload(environment_doc, tenant_doc)
 	payload["teardown_reason"] = reason
 	return _run_adapter(
 		"teardown-demo-runtime",
@@ -57,7 +57,7 @@ def teardown_demo_runtime(environment: str | Document, *, reason: str) -> dict[s
 def restore_demo_runtime(environment: str | Document, *, reason: str) -> dict[str, Any]:
 	environment_doc = _as_doc("Tenant Environment", environment)
 	tenant_doc = frappe.get_doc("Press Tenant", environment_doc.tenant)
-	payload = _build_payload(environment_doc, tenant_doc)
+	payload = build_runtime_payload(environment_doc, tenant_doc)
 	payload["restore_reason"] = reason
 	return _run_adapter(
 		"restore-demo-runtime",
@@ -65,8 +65,11 @@ def restore_demo_runtime(environment: str | Document, *, reason: str) -> dict[st
 	)
 
 
-def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
+def build_runtime_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 	policy_doc = frappe.get_doc("Tenant Policy", environment.policy) if environment.policy else None
+	runtime_pool_doc = (
+		frappe.get_doc("Runtime Pool", environment.runtime_pool) if environment.runtime_pool else None
+	)
 	drive_storage_profile = build_drive_storage_profile(environment)
 	return {
 		"tenant": {
@@ -109,6 +112,8 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"policy": environment.policy,
 			"hosting_tier": environment.hosting_tier,
 			"placement_strategy": environment.placement_strategy,
+			"runtime_pool": environment.runtime_pool,
+			"dedicated_runtime_target": environment.dedicated_runtime_target,
 			"primary_cloud_provider": environment.primary_cloud_provider,
 			"runtime_provider": environment.runtime_provider,
 			"object_storage_provider": environment.object_storage_provider,
@@ -167,8 +172,37 @@ def _build_payload(environment: Document, tenant: Document) -> dict[str, Any]:
 			"drive_storage_profile": drive_storage_profile,
 		},
 		"runtime": {
+			"pool": environment.runtime_pool,
+			"dedicated_target": environment.dedicated_runtime_target,
 			"drive_storage_profile": drive_storage_profile,
 		},
+		"runtime_pool": {
+			"name": runtime_pool_doc.name if runtime_pool_doc else environment.runtime_pool,
+			"pool_name": getattr(runtime_pool_doc, "pool_name", None) if runtime_pool_doc else None,
+			"pool_mode": getattr(runtime_pool_doc, "pool_mode", None) if runtime_pool_doc else None,
+			"pool_status": getattr(runtime_pool_doc, "pool_status", None) if runtime_pool_doc else None,
+			"orchestrator_type": getattr(runtime_pool_doc, "orchestrator_type", None)
+			if runtime_pool_doc
+			else None,
+			"compatibility_key": getattr(runtime_pool_doc, "compatibility_key", None)
+			if runtime_pool_doc
+			else None,
+			"primary_cloud_provider": getattr(runtime_pool_doc, "primary_cloud_provider", None)
+			if runtime_pool_doc
+			else None,
+			"runtime_provider": getattr(runtime_pool_doc, "runtime_provider", None)
+			if runtime_pool_doc
+			else None,
+			"region": getattr(runtime_pool_doc, "region", None) if runtime_pool_doc else None,
+			"pool_reference": getattr(runtime_pool_doc, "pool_reference", None) if runtime_pool_doc else None,
+			"host_reference": getattr(runtime_pool_doc, "host_reference", None) if runtime_pool_doc else None,
+			"site_capacity": getattr(runtime_pool_doc, "site_capacity", None) if runtime_pool_doc else None,
+			"assigned_site_count": getattr(runtime_pool_doc, "assigned_site_count", None)
+			if runtime_pool_doc
+			else None,
+		}
+		if runtime_pool_doc or environment.runtime_pool
+		else None,
 	}
 
 
@@ -234,7 +268,9 @@ def _get_timeout_seconds() -> int:
 
 	try:
 		timeout = int(configured)
-	except (TypeError, ValueError):
+	except TypeError:
+		frappe.throw("Founder runtime adapter timeout must be an integer number of seconds.")
+	except ValueError:
 		frappe.throw("Founder runtime adapter timeout must be an integer number of seconds.")
 
 	if timeout <= 0:

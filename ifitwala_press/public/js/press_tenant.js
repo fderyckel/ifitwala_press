@@ -108,9 +108,27 @@ frappe.ui.form.on("Press Tenant", {
 						label: __("Demo Seed Reference"),
 					},
 					{
+						fieldname: "deployment_mode",
+						fieldtype: "Select",
+						label: __("Deployment Mode"),
+						options: "\nShared Runtime\nReserved Runtime\nDedicated Runtime",
+						default: "",
+					},
+					{
+						fieldname: "runtime_pool",
+						fieldtype: "Link",
+						label: __("Runtime Pool"),
+						options: "Runtime Pool",
+					},
+					{
+						fieldname: "dedicated_runtime_target",
+						fieldtype: "Data",
+						label: __("Dedicated Runtime Target"),
+					},
+					{
 						fieldname: "auto_provision_runtime",
 						fieldtype: "Check",
-						label: __("Provision Founder Demo Runtime"),
+						label: __("Provision Runtime Immediately"),
 						default: 1,
 					},
 					{
@@ -130,6 +148,9 @@ frappe.ui.form.on("Press Tenant", {
 							expiry_date: values.expiry_date,
 							demo_seed_mode: values.demo_seed_mode,
 							demo_seed_reference: values.demo_seed_reference,
+							deployment_mode: values.deployment_mode,
+							runtime_pool: values.runtime_pool,
+							dedicated_runtime_target: values.dedicated_runtime_target,
 							status_reason: values.status_reason,
 						},
 						freeze: true,
@@ -151,15 +172,15 @@ frappe.ui.form.on("Press Tenant", {
 							}
 
 							frappe.call({
-								method: "ifitwala_press.api.lifecycle.provision_founder_demo_runtime",
+								method: "ifitwala_press.api.lifecycle.provision_environment_runtime",
 								args: {
 									environment: message.name,
 								},
 								freeze: true,
-								freeze_message: __("Provisioning founder demo runtime"),
+								freeze_message: __("Provisioning environment runtime"),
 								callback: () => {
 									frappe.show_alert({
-										message: __("Founder demo runtime provisioned"),
+										message: __("Environment runtime provisioned"),
 										indicator: "green",
 									});
 									if (

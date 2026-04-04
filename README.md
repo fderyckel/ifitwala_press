@@ -84,13 +84,15 @@ The intended model is:
 
 - **Sandbox / Trial**
   Cheap, disposable, shared infrastructure, normally with demo data
-  Broad trials should favor shared demo density, not a full heavy per-environment stack by default
+  Broad trials should favor shared demo density through a shared runtime pool, not a full heavy per-environment stack by default
 
 - **Standard Production**
-  Shared runtime, shared HA database fleet, one database per site
+  Shared runtime remains the default for many smaller schools when app-bundle compatibility and observed capacity allow it
+  One database per site remains mandatory
 
 - **Premium / VIP Production**
   Stronger isolation, usually dedicated database instance per tenant
+  Dedicated runtime is justified for VIP, high-concurrency, or incompatible app-bundle tenants
 
 ### 5. Sandbox is not production
 A sandbox should be:
@@ -136,6 +138,7 @@ Before a larger number of manually approved demo environments, the platform must
 - Google Cloud DNS as the default DNS authority
 - off-runtime backup export plus at least one successful restore rehearsal
 - no default demo architecture that gives every manually approved sandbox a full heavy dedicated stack
+- shared runtime pools must become the default placement target for demo and smaller-school environments
 
 ## Current product intent
 
@@ -160,6 +163,7 @@ The current intended first-class objects are:
 - `Tenant Transition Log`
 
 ### Likely early follow-up
+- `Runtime Pool`
 - `App Bundle`
 - `App Release`
 - `Tenant Environment App Assignment`
